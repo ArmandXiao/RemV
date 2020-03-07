@@ -33,6 +33,6 @@ def translate(word):
 
 
 if __name__ == '__main__':
-    lista, listb = translate("Fluoridation")
+    lista, listb = translate("pig")
     print(lista)
     print(listb)
