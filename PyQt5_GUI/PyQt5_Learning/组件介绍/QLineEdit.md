@@ -16,6 +16,8 @@
 
     
 ##QLineEdit 校验器 ：限制控件的输入
+- *setValidator 与 QlineEdit组件捆绑*
+
 - QIntValidator     检测输入是否为整数
     - 可配合 setRange()来限定范围
     
@@ -27,7 +29,8 @@
     - import QRegEx
     - setRegEx(reg)
     
-    
+## QLineEditMask 掩码: 限制控件输入
+- 自己搜掩码
 
     
     
