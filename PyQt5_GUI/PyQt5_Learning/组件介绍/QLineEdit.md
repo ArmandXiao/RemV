@@ -3,6 +3,12 @@
 
 - setPlaceholderText(): 设置当文本框没有输入时的显示
 
+- setMaxLength(int): 限制最大输入长度
+
+- setReadOnly(Boolean)
+### 常用事件
+- textChanged
+
  ###Echo mode : 设置回显模式 
 1. Normal
 

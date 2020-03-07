@@ -1,5 +1,5 @@
 # QLabel 控件
-
+支持 html 标签， 可为文本设置漂亮的风格
 - setAlignment() 设置文本对齐方式
 
 - setIndent() 设置文本缩进
