@@ -13,3 +13,9 @@
 - selectedText() 返回所选择的字符
 
 - setWordWrap() 设置是否允许换行
+
+## QLabel 常用事件
+
+- linkHovered : 当鼠标滑过
+
+- linkActivated : 当鼠标单机
