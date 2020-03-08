@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1258</width>
-    <height>853</height>
+    <width>1260</width>
+    <height>819</height>
    </rect>
   </property>
   <property name="tabletTracking">
@@ -15,6 +15,24 @@
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="windowOpacity">
+   <double>0.980000000000000</double>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="animated">
+   <bool>true</bool>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="layoutWidget">
@@ -26,40 +44,25 @@
       <height>821</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout" rowstretch="1,20" columnstretch="3,2,13">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="1,0" columnstretch="3,2,16">
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <property name="leftMargin">
       <number>0</number>
      </property>
-     <property name="spacing">
+     <property name="topMargin">
       <number>0</number>
      </property>
-     <item row="1" column="1">
-      <widget class="QListWidget" name="lessonListWidget">
-       <property name="font">
-        <font>
-         <family>Times New Roman</family>
-         <pointsize>12</pointsize>
-         <weight>9</weight>
-         <italic>false</italic>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 75 12pt &quot;Times New Roman&quot;;</string>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <item>
-        <property name="text">
-         <string>Lesson 20</string>
-        </property>
-       </item>
-      </widget>
-     </item>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing">
+      <number>0</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>1</number>
+     </property>
      <item row="1" column="0">
       <widget class="QListWidget" name="bookListWidget">
        <property name="toolTip">
@@ -76,6 +79,9 @@
 color:rgb(255, 255, 255);
 background: rgb(42, 51, 60)
 </string>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
        </property>
        <property name="alternatingRowColors">
         <bool>false</bool>
@@ -94,86 +100,167 @@ background: rgb(42, 51, 60)
        </property>
        <item>
         <property name="text">
-         <string>Sat Vocabulary Book List</string>
+         <string>Sat Vocabulary</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QFrame" name="frame">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QWidget" name="horizontalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>0</y>
+          <width>381</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>20</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="OverViewSceneBtn">
+           <property name="text">
+            <string>OverView</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="MemorizeSceneBtn">
+           <property name="text">
+            <string>Memorize</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="QuizSceneBtn">
+           <property name="text">
+            <string>Quiz</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QStackedWidget" name="stackedWidget">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="OverviewScene"/>
+       <widget class="QWidget" name="MemorizeScene"/>
+       <widget class="QWidget" name="QuizScene"/>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QListWidget" name="lessonListWidget">
+       <property name="font">
+        <font>
+         <family>Times New Roman</family>
+         <pointsize>12</pointsize>
+         <weight>9</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 75 12pt &quot;Times New Roman&quot;;</string>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
        <item>
         <property name="text">
-         <string>LongLong TIm</string>
+         <string>Lesson List</string>
         </property>
        </item>
       </widget>
      </item>
      <item row="0" column="0" colspan="2">
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>PushButton</string>
+      <widget class="QPushButton" name="uploadButton">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="2" rowspan="2">
-      <widget class="QTabWidget" name="tabWidget">
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <property name="styleSheet">
-        <string notr="true">background: rgb(255, 255, 255)</string>
+        <string notr="true">    background-color: green;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    border-color: beige;
+    font: bold 14px;
+    min-width: 10em;
+    padding: 6px;</string>
        </property>
-       <property name="tabPosition">
-        <enum>QTabWidget::North</enum>
+       <property name="text">
+        <string>Upload Excels</string>
        </property>
-       <property name="tabShape">
-        <enum>QTabWidget::Triangular</enum>
-       </property>
-       <property name="currentIndex">
-        <number>2</number>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="documentMode">
+       <property name="checkable">
         <bool>false</bool>
        </property>
-       <property name="tabsClosable">
+       <property name="flat">
         <bool>false</bool>
        </property>
-       <widget class="QWidget" name="tab">
-        <attribute name="title">
-         <string>Tab 1</string>
-        </attribute>
-       </widget>
-       <widget class="QWidget" name="tab_2">
-        <attribute name="title">
-         <string>Tab 2</string>
-        </attribute>
-       </widget>
-       <widget class="QWidget" name="tab_3">
-        <attribute name="title">
-         <string>Tab 3</string>
-        </attribute>
-       </widget>
       </widget>
      </item>
     </layout>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1258</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuHello">
-    <property name="title">
-     <string>Hello</string>
-    </property>
-   </widget>
-   <addaction name="menuHello"/>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
