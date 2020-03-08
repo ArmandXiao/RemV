@@ -5,10 +5,11 @@ QPushButton#OverViewSceneBtn{
     border-radius: 10px;
     background-color: black;
 }
+
 QPushButton#OverViewSceneBtn:Pressed{
     color:white
 }
+
 QPushButton#MemorizeSceneBtn{
     color:red;
-
 }
