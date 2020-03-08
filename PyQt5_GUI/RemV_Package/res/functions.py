@@ -106,7 +106,7 @@ def getBookNames(pathList):
     :param pathList:
     :return: List of names
     """
-    list_ = [""]
+    list_ = []
     for item in pathList:
         list_.append(getExcelName(item))
     return list_
