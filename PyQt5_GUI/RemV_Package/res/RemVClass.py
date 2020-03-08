@@ -90,7 +90,8 @@ class RemV(QMainWindow):
         # 判断有没有选择书
         if self.currentBook == "":
             return
-
+        # 使左半边变成enabled
+        self.ui.stackedWidget.setEnabled(True)
         # 更新 currentLesson, lessonLen
         self.currentLesson = self.ui.lessonListWidget.row(item)
         self.lessonLen = len(self.wordsOAB[self.currentBook][self.currentLesson])
