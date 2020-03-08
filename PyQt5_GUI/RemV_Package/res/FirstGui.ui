@@ -89,6 +89,9 @@ background: rgb(42, 51, 60)
        <property name="isWrapping" stdset="0">
         <bool>false</bool>
        </property>
+       <property name="spacing">
+        <number>20</number>
+       </property>
        <property name="viewMode">
         <enum>QListView::ListMode</enum>
        </property>
@@ -98,11 +101,6 @@ background: rgb(42, 51, 60)
        <property name="sortingEnabled">
         <bool>false</bool>
        </property>
-       <item>
-        <property name="text">
-         <string>BookList</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="0" column="2">
@@ -146,7 +144,7 @@ background: rgb(42, 51, 60)
         <widget class="QWidget" name="horizontalLayoutWidget_2">
          <property name="geometry">
           <rect>
-           <x>130</x>
+           <x>80</x>
            <y>70</y>
            <width>571</width>
            <height>671</height>
@@ -157,16 +155,19 @@ background: rgb(42, 51, 60)
            <number>20</number>
           </property>
           <item>
-           <widget class="QListWidget" name="listWidget_2">
+           <widget class="QListWidget" name="wordListWidget">
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QListWidget" name="listWidget">
+           <widget class="QListWidget" name="meaningListWidget">
             <property name="alternatingRowColors">
              <bool>true</bool>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -175,24 +176,27 @@ background: rgb(42, 51, 60)
         <widget class="QWidget" name="horizontalLayoutWidget_3">
          <property name="geometry">
           <rect>
-           <x>130</x>
+           <x>80</x>
            <y>0</y>
            <width>571</width>
            <height>89</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>20</number>
+          </property>
           <item>
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="WordLabel_0">
             <property name="text">
-             <string>Meaning</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; font-style:italic; color:#ff4ea4;&quot;&gt;Word&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="MeaningLabel_0">
             <property name="text">
-             <string>Word</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; font-style:italic; color:#4e7af3;&quot;&gt;Meaning&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -201,10 +205,10 @@ background: rgb(42, 51, 60)
         <widget class="QWidget" name="horizontalLayoutWidget">
          <property name="geometry">
           <rect>
-           <x>790</x>
-           <y>170</y>
-           <width>95</width>
-           <height>241</height>
+           <x>720</x>
+           <y>150</y>
+           <width>191</width>
+           <height>291</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -212,9 +216,20 @@ background: rgb(42, 51, 60)
            <number>20</number>
           </property>
           <item>
-           <widget class="QPushButton" name="MemorizeSceneBtn">
+           <widget class="QPushButton" name="MemorizeBtn_0">
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Memorize</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -232,9 +247,32 @@ background: rgb(42, 51, 60)
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="QuizSceneBtn">
+           <widget class="QPushButton" name="QuizBtn_0">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Quiz</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -265,9 +303,42 @@ background: rgb(42, 51, 60)
        <property name="alternatingRowColors">
         <bool>true</bool>
        </property>
+       <property name="spacing">
+        <number>10</number>
+       </property>
        <item>
         <property name="text">
-         <string>Lesson List</string>
+         <string>请</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>先</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>选</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>择</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>一</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>本</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>书</string>
         </property>
        </item>
       </widget>

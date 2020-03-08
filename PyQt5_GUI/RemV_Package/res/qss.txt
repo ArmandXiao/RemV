@@ -1,15 +1,32 @@
-QPushButton#OverViewSceneBtn{
+QPushButton#MemorizeBtn_0{
     color:red;
+    border-color: black;
     border-style: outset;
     border-width: 2px;
     border-radius: 10px;
-    background-color: black;
 }
 
-QPushButton#OverViewSceneBtn:Pressed{
-    color:white
-}
-
-QPushButton#MemorizeSceneBtn{
+QPushButton#QuizBtn_0{
     color:red;
+    border-color: black;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+
+}
+
+QPushButton#MemorizeBtn_0:Pressed{
+    color:black
+}
+
+QPushButton#QuizBtn_0:Pressed{
+    color:black
+}
+
+QListWidget#wordListWidget{
+    font: 20px
+}
+
+QListWidget#meaningListWidget{
+    font: 20px
 }
