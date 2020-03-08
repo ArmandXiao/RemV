@@ -31,6 +31,9 @@ class Ui_MainWindow(object):
         self.treeView = QtWidgets.QTreeView(self.horizontalLayoutWidget)
         self.treeView.setObjectName("treeView")
         self.horizontalLayout.addWidget(self.treeView)
+        self.testButton = QtWidgets.QPushButton(self.centralwidget)
+        self.testButton.setGeometry(QtCore.QRect(200, 210, 93, 28))
+        self.testButton.setObjectName("testButton")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
@@ -53,5 +56,6 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "Button1"))
+        self.testButton.setText(_translate("MainWindow", "PushButton"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings"))
