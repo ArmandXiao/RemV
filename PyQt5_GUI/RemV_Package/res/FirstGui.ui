@@ -100,7 +100,7 @@ background: rgb(42, 51, 60)
        </property>
        <item>
         <property name="text">
-         <string>Sat Vocabulary</string>
+         <string>BookList</string>
         </property>
        </item>
       </widget>

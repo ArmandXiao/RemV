@@ -1,0 +1,14 @@
+QPushButton#OverViewSceneBtn{
+    color:red;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: black;
+}
+QPushButton#OverViewSceneBtn:Pressed{
+    color:white
+}
+QPushButton#MemorizeSceneBtn{
+    color:red;
+
+}
