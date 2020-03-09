@@ -16,13 +16,39 @@ QPushButton#QuizBtn_0{
     background-color: rgb(255,255,255)
 
 }
+QPushButton#MenuBtn_1{
+    color:red;
+    border-color: black;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: rgb(255,255,255)
 
+}
+
+QPushButton#QuizBtn_1{
+    color:red;
+    border-color: black;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: rgb(255,255,255)
+
+}
 QPushButton#MemorizeBtn_0:Pressed{
     color:black
 
 }
 
 QPushButton#QuizBtn_0:Pressed{
+    color:black
+}
+
+QPushButton#QuizBtn_1:Pressed{
+    color:black
+}
+
+QPushButton#MenuBtn_1:Pressed{
     color:black
 }
 

@@ -18,18 +18,27 @@ class RemV(QMainWindow):
 
         # 更改图片尺寸
         self.image = QPixmap(r"./image/background_3")
-        self.image = self.image.scaled(1260, 835,  Qt.IgnoreAspectRatio, Qt.FastTransformation)
+        self.image = self.image.scaled(1260, 835, Qt.IgnoreAspectRatio, Qt.FastTransformation)
 
         # 添加主窗口背景图
         palette = QPalette()
         palette.setBrush(QPalette.Background, QBrush(QPixmap(self.image)))
         self.setPalette(palette)
 
+        # 先disable
+        self.ui.stackedWidget.setEnabled(False)
+        self.ui.stackedWidget.setCurrentIndex(0)
+
         # 给各个按钮加对应图标
         self.ui.uploadButton.setIcon(QIcon(r"./image/upload_2.png"))
         self.ui.MemorizeBtn_0.setIcon(QIcon(r"./image/brain.png"))
+        self.ui.MenuBtn_1.setIcon(QIcon(r"./image/home_2.png"))
         self.ui.QuizBtn_0.setIcon(QIcon(r"./image/quiz.png"))
+        self.ui.QuizBtn_1.setIcon(QIcon(r"./image/quiz.png"))
         self.ui.helpBtn.setIcon(QIcon(r"./image/question.png"))
+        self.ui.translateBtn.setIcon(QIcon(r"./image/translate.png"))
+        self.ui.backBtn.setIcon(QIcon(r"./image/back_2.png"))
+        self.ui.NextBtn.setIcon(QIcon(r"./image/next_2.png"))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -43,6 +52,13 @@ class RemV(QMainWindow):
 
         # uploadBtn 添加点击事件
         self.ui.uploadButton.clicked.connect(self.uploadBtnClicked)
+
+        # 给 memorize 和 quiz 添加事件 切屏事件
+        self.ui.MemorizeBtn_0.clicked.connect(self.changeScene_1)
+
+        # next 和 back 添加点击事件
+        self.ui.NextBtn.clicked.connect(self.next)
+        self.ui.backBtn.clicked.connect(self.back)
 
         # 初始化数据
         # 保存book路径的list
@@ -123,6 +139,10 @@ class RemV(QMainWindow):
         把OverViewScene设置好
         :return: None
         """
+        # enable
+        self.ui.wordListWidget.setEnabled(True)
+        self.ui.lessonListWidget.setEnabled(True)
+
         # 根据currentBook 和 currentLesson 填补单词和意思
         for i in range(self.lessonLen):
             self.ui.wordListWidget.addItem(
@@ -148,6 +168,84 @@ class RemV(QMainWindow):
                 self.pathList.append(filePath)
         else:
             print("上传动作取消")
+
+    def changeScene_1(self):
+        self.ui.stackedWidget.setCurrentIndex(1)
+        self.ui.bookListWidget.setEnabled(False)
+        self.ui.lessonListWidget.setEnabled(False)
+
+        # 把第一个元素更新
+        self.updateWord(0)
+
+        self.ui.backBtn.setEnabled(False)
+
+    def updateWord(self, index):
+        """
+        把 WordBrowser 和 meaningBrowser 更新
+        :param index: 第几个数
+        :return: None
+        """
+        self.ui.wordBrowser.setText(
+            self.wordsOAB[self.currentBook][self.currentLesson][index][0]
+        )
+        if self.wordsOAB[self.currentBook][self.currentLesson][index][1][0] is not None:
+            self.ui.meaningBrowser.setText(
+                str(self.wordsOAB[self.currentBook][self.currentLesson][index][1][0]) +
+                self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
+            )
+        else:
+            self.ui.meaningBrowser.setText(
+                self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
+            )
+
+        # 居中显示
+        self.ui.wordBrowser.setAlignment(Qt.AlignCenter)
+        self.ui.meaningBrowser.setAlignment(Qt.AlignCenter)
+
+    def next(self):
+        if len(self.wordsOAB) == 0:
+            pass
+        elif self.currentIndex < self.lessonLen - 1:
+            self.ui.MenuBtn_1.setEnabled(False)
+            # 第一轮要先 index+1 再update
+            if self.countRound == 0:
+                self.currentIndex += 1
+                # self.saveData()
+                self.updateWord(self.currentIndex)
+
+            # 第二轮 要先update 再加一
+            elif self.countRound == 1:
+                self.currentIndex += 1
+                if self.currentIndex == 0:
+                    self.ui.backBtn.setEnabled(False)
+                # 让backButton可以正常使用
+                self.ui.backBtn.setEnabled(True)
+                self.updateWord(self.currentIndex)
+                # 不显示意思
+                self.ui.meaningBrowser.setText("")
+
+        # 第一轮结束
+        elif self.currentIndex == self.lessonLen - 1 and self.countRound == 0:
+            self.ui.backBtn.setEnabled(False)
+
+            self.currentIndex = -1  # 设置成-1 就可以先更新变量 再update了
+            self.ui.wordBrowser.setText("SecondRound")
+            self.ui.meaningBrowser.setText("这回可没有中文意思了哦！\n不过你可以点击show来查看\nAre you Ready?")
+
+            self.countRound = 1
+
+        # 第二轮结束
+        elif self.currentIndex == self.lessonLen - 1 and self.countRound == 1:
+            # self.currentIndex = 0
+            self.ui.NextBtn.setEnabled(False)
+            self.ui.wordBrowser.setText("Take a Quiz")
+            self.ui.backBtn.setEnabled(False)
+            self.ui.translateBtn.setEnabled(False)
+            self.ui.MenuBtn_1.setEnabled(True)
+            return
+
+    def back(self):
+        pass
 
     def parseAllBooks(self, pathList):
         """

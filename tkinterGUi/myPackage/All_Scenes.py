@@ -499,15 +499,6 @@ class FirstScene:
             self.meaningVariable.set("准备好了么？\n 准备好了就开始吧！")
             self.countRound = 1
 
-        # elif self.currentIndex == 0 and self.countRound == 1:
-        #     self.updateAll()
-
-        # elif self.currentIndex == self.lessonLen - 1 and self.countRound == 1:
-        #     self.updateAll()
-        #     self.currentIndex += 1
-        #     self.showButton.grid()
-        #     self.translateButton.grid_forget()
-
         elif self.currentIndex == self.lessonLen - 1 and self.countRound == 1:
             # self.currentIndex = 0
             self.wordVariable.set("下个环节将是单词测试环节\n检测你是否掌握了单词的拼写")
