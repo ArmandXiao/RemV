@@ -54,7 +54,8 @@ class RemV(QMainWindow):
         # uploadBtn 添加点击事件
         self.ui.uploadButton.clicked.connect(self.uploadBtnClicked)
 
-        # 给 memorize 和 quiz 添加事件 切屏事件
+        # 给 memorize, quiz, menu 添加事件 切屏事件
+        self.ui.MenuBtn_1.clicked.connect(self.changeScene_0)
         self.ui.MemorizeBtn_0.clicked.connect(self.changeScene_1)
 
         # next, back, translate, show 添加点击事件
@@ -183,6 +184,10 @@ class RemV(QMainWindow):
         self.ui.backBtn.setEnabled(False)
         self.ui.showBtn.setVisible(False)
 
+    def changeScene_0(self):
+        self.setOverViewScene()
+        self.ui.stackedWidget.setCurrentIndex(0)
+
     def updateWord(self, index):
         """
         把 WordBrowser 和 meaningBrowser 更新
@@ -229,8 +234,7 @@ class RemV(QMainWindow):
                 self.currentIndex += 1
                 if self.currentIndex == 0:
                     self.ui.backBtn.setEnabled(False)
-                # 让backButton可以正常使用
-                self.ui.backBtn.setEnabled(True)
+
                 self.updateWord(self.currentIndex)
                 # 不显示意思
                 self.ui.meaningBrowser.setText("")
@@ -253,9 +257,11 @@ class RemV(QMainWindow):
             self.ui.showBtn.setVisible(False)
             self.ui.NextBtn.setEnabled(False)
             self.ui.wordBrowser.setText("Take a Quiz")
+            self.ui.meaningBrowser.setText("Quiz is the core of this app!")
             self.ui.backBtn.setEnabled(False)
             self.ui.translateBtn.setEnabled(False)
             self.ui.MenuBtn_1.setEnabled(True)
+
             return
 
     def back(self):
@@ -267,6 +273,9 @@ class RemV(QMainWindow):
         self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
         # self.saveData()
         self.updateWord(self.currentIndex)
+
+        if self.countRound == 1:
+            self.ui.meaningBrowser.setText("")
 
     def translate(self):
         ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)

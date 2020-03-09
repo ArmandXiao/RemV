@@ -710,6 +710,9 @@ p, li { white-space: pre-wrap; }
             <height>71</height>
            </rect>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgba(255,255,255,0)</string>
           </property>

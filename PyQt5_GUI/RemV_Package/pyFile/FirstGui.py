@@ -284,6 +284,7 @@ class Ui_MainWindow(object):
         self.meaningBrowser.setObjectName("meaningBrowser")
         self.showBtn = QtWidgets.QPushButton(self.groupBox_2)
         self.showBtn.setGeometry(QtCore.QRect(320, 210, 161, 71))
+        self.showBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.showBtn.setStyleSheet("background-color: rgba(255,255,255,0)")
         self.showBtn.setText("")
         self.showBtn.setIconSize(QtCore.QSize(50, 50))
