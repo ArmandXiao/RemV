@@ -61,7 +61,7 @@ class RemV(QMainWindow):
         self.ui.NextBtn.clicked.connect(self.next)
         self.ui.backBtn.clicked.connect(self.back)
         self.ui.translateBtn.clicked.connect(self.translate)
-        self.ui.showBtn.clicked.connect(self.updateWord)
+        self.ui.showBtn.clicked.connect(lambda: self.updateWord(self.currentIndex))
 
         # 初始化数据
         # 保存book路径的list
@@ -212,7 +212,7 @@ class RemV(QMainWindow):
             pass
         elif self.currentIndex < self.lessonLen - 1:
             self.ui.MenuBtn_1.setEnabled(False)
-            self.ui.backBtn.setVisible(True)
+            self.ui.backBtn.setEnabled(True)
 
             # 第一轮要先 index+1 再update
             if self.countRound == 0:
@@ -263,10 +263,10 @@ class RemV(QMainWindow):
 
         if self.currentIndex == 0:
             self.ui.backBtn.setEnabled(False)
-        self.updateWord(self.currentIndex)
         # 更新count
         self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
         # self.saveData()
+        self.updateWord(self.currentIndex)
 
     def translate(self):
         ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
