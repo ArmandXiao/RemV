@@ -1,8 +1,7 @@
-import sys, FirstGui, functions
-
+import sys, FirstGui, functions, os, getTranslationFromYouDao
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush
-from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 
 
 def loadQss():
@@ -13,11 +12,12 @@ def loadQss():
 class RemV(QMainWindow):
     def __init__(self):
         super().__init__()
+        os.chdir(os.getcwd())
         self.ui = FirstGui.Ui_MainWindow()
         FirstGui.Ui_MainWindow.setupUi(self.ui, self)
 
         # 更改图片尺寸
-        self.image = QPixmap(r"./image/background_3")
+        self.image = QPixmap(r"res/image/background_3")
         self.image = self.image.scaled(1260, 835, Qt.IgnoreAspectRatio, Qt.FastTransformation)
 
         # 添加主窗口背景图
@@ -30,15 +30,15 @@ class RemV(QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(0)
 
         # 给各个按钮加对应图标
-        self.ui.uploadButton.setIcon(QIcon(r"./image/upload_2.png"))
-        self.ui.MemorizeBtn_0.setIcon(QIcon(r"./image/brain.png"))
-        self.ui.MenuBtn_1.setIcon(QIcon(r"./image/home_2.png"))
-        self.ui.QuizBtn_0.setIcon(QIcon(r"./image/quiz.png"))
-        self.ui.QuizBtn_1.setIcon(QIcon(r"./image/quiz.png"))
-        self.ui.helpBtn.setIcon(QIcon(r"./image/question.png"))
-        self.ui.translateBtn.setIcon(QIcon(r"./image/translate.png"))
-        self.ui.backBtn.setIcon(QIcon(r"./image/back_2.png"))
-        self.ui.NextBtn.setIcon(QIcon(r"./image/next_2.png"))
+        self.ui.uploadButton.setIcon(QIcon(r"res/image/upload_2.png"))
+        self.ui.MemorizeBtn_0.setIcon(QIcon(r"res/image/brain.png"))
+        self.ui.MenuBtn_1.setIcon(QIcon(r"res/image/home_2.png"))
+        self.ui.QuizBtn_0.setIcon(QIcon(r"res/image/quiz.png"))
+        self.ui.QuizBtn_1.setIcon(QIcon(r"res/image/quiz.png"))
+        self.ui.helpBtn.setIcon(QIcon(r"res/image/question.png"))
+        self.ui.translateBtn.setIcon(QIcon(r"res/image/translate.png"))
+        self.ui.backBtn.setIcon(QIcon(r"res/image/back_2.png"))
+        self.ui.NextBtn.setIcon(QIcon(r"res/image/next_2.png"))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -56,13 +56,14 @@ class RemV(QMainWindow):
         # 给 memorize 和 quiz 添加事件 切屏事件
         self.ui.MemorizeBtn_0.clicked.connect(self.changeScene_1)
 
-        # next 和 back 添加点击事件
+        # next, back, translate 添加点击事件
         self.ui.NextBtn.clicked.connect(self.next)
         self.ui.backBtn.clicked.connect(self.back)
+        self.ui.translateBtn.clicked.connect(self.translate)
 
         # 初始化数据
         # 保存book路径的list
-        self.pathList = [r"./word_Repository/TestMaterial.xlsx", r"./word_Repository/SatVocabulary.xlsx"]
+        self.pathList = [r"res/word_Repository/TestMaterial.xlsx", r"res/word_Repository/SatVocabulary.xlsx"]
 
         # 总共有多少课
         self.lessonNum = 0
@@ -176,7 +177,7 @@ class RemV(QMainWindow):
 
         # 把第一个元素更新
         self.updateWord(0)
-
+        self.ui.countBrowser_1.setText("  1")
         self.ui.backBtn.setEnabled(False)
 
     def updateWord(self, index):
@@ -185,9 +186,10 @@ class RemV(QMainWindow):
         :param index: 第几个数
         :return: None
         """
-        self.ui.wordBrowser.setText(
-            self.wordsOAB[self.currentBook][self.currentLesson][index][0]
-        )
+        # 更新 currentWord
+        self.currentWord = self.wordsOAB[self.currentBook][self.currentLesson][index][0]
+        self.ui.wordBrowser.setText(self.currentWord)
+
         if self.wordsOAB[self.currentBook][self.currentLesson][index][1][0] is not None:
             self.ui.meaningBrowser.setText(
                 str(self.wordsOAB[self.currentBook][self.currentLesson][index][1][0]) +
@@ -212,6 +214,8 @@ class RemV(QMainWindow):
                 self.currentIndex += 1
                 # self.saveData()
                 self.updateWord(self.currentIndex)
+                # 更新count
+                self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
 
             # 第二轮 要先update 再加一
             elif self.countRound == 1:
@@ -223,6 +227,8 @@ class RemV(QMainWindow):
                 self.updateWord(self.currentIndex)
                 # 不显示意思
                 self.ui.meaningBrowser.setText("")
+                # 更新count
+                self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
 
         # 第一轮结束
         elif self.currentIndex == self.lessonLen - 1 and self.countRound == 0:
@@ -246,6 +252,16 @@ class RemV(QMainWindow):
 
     def back(self):
         pass
+
+    def translate(self):
+        ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
+        tmp = "音标:"
+        for each in ProunceList:
+            tmp += each
+        tmp += "\n"
+        for each in MeaningList:
+            tmp += each+"\n"
+        self.ui.meaningBrowser.setText(tmp)
 
     def parseAllBooks(self, pathList):
         """

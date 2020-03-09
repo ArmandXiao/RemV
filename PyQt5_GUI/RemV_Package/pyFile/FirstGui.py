@@ -166,7 +166,7 @@ class Ui_MainWindow(object):
         self.MemorizeScene = QtWidgets.QWidget()
         self.MemorizeScene.setObjectName("MemorizeScene")
         self.groupBox = QtWidgets.QGroupBox(self.MemorizeScene)
-        self.groupBox.setGeometry(QtCore.QRect(240, 100, 381, 91))
+        self.groupBox.setGeometry(QtCore.QRect(240, 100, 420, 91))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(18)
@@ -176,7 +176,7 @@ class Ui_MainWindow(object):
         self.groupBox.setStyleSheet("color:blue")
         self.groupBox.setObjectName("groupBox")
         self.wordBrowser = QtWidgets.QTextBrowser(self.groupBox)
-        self.wordBrowser.setGeometry(QtCore.QRect(0, 40, 381, 51))
+        self.wordBrowser.setGeometry(QtCore.QRect(0, 40, 420, 51))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -225,7 +225,7 @@ class Ui_MainWindow(object):
         self.wordBrowser.setStyleSheet("color:black;")
         self.wordBrowser.setObjectName("wordBrowser")
         self.groupBox_2 = QtWidgets.QGroupBox(self.MemorizeScene)
-        self.groupBox_2.setGeometry(QtCore.QRect(240, 250, 391, 271))
+        self.groupBox_2.setGeometry(QtCore.QRect(240, 250, 420, 271))
         font = QtGui.QFont()
         font.setPointSize(18)
         font.setItalic(False)
@@ -233,7 +233,7 @@ class Ui_MainWindow(object):
         self.groupBox_2.setStyleSheet("color:blue;")
         self.groupBox_2.setObjectName("groupBox_2")
         self.meaningBrowser = QtWidgets.QTextBrowser(self.groupBox_2)
-        self.meaningBrowser.setGeometry(QtCore.QRect(0, 40, 391, 231))
+        self.meaningBrowser.setGeometry(QtCore.QRect(0, 40, 420, 231))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -276,14 +276,14 @@ class Ui_MainWindow(object):
         font.setFamily("Times New Roman")
         font.setPointSize(20)
         font.setBold(True)
-        font.setItalic(True)
+        font.setItalic(False)
         font.setWeight(75)
         self.meaningBrowser.setFont(font)
         self.meaningBrowser.setStyleSheet("color: black")
         self.meaningBrowser.setAcceptRichText(True)
         self.meaningBrowser.setObjectName("meaningBrowser")
         self.horizontalLayoutWidget_4 = QtWidgets.QWidget(self.MemorizeScene)
-        self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(60, 589, 781, 121))
+        self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(70, 590, 781, 121))
         self.horizontalLayoutWidget_4.setObjectName("horizontalLayoutWidget_4")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_4)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -380,6 +380,22 @@ class Ui_MainWindow(object):
         self.QuizBtn_1.setIconSize(QtCore.QSize(40, 40))
         self.QuizBtn_1.setObjectName("QuizBtn_1")
         self.verticalLayout_3.addWidget(self.QuizBtn_1)
+        self.countBrowser_1 = QtWidgets.QTextBrowser(self.MemorizeScene)
+        self.countBrowser_1.setGeometry(QtCore.QRect(20, 190, 191, 151))
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(48)
+        font.setBold(True)
+        font.setItalic(False)
+        font.setWeight(75)
+        self.countBrowser_1.setFont(font)
+        self.countBrowser_1.setStyleSheet("background-color:rgba(227, 227, 227,100);\n"
+"border-style: insert;\n"
+"border-width: 1px;\n"
+"border-radius: 50px;\n"
+"border-color: green;\n"
+"padding:20px")
+        self.countBrowser_1.setObjectName("countBrowser_1")
         self.stackedWidget.addWidget(self.MemorizeScene)
         self.QuizScene = QtWidgets.QWidget()
         self.QuizScene.setObjectName("QuizScene")
@@ -504,10 +520,15 @@ class Ui_MainWindow(object):
         self.meaningBrowser.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Times New Roman\'; font-size:20pt; font-weight:600; font-style:italic;\">\n"
-"<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:20px;\"><br /></p></body></html>"))
+"</style></head><body style=\" font-family:\'Times New Roman\'; font-size:20pt; font-weight:600; font-style:normal;\">\n"
+"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:20px; font-style:italic;\"><br /></p></body></html>"))
         self.MenuBtn_1.setText(_translate("MainWindow", "Menu"))
         self.QuizBtn_1.setText(_translate("MainWindow", "Quiz"))
+        self.countBrowser_1.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Times New Roman\'; font-size:48pt; font-weight:600; font-style:normal;\">\n"
+"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:48px;\"><br /></p></body></html>"))
         __sortingEnabled = self.lessonListWidget.isSortingEnabled()
         self.lessonListWidget.setSortingEnabled(False)
         item = self.lessonListWidget.item(0)
