@@ -1,3 +1,5 @@
+import random
+import re
 import sys, FirstGui, functions, os, getTranslationFromYouDao
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush
@@ -12,6 +14,7 @@ def loadQss():
 class RemV(QMainWindow):
     def __init__(self):
         super().__init__()
+
         os.chdir(os.getcwd())
         self.ui = FirstGui.Ui_MainWindow()
         FirstGui.Ui_MainWindow.setupUi(self.ui, self)
@@ -40,6 +43,7 @@ class RemV(QMainWindow):
         self.ui.backBtn.setIcon(QIcon(r"res/image/back_2.png"))
         self.ui.NextBtn.setIcon(QIcon(r"res/image/next_2.png"))
         self.ui.showBtn.setIcon(QIcon(r"res/image/word.png"))
+        self.ui.statusBtn.setIcon(QIcon(r"res/image/wrong.png"))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -56,13 +60,21 @@ class RemV(QMainWindow):
 
         # 给 memorize, quiz, menu 添加事件 切屏事件
         self.ui.MenuBtn_1.clicked.connect(self.changeScene_0)
+        self.ui.MenuBtn_2.clicked.connect(self.changeScene_0)
         self.ui.MemorizeBtn_0.clicked.connect(self.changeScene_1)
+        self.ui.QuizBtn_0.clicked.connect(self.changeScene_2)
+        self.ui.QuizBtn_1.clicked.connect(self.changeScene_2)
 
         # next, back, translate, show 添加点击事件
         self.ui.NextBtn.clicked.connect(self.next)
         self.ui.backBtn.clicked.connect(self.back)
         self.ui.translateBtn.clicked.connect(self.translate)
         self.ui.showBtn.clicked.connect(lambda: self.updateWord(self.currentIndex))
+
+        # QuizScene 事件
+        # 回车键叫return
+        self.ui.enterEdit.returnPressed.connect(self.enterCheck)
+        self.ui.enterEdit.textChanged.connect(self.checkEverySyllable)
 
         # 初始化数据
         # 保存book路径的list
@@ -96,6 +108,7 @@ class RemV(QMainWindow):
         self.lastProgress = ""
         self.randomSet = set()
         self.noWrongTime = True
+        self.remain = 20
 
         # 调用方法
         # 解析已存在的excel
@@ -188,6 +201,15 @@ class RemV(QMainWindow):
         self.setOverViewScene()
         self.ui.stackedWidget.setCurrentIndex(0)
 
+    def changeScene_2(self):
+        self.ui.stackedWidget.setCurrentIndex(2)
+        self.ui.MenuBtn_2.setEnabled(False)
+        self.nextRandWord()
+        self.ui.enterEdit.setFocus()
+
+        self.ui.backBtn.setEnabled(False)
+        self.ui.showBtn.setVisible(False)
+
     def updateWord(self, index):
         """
         把 WordBrowser 和 meaningBrowser 更新
@@ -277,6 +299,72 @@ class RemV(QMainWindow):
         if self.countRound == 1:
             self.ui.meaningBrowser.setText("")
 
+    def nextRandWord(self):
+        if self.noWrongTime:
+            self.randomSet.add(self.currentIndex)
+            self.nowNum += 1
+            self.accumulativeNum += 1
+            self.remain -= 1
+            # self.saveData()
+        else:
+            self.noWrongTime = True
+
+        if len(self.randomSet) == 20:
+            # 结束 Test scene
+            self.ui.MenuBtn_2.setEnabled(True)
+            # 其实还需要判断 currentLesson 有没有越界
+            self.currentLesson += 1
+
+            self.currentIndex = 0
+            # 更新界面
+            self.randomSet = set()
+            self.countRound = 0
+
+            # self.getData()
+
+            # 清空list里所有组件的
+            self.ui.wordEnterListWidget.clear()
+            return
+
+        tmp = random.randint(0, 19)
+        while tmp in self.randomSet:
+            tmp = random.randint(0, 19)
+        self.currentIndex = tmp
+        self.currentWord = self.wordsOAB[self.currentBook][self.currentLesson][self.currentIndex][0]
+        self.currentMeaning = self.wordsOAB[self.currentBook][self.currentLesson][self.currentIndex][1][1]
+        # self.updateAll()
+        self.updateAllTest()
+
+    def updateAllTest(self):
+        self.ui.meaningBrowser_2.setText(self.currentMeaning)
+        self.ui.hintEdit.setText(self.convertTohint())
+
+    def convertTohint(self):
+        tmp = self.currentWord[0:1]
+        pattern = re.compile(r"[a-z][A-Z]*")
+        tmp += pattern.sub("*", self.currentWord[1:])
+        return tmp
+
+    def enterCheck(self):
+        print(1)
+        if self.ui.enterEdit.text().strip() == self.currentWord:
+            # 先更新 list 不然 currentWord就变了
+            self.ui.wordEnterListWidget.insertItem(self.currentWord)
+            # 对的话才让下一个词
+            self.nextRandWord()
+        else:
+            # 错的话 就知道输入正确为止
+            self.ui.hintEdit.setText(self.currentWord)
+            self.noWrongTime = False
+        # 清空 Entry
+        self.ui.enterEdit.clear()
+
+    def checkEverySyllable(self):
+        if self.ui.enterEdit.text().strip() == self.currentWord:
+            self.ui.statusBtn.setIcon(QIcon(r"res/image/correct.png"))
+        else:
+            self.ui.statusBtn.setIcon(QIcon(r"res/image/wrong.png"))
+
     def translate(self):
         ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
         tmp = "音标:"
@@ -286,7 +374,6 @@ class RemV(QMainWindow):
         for each in MeaningList:
             tmp += each + "\n"
         self.ui.meaningBrowser.setText(tmp)
-
 
     def parseAllBooks(self, pathList):
         """
