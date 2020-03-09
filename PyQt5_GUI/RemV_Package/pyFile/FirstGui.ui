@@ -114,14 +114,14 @@ background: rgb(42, 51, 60)
        <widget class="QLabel" name="label_3">
         <property name="geometry">
          <rect>
-          <x>250</x>
+          <x>0</x>
           <y>0</y>
-          <width>381</width>
-          <height>31</height>
+          <width>951</width>
+          <height>51</height>
          </rect>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;This is the record of your Progess&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;上次学习进度： SAT Vocabularies, Lesson 1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QToolButton" name="helpBtn">
@@ -1012,6 +1012,12 @@ p, li { white-space: pre-wrap; }
          <property name="layoutDirection">
           <enum>Qt::RightToLeft</enum>
          </property>
+         <property name="styleSheet">
+          <string notr="true">border-style: outset;
+border-radius:15;
+border-color:rgb(255,255,255,0);
+border-width: 1px;</string>
+         </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
@@ -1032,6 +1038,12 @@ p, li { white-space: pre-wrap; }
           <font>
            <pointsize>20</pointsize>
           </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-style: outset;
+border-radius:15;
+border-color:rgb(255, 170, 255);
+border-width: 1px;</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -1115,7 +1127,7 @@ p, li { white-space: pre-wrap; }
          <property name="styleSheet">
           <string notr="true">border-style: outset;
 border-color: green;
-border-width: 4px;
+border-width:1px;
 border-radius: 15px;</string>
          </property>
          <property name="text">
@@ -1133,12 +1145,16 @@ border-radius: 15px;</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>18</pointsize>
+           <pointsize>22</pointsize>
            <italic>false</italic>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">color:blue;</string>
+          <string notr="true">color:blue;
+border-style: outset;
+border-radius:15;
+border-color:rgb(0,0,0);
+border-width: 1px;</string>
          </property>
          <property name="title">
           <string>Meaning</string>
@@ -1147,9 +1163,9 @@ border-radius: 15px;</string>
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>40</y>
+            <y>50</y>
             <width>500</width>
-            <height>231</height>
+            <height>230</height>
            </rect>
           </property>
           <property name="palette">
@@ -1280,7 +1296,11 @@ border-radius: 15px;</string>
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">color: black</string>
+           <string notr="true">color: black;
+border-style: outset;
+border-radius:15;
+border-color:black;
+border-width: 1px;</string>
           </property>
           <property name="html">
            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1306,7 +1326,11 @@ p, li { white-space: pre-wrap; }
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: rgba(255,255,255,0)</string>
+           <string notr="true">background-color: rgba(255,255,255,0);
+border-style: outset;
+border-radius:15;
+border-color: rgba(255,255,255,0);
+border-width: 1px;</string>
           </property>
           <property name="text">
            <string/>
@@ -1368,13 +1392,13 @@ p, li { white-space: pre-wrap; }
         <font>
          <family>Times New Roman</family>
          <pointsize>12</pointsize>
-         <weight>9</weight>
+         <weight>50</weight>
          <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 12pt &quot;Times New Roman&quot;;</string>
+        <string notr="true"/>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
@@ -1387,10 +1411,11 @@ p, li { white-space: pre-wrap; }
        </property>
        <item>
         <property name="text">
-         <string>请</string>
+         <string> 请</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>36</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1398,10 +1423,11 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <property name="text">
-         <string>先</string>
+         <string> 先</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>36</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1409,10 +1435,11 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <property name="text">
-         <string>选</string>
+         <string> 选</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>36</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1420,10 +1447,11 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <property name="text">
-         <string>择</string>
+         <string> 择</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>36</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1431,10 +1459,11 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <property name="text">
-         <string>一</string>
+         <string> 一</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>36</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1442,10 +1471,11 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <property name="text">
-         <string>本</string>
+         <string> 本</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>36</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1453,10 +1483,11 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <property name="text">
-         <string>书</string>
+         <string> 书</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>36</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>

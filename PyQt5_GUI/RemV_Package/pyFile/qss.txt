@@ -26,6 +26,16 @@ QPushButton#MenuBtn_1{
 
 }
 
+QPushButton#MenuBtn_2{
+    color:red;
+    border-color: black;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: rgb(255,255,255)
+
+}
+
 QPushButton#QuizBtn_1{
     color:red;
     border-color: black;
@@ -52,6 +62,9 @@ QPushButton#MenuBtn_1:Pressed{
     color:black
 }
 
+QPushButton#MenuBtn_1:Pressed{
+    color:white
+}
 QListWidget#wordListWidget{
     font: 20px;
     font-style: bold;

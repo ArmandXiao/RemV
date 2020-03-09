@@ -36,6 +36,7 @@ class RemV(QMainWindow):
         self.ui.uploadButton.setIcon(QIcon(r"res/image/upload_2.png"))
         self.ui.MemorizeBtn_0.setIcon(QIcon(r"res/image/brain.png"))
         self.ui.MenuBtn_1.setIcon(QIcon(r"res/image/home_2.png"))
+        self.ui.MenuBtn_2.setIcon(QIcon(r"res/image/home_2.png"))
         self.ui.QuizBtn_0.setIcon(QIcon(r"res/image/quiz.png"))
         self.ui.QuizBtn_1.setIcon(QIcon(r"res/image/quiz.png"))
         self.ui.helpBtn.setIcon(QIcon(r"res/image/question.png"))
@@ -108,7 +109,9 @@ class RemV(QMainWindow):
         self.lastProgress = ""
         self.randomSet = set()
         self.noWrongTime = True
-        self.remain = 20
+        self.remain = 19
+        self.showHint = True
+        self.firstQuiz = True
 
         # 调用方法
         # 解析已存在的excel
@@ -125,6 +128,7 @@ class RemV(QMainWindow):
         self.currentBook = self.pathList[self.ui.bookListWidget.row(item)]
         # 更新这本书对应的课程
         self.setLessons(self.currentBook)
+
 
     def lessonClicked(self, item):
         """
@@ -204,11 +208,12 @@ class RemV(QMainWindow):
     def changeScene_2(self):
         self.ui.stackedWidget.setCurrentIndex(2)
         self.ui.MenuBtn_2.setEnabled(False)
+        self.ui.enterEdit.setEnabled(True)
         self.nextRandWord()
         self.ui.enterEdit.setFocus()
 
-        self.ui.backBtn.setEnabled(False)
-        self.ui.showBtn.setVisible(False)
+        self.ui.bookListWidget.setEnabled(False)
+        self.ui.lessonListWidget.setEnabled(False)
 
     def updateWord(self, index):
         """
@@ -232,7 +237,7 @@ class RemV(QMainWindow):
 
         # 居中显示
         self.ui.wordBrowser.setAlignment(Qt.AlignCenter)
-        self.ui.meaningBrowser.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        self.ui.meaningBrowser.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
     def next(self):
         if len(self.wordsOAB) == 0:
@@ -283,7 +288,7 @@ class RemV(QMainWindow):
             self.ui.backBtn.setEnabled(False)
             self.ui.translateBtn.setEnabled(False)
             self.ui.MenuBtn_1.setEnabled(True)
-
+            self.ui.QuizBtn_1.setEnabled(True)
             return
 
     def back(self):
@@ -300,13 +305,17 @@ class RemV(QMainWindow):
             self.ui.meaningBrowser.setText("")
 
     def nextRandWord(self):
-        if self.noWrongTime:
+        # 不是first time
+        if self.noWrongTime and not self.firstQuiz:
+            self.ui.wordEnterListWidget.addItem(self.currentWord)
             self.randomSet.add(self.currentIndex)
+            self.remain -= 1
+            # 是firstTime
             self.nowNum += 1
             self.accumulativeNum += 1
-            self.remain -= 1
             # self.saveData()
         else:
+            self.firstQuiz = False
             self.noWrongTime = True
 
         if len(self.randomSet) == 20:
@@ -316,12 +325,18 @@ class RemV(QMainWindow):
             self.currentLesson += 1
 
             self.currentIndex = 0
-            # 更新界面
+
             self.randomSet = set()
+
             self.countRound = 0
+            # 更新界面
+            self.ui.meaningBrowser_2.setText("Back to the Menu, and Start a new lesson!")
+            self.ui.hintEdit.clear()
+            self.ui.remainLabel.setText("Congratulations!")
+            self.ui.enterEdit.setEnabled(False)
 
             # self.getData()
-
+            self.remain = 19
             # 清空list里所有组件的
             self.ui.wordEnterListWidget.clear()
             return
@@ -338,6 +353,8 @@ class RemV(QMainWindow):
     def updateAllTest(self):
         self.ui.meaningBrowser_2.setText(self.currentMeaning)
         self.ui.hintEdit.setText(self.convertTohint())
+        self.ui.remainLabel.setText("Remain: %s"% str(self.remain + 1))
+        self.ui.meaningBrowser_2.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
     def convertTohint(self):
         tmp = self.currentWord[0:1]
@@ -347,20 +364,22 @@ class RemV(QMainWindow):
 
     def enterCheck(self):
         if self.ui.enterEdit.text().strip() == self.currentWord:
-            # 先更新 list 不然 currentWord就变了
-            self.ui.wordEnterListWidget.addItem(self.currentWord)
             # 对的话才让下一个词
             self.nextRandWord()
         else:
             # 错的话 就知道输入正确为止
             self.ui.hintEdit.setText(self.currentWord)
             self.noWrongTime = False
+            self.showHint = False
         # 清空 Entry
         self.ui.enterEdit.clear()
 
     def checkEverySyllable(self):
-        # 一有输入就消除提示
-        self.ui.hintEdit.setText(self.convertTohint())
+        # 一有输入就消除提示 检查上次有没有输错
+        if self.showHint:
+            self.ui.hintEdit.setText(self.convertTohint())
+        else:
+            self.showHint = True
 
         if self.ui.enterEdit.text().strip() == self.currentWord:
             self.ui.statusBtn.setIcon(QIcon(r"res/image/correct.png"))
@@ -431,6 +450,7 @@ class RemV(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = RemV()
+    win.setWindowTitle("RemV - alpha")
     win.setStyleSheet(loadQss())
     win.show()
 
