@@ -39,6 +39,7 @@ class RemV(QMainWindow):
         self.ui.translateBtn.setIcon(QIcon(r"res/image/translate.png"))
         self.ui.backBtn.setIcon(QIcon(r"res/image/back_2.png"))
         self.ui.NextBtn.setIcon(QIcon(r"res/image/next_2.png"))
+        self.ui.showBtn.setIcon(QIcon(r"res/image/word.png"))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -56,10 +57,11 @@ class RemV(QMainWindow):
         # 给 memorize 和 quiz 添加事件 切屏事件
         self.ui.MemorizeBtn_0.clicked.connect(self.changeScene_1)
 
-        # next, back, translate 添加点击事件
+        # next, back, translate, show 添加点击事件
         self.ui.NextBtn.clicked.connect(self.next)
         self.ui.backBtn.clicked.connect(self.back)
         self.ui.translateBtn.clicked.connect(self.translate)
+        self.ui.showBtn.clicked.connect(self.updateWord)
 
         # 初始化数据
         # 保存book路径的list
@@ -179,6 +181,7 @@ class RemV(QMainWindow):
         self.updateWord(0)
         self.ui.countBrowser_1.setText("  1")
         self.ui.backBtn.setEnabled(False)
+        self.ui.showBtn.setVisible(False)
 
     def updateWord(self, index):
         """
@@ -202,13 +205,15 @@ class RemV(QMainWindow):
 
         # 居中显示
         self.ui.wordBrowser.setAlignment(Qt.AlignCenter)
-        self.ui.meaningBrowser.setAlignment(Qt.AlignCenter)
+        self.ui.meaningBrowser.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
     def next(self):
         if len(self.wordsOAB) == 0:
             pass
         elif self.currentIndex < self.lessonLen - 1:
             self.ui.MenuBtn_1.setEnabled(False)
+            self.ui.backBtn.setVisible(True)
+
             # 第一轮要先 index+1 再update
             if self.countRound == 0:
                 self.currentIndex += 1
@@ -219,6 +224,8 @@ class RemV(QMainWindow):
 
             # 第二轮 要先update 再加一
             elif self.countRound == 1:
+                self.ui.showBtn.setVisible(True)
+
                 self.currentIndex += 1
                 if self.currentIndex == 0:
                     self.ui.backBtn.setEnabled(False)
@@ -243,6 +250,7 @@ class RemV(QMainWindow):
         # 第二轮结束
         elif self.currentIndex == self.lessonLen - 1 and self.countRound == 1:
             # self.currentIndex = 0
+            self.ui.showBtn.setVisible(False)
             self.ui.NextBtn.setEnabled(False)
             self.ui.wordBrowser.setText("Take a Quiz")
             self.ui.backBtn.setEnabled(False)
@@ -251,7 +259,14 @@ class RemV(QMainWindow):
             return
 
     def back(self):
-        pass
+        self.currentIndex -= 1
+
+        if self.currentIndex == 0:
+            self.ui.backBtn.setEnabled(False)
+        self.updateWord(self.currentIndex)
+        # 更新count
+        self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
+        # self.saveData()
 
     def translate(self):
         ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
@@ -260,8 +275,9 @@ class RemV(QMainWindow):
             tmp += each
         tmp += "\n"
         for each in MeaningList:
-            tmp += each+"\n"
+            tmp += each + "\n"
         self.ui.meaningBrowser.setText(tmp)
+
 
     def parseAllBooks(self, pathList):
         """
