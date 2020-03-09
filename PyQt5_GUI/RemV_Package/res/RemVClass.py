@@ -1,6 +1,8 @@
 import sys, FirstGui, functions
+
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QFileDialog
 
 
 def loadQss():
@@ -13,14 +15,21 @@ class RemV(QMainWindow):
         super().__init__()
         self.ui = FirstGui.Ui_MainWindow()
         FirstGui.Ui_MainWindow.setupUi(self.ui, self)
+
+        # 更改图片尺寸
+        self.image = QPixmap(r"./image/background_3")
+        self.image = self.image.scaled(1260, 835,  Qt.IgnoreAspectRatio, Qt.FastTransformation)
+
         # 添加主窗口背景图
         palette = QPalette()
-        palette.setBrush(QPalette.Background, QBrush(QPixmap("./image/background_3")))
+        palette.setBrush(QPalette.Background, QBrush(QPixmap(self.image)))
         self.setPalette(palette)
+
         # 给各个按钮加对应图标
-        self.ui.uploadButton.setIcon(QIcon(r"./image/upload.png"))
+        self.ui.uploadButton.setIcon(QIcon(r"./image/upload_2.png"))
         self.ui.MemorizeBtn_0.setIcon(QIcon(r"./image/brain.png"))
         self.ui.QuizBtn_0.setIcon(QIcon(r"./image/quiz.png"))
+        self.ui.helpBtn.setIcon(QIcon(r"./image/question.png"))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -31,6 +40,9 @@ class RemV(QMainWindow):
         # 给列表添加 点击事件
         self.ui.bookListWidget.itemClicked.connect(self.bookClicked)
         self.ui.lessonListWidget.itemClicked.connect(self.lessonClicked)
+
+        # uploadBtn 添加点击事件
+        self.ui.uploadButton.clicked.connect(self.uploadBtnClicked)
 
         # 初始化数据
         # 保存book路径的list
@@ -102,6 +114,10 @@ class RemV(QMainWindow):
 
         self.setOverViewScene()
 
+        # 调高透明度
+        self.ui.wordListWidget.setStyleSheet("background-color: rgb(255,255,255)")
+        self.ui.meaningListWidget.setStyleSheet("background-color: rgb(255,255,255)")
+
     def setOverViewScene(self):
         """
         把OverViewScene设置好
@@ -121,6 +137,17 @@ class RemV(QMainWindow):
                 self.ui.meaningListWidget.addItem(
                     self.wordsOAB[self.currentBook][self.currentLesson][i][1][1]
                 )
+
+    def uploadBtnClicked(self):
+        filePath, _ = QFileDialog.getOpenFileName(self, "上传文件", "./", "Excel (*.xlsx)")  # 设置文件扩展名过滤,注意用双分号间隔
+        # _ 是返回的type 如果是excel 就返回 "Excel (*.xlsx)"
+        if _ != "":
+            self.parseFile(filePath)
+            # 查重
+            if filePath not in self.pathList:
+                self.pathList.append(filePath)
+        else:
+            print("上传动作取消")
 
     def parseAllBooks(self, pathList):
         """
