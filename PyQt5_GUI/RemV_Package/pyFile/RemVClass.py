@@ -346,10 +346,9 @@ class RemV(QMainWindow):
         return tmp
 
     def enterCheck(self):
-        print(1)
         if self.ui.enterEdit.text().strip() == self.currentWord:
             # 先更新 list 不然 currentWord就变了
-            self.ui.wordEnterListWidget.insertItem(self.currentWord)
+            self.ui.wordEnterListWidget.addItem(self.currentWord)
             # 对的话才让下一个词
             self.nextRandWord()
         else:
@@ -360,6 +359,9 @@ class RemV(QMainWindow):
         self.ui.enterEdit.clear()
 
     def checkEverySyllable(self):
+        # 一有输入就消除提示
+        self.ui.hintEdit.setText(self.convertTohint())
+
         if self.ui.enterEdit.text().strip() == self.currentWord:
             self.ui.statusBtn.setIcon(QIcon(r"res/image/correct.png"))
         else:

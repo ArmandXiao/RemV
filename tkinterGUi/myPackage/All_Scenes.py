@@ -673,13 +673,6 @@ class FirstScene:
         self.updateAll()
         self.updateAllTest()
 
-        tmp = random.randint(0, 19)
-        while tmp in self.randomSet:
-            tmp = random.randint(0, 19)
-        self.currentIndex = tmp
-        self.updateAll()
-        self.updateAllTest()
-
     def enterCheck(self, event):
         if self.meaningEntry.get().strip() == self.currentWord:
             # 对的话才让下一个词
