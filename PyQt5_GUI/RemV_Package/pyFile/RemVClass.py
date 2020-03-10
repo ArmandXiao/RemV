@@ -8,7 +8,7 @@ import re
 import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush
+from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 
 
@@ -29,12 +29,11 @@ class RemV(QMainWindow):
         FirstGui_ChineseVersion.Ui_MainWindow.setupUi(self.ui, self)
 
         # 紧张窗口缩放和拉伸
-        # self.setWindowFlags(Qt.WindowMinimizeButtonHint)
-        self.setFixedSize(self.width(), self.height())
+        self.setWindowFlag(Qt.FramelessWindowHint)
 
         # 更改图片尺寸
         self.image = QPixmap(r"pyFile/res/image/background_3")
-        self.image = self.image.scaled(1260, 835, Qt.IgnoreAspectRatio, Qt.FastTransformation)
+        self.image = self.image.scaled(1259, 878, Qt.IgnoreAspectRatio, Qt.FastTransformation)
 
         # 添加主窗口背景图
         palette = QPalette()
@@ -46,7 +45,7 @@ class RemV(QMainWindow):
         # self.ui.stackedWidget.setCurrentIndex(3)
 
         # 给各个按钮加对应图标
-        self.ui.uploadButton.setIcon(QIcon(r"pyFile/res/image/upload_2.png"))
+        self.ui.uploadButton.setIcon(QIcon(r"pyFile/res/image/upload.png"))
         self.ui.MemorizeBtn_0.setIcon(QIcon(r"pyFile/res/image/brain.png"))
         self.ui.MenuBtn_1.setIcon(QIcon(r"pyFile/res/image/home_2.png"))
         self.ui.MenuBtn_2.setIcon(QIcon(r"pyFile/res/image/home_2.png"))
@@ -524,6 +523,29 @@ class RemV(QMainWindow):
                     pass
         except:
             pass
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.m_drag = True
+
+            self.m_DragPosition = event.globalPos() - self.pos()
+            self.setCursor(QCursor(Qt.OpenHandCursor))
+            # print(event.globalPos())
+            # print(event.pos())
+            # print(self.pos())
+        if event.button() == Qt.RightButton:
+            self.close()
+
+    def mouseMoveEvent(self, QMouseEvent):
+        if Qt.LeftButton and self.m_drag:
+            # 当左键移动窗体修改偏移值
+            # QPoint
+            # 实时计算窗口左上角坐标
+            self.move(QMouseEvent.globalPos() - self.m_DragPosition)
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.m_drag = False
+        self.setCursor(QCursor(Qt.ArrowCursor))
 
 
 if __name__ == '__main__':
