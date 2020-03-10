@@ -57,6 +57,7 @@ class RemV(QMainWindow):
         self.ui.NextBtn.setIcon(QIcon(r"pyFile/res/image/next_2.png"))
         self.ui.showBtn.setIcon(QIcon(r"pyFile/res/image/word.png"))
         self.ui.statusBtn.setIcon(QIcon(r"pyFile/res/image/wrong.png"))
+        self.ui.exitBtn.setIcon(QIcon(r"pyFile/res/image/exit_3.png"))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -78,11 +79,12 @@ class RemV(QMainWindow):
         self.ui.QuizBtn_0.clicked.connect(self.changeScene_2)
         self.ui.QuizBtn_1.clicked.connect(self.changeScene_2)
 
-        # next, back, translate, show 添加点击事件
+        # next, back, translate, show, exit 添加点击事件
         self.ui.NextBtn.clicked.connect(self.next)
         self.ui.backBtn.clicked.connect(self.back)
         self.ui.translateBtn.clicked.connect(self.translate)
         self.ui.showBtn.clicked.connect(lambda: self.updateWord(self.currentIndex))
+        self.ui.exitBtn.clicked.connect(lambda: self.close())
 
         # QuizScene 事件
         # 回车键叫return
@@ -92,7 +94,9 @@ class RemV(QMainWindow):
         # 初始化数据
         # 保存book路径的list
 
-        self.pathList = [r"pyFile/res/word_Repository/SatVocabulary.xlsx"]
+        self.pathList = [r"pyFile/res/word_Repository/托福45天.xlsx",
+                         r"pyFile/res/word_Repository/四六级.xlsx",
+                         r"pyFile/res/word_Repository/SatVocabulary.xlsx"]
 
         # 总共有多少课
         self.lessonNum = 0
@@ -225,8 +229,10 @@ class RemV(QMainWindow):
             # 查重
             if filePath not in self.pathList:
                 self.pathList.append(filePath)
+            self.saveData()
         else:
             print("上传动作取消")
+
 
     def changeScene_1(self):
         self.ui.stackedWidget.setCurrentIndex(1)

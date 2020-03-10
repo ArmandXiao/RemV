@@ -44,7 +44,7 @@
       <height>881</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout" rowstretch="2,2,30" columnstretch="3,2,16">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="2,4,60" columnstretch="3,2,16">
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
@@ -100,7 +100,7 @@
         <property name="geometry">
          <rect>
           <x>900</x>
-          <y>0</y>
+          <y>800</y>
           <width>51</width>
           <height>51</height>
          </rect>
@@ -145,8 +145,7 @@
         <bool>false</bool>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgba(255,255,255,0);
-border-style: insert;</string>
+        <string notr="true"/>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
@@ -388,11 +387,20 @@ border-style: insert;</string>
            <bold>true</bold>
           </font>
          </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
          <property name="styleSheet">
-          <string notr="true">color:blue</string>
+          <string notr="true">color: blue;</string>
          </property>
          <property name="title">
           <string>单词</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
          </property>
          <widget class="QTextBrowser" name="wordBrowser">
           <property name="geometry">
@@ -624,6 +632,9 @@ p, li { white-space: pre-wrap; }
          </widget>
         </widget>
         <widget class="QGroupBox" name="groupBox_2">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="geometry">
           <rect>
            <x>240</x>
@@ -1732,24 +1743,12 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Times New Roman'; font-size:20pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:600;&quot;&gt;快捷键&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Times New Roman'; font-size:20pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:600;&quot;&gt;上传:        +         &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:600;&quot;&gt;上传:        +         &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:600;&quot;&gt;关闭:        +         &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
          </layout>
-        </widget>
-        <widget class="QLabel" name="label_2">
-         <property name="geometry">
-          <rect>
-           <x>230</x>
-           <y>540</y>
-           <width>71</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
         </widget>
         <widget class="QToolButton" name="toolButton_2">
          <property name="enabled">
@@ -1765,13 +1764,13 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>12</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(204, 204, 204);
+          <string notr="true">background-color: rgb(204, 204, 204，0);
 color: blue;</string>
          </property>
          <property name="text">
@@ -1784,7 +1783,7 @@ color: blue;</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>505</x>
+           <x>500</x>
            <y>553</y>
            <width>41</width>
            <height>41</height>
@@ -1792,13 +1791,13 @@ color: blue;</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>12</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(204, 204, 204);
+          <string notr="true">background-color: rgb(204, 204, 204，0);
 color: blue;</string>
          </property>
          <property name="text">
@@ -1824,11 +1823,66 @@ color: blue;</string>
           <enum>QFrame::Raised</enum>
          </property>
         </widget>
+        <widget class="QToolButton" name="toolButton_4">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>425</x>
+           <y>597</y>
+           <width>41</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(204, 204, 204，0);
+color: blue;</string>
+         </property>
+         <property name="text">
+          <string>Ctrl</string>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="toolButton_5">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>500</x>
+           <y>597</y>
+           <width>41</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(204, 204, 204，0);
+color: blue;</string>
+         </property>
+         <property name="text">
+          <string>X</string>
+         </property>
+        </widget>
         <zorder>frame_6</zorder>
         <zorder>verticalLayoutWidget</zorder>
-        <zorder>label_2</zorder>
         <zorder>toolButton_2</zorder>
         <zorder>toolButton_3</zorder>
+        <zorder>toolButton_4</zorder>
+        <zorder>toolButton_5</zorder>
        </widget>
       </widget>
      </item>
@@ -1980,15 +2034,15 @@ background: rgb(42, 51, 60)
        <item row="0" column="0">
         <widget class="QWidget" name="widget" native="true">
          <property name="styleSheet">
-          <string notr="true">background-color:rgb(255, 255, 255)</string>
+          <string notr="true">background-color:rgb(60, 63, 65)</string>
          </property>
-         <widget class="QToolButton" name="toolButton">
+         <widget class="QToolButton" name="exitBtn">
           <property name="geometry">
            <rect>
-            <x>1210</x>
+            <x>1220</x>
             <y>0</y>
-            <width>50</width>
-            <height>50</height>
+            <width>31</width>
+            <height>31</height>
            </rect>
           </property>
           <property name="cursor">
@@ -2003,22 +2057,30 @@ background: rgb(42, 51, 60)
           </property>
           <property name="iconSize">
            <size>
-            <width>30</width>
-            <height>30</height>
+            <width>20</width>
+            <height>20</height>
            </size>
+          </property>
+          <property name="shortcut">
+           <string>Ctrl+X</string>
           </property>
          </widget>
          <widget class="QLabel" name="label">
           <property name="geometry">
            <rect>
             <x>500</x>
-            <y>5</y>
+            <y>-8</y>
             <width>311</width>
             <height>41</height>
            </rect>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>6</pointsize>
+           </font>
+          </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt; font-weight:600; font-style:italic; color:#ff5500;&quot;&gt;RemV&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; font-style:italic; color:#ffffff;&quot;&gt;RemV&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </widget>
