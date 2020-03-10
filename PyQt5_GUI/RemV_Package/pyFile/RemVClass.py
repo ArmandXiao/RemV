@@ -1,3 +1,4 @@
+import pickle
 import random
 import re
 import sys, FirstGui, functions, os, getTranslationFromYouDao
@@ -7,20 +8,18 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 
 
 def loadQss():
-    with open(r"qss.txt", "r") as f:
+    with open(r"pyFile/qss.txt", "r") as f:
         return f.read()
 
 
 class RemV(QMainWindow):
     def __init__(self):
         super().__init__()
-
-        os.chdir(os.getcwd())
         self.ui = FirstGui.Ui_MainWindow()
         FirstGui.Ui_MainWindow.setupUi(self.ui, self)
 
         # 更改图片尺寸
-        self.image = QPixmap(r"res/image/background_3")
+        self.image = QPixmap(r"pyFile/res/image/background_3")
         self.image = self.image.scaled(1260, 835, Qt.IgnoreAspectRatio, Qt.FastTransformation)
 
         # 添加主窗口背景图
@@ -33,18 +32,18 @@ class RemV(QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(0)
 
         # 给各个按钮加对应图标
-        self.ui.uploadButton.setIcon(QIcon(r"res/image/upload_2.png"))
-        self.ui.MemorizeBtn_0.setIcon(QIcon(r"res/image/brain.png"))
-        self.ui.MenuBtn_1.setIcon(QIcon(r"res/image/home_2.png"))
-        self.ui.MenuBtn_2.setIcon(QIcon(r"res/image/home_2.png"))
-        self.ui.QuizBtn_0.setIcon(QIcon(r"res/image/quiz.png"))
-        self.ui.QuizBtn_1.setIcon(QIcon(r"res/image/quiz.png"))
-        self.ui.helpBtn.setIcon(QIcon(r"res/image/question.png"))
-        self.ui.translateBtn.setIcon(QIcon(r"res/image/translate.png"))
-        self.ui.backBtn.setIcon(QIcon(r"res/image/back_2.png"))
-        self.ui.NextBtn.setIcon(QIcon(r"res/image/next_2.png"))
-        self.ui.showBtn.setIcon(QIcon(r"res/image/word.png"))
-        self.ui.statusBtn.setIcon(QIcon(r"res/image/wrong.png"))
+        self.ui.uploadButton.setIcon(QIcon(r"pyFile/res/image/upload_2.png"))
+        self.ui.MemorizeBtn_0.setIcon(QIcon(r"pyFile/res/image/brain.png"))
+        self.ui.MenuBtn_1.setIcon(QIcon(r"pyFile/res/image/home_2.png"))
+        self.ui.MenuBtn_2.setIcon(QIcon(r"pyFile/res/image/home_2.png"))
+        self.ui.QuizBtn_0.setIcon(QIcon(r"pyFile/res/image/quiz.png"))
+        self.ui.QuizBtn_1.setIcon(QIcon(r"pyFile/res/image/quiz.png"))
+        self.ui.helpBtn.setIcon(QIcon(r"pyFile/res/image/question.png"))
+        self.ui.translateBtn.setIcon(QIcon(r"pyFile/res/image/translate.png"))
+        self.ui.backBtn.setIcon(QIcon(r"pyFile/res/image/back_2.png"))
+        self.ui.NextBtn.setIcon(QIcon(r"pyFile/res/image/next_2.png"))
+        self.ui.showBtn.setIcon(QIcon(r"pyFile/res/image/word.png"))
+        self.ui.statusBtn.setIcon(QIcon(r"pyFile/res/image/wrong.png"))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -79,7 +78,8 @@ class RemV(QMainWindow):
 
         # 初始化数据
         # 保存book路径的list
-        self.pathList = [r"res/word_Repository/TestMaterial.xlsx", r"res/word_Repository/SatVocabulary.xlsx"]
+
+        self.pathList = [r"pyFile/res/word_Repository/SatVocabulary.xlsx"]
 
         # 总共有多少课
         self.lessonNum = 0
@@ -106,13 +106,20 @@ class RemV(QMainWindow):
         # 控制是翻译还是显示原意思
         self.controlTranslate = True
         self.totalStudyTime = 0
-        self.lastProgress = ""
+        self.lastProgress = "欢迎使用这个软件，希望你可以喜欢"
         self.randomSet = set()
         self.noWrongTime = True
         self.remain = 19
         self.showHint = True
         self.firstQuiz = True
 
+        # 获取上次进度
+        try:
+            self.getData()
+        except:
+            pass
+
+        self.ui.progressLabel.setText(self.lastProgress)
         # 调用方法
         # 解析已存在的excel
         self.parseAllBooks(self.pathList)
@@ -128,7 +135,6 @@ class RemV(QMainWindow):
         self.currentBook = self.pathList[self.ui.bookListWidget.row(item)]
         # 更新这本书对应的课程
         self.setLessons(self.currentBook)
-
 
     def lessonClicked(self, item):
         """
@@ -214,6 +220,7 @@ class RemV(QMainWindow):
 
         self.ui.bookListWidget.setEnabled(False)
         self.ui.lessonListWidget.setEnabled(False)
+        self.ui.quizLabel.setText("%s Lesson %d Quiz" % (functions.getBookNames([self.currentBook])[0], self.currentLesson+1))
 
     def updateWord(self, index):
         """
@@ -243,13 +250,14 @@ class RemV(QMainWindow):
         if len(self.wordsOAB) == 0:
             pass
         elif self.currentIndex < self.lessonLen - 1:
+            self.ui.translateBtn.setEnabled(True)
             self.ui.MenuBtn_1.setEnabled(False)
             self.ui.backBtn.setEnabled(True)
 
             # 第一轮要先 index+1 再update
             if self.countRound == 0:
                 self.currentIndex += 1
-                # self.saveData()
+                self.saveData()
                 self.updateWord(self.currentIndex)
                 # 更新count
                 self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
@@ -275,8 +283,9 @@ class RemV(QMainWindow):
             self.currentIndex = -1  # 设置成-1 就可以先更新变量 再update了
             self.ui.wordBrowser.setText("SecondRound")
             self.ui.meaningBrowser.setText("这回可没有中文意思了哦！\n不过你可以点击show来查看\nAre you Ready?")
-
+            self.ui.countBrowser_1.setText("")
             self.countRound = 1
+            self.ui.translateBtn.setEnabled(False)
 
         # 第二轮结束
         elif self.currentIndex == self.lessonLen - 1 and self.countRound == 1:
@@ -298,7 +307,7 @@ class RemV(QMainWindow):
             self.ui.backBtn.setEnabled(False)
         # 更新count
         self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
-        # self.saveData()
+        self.saveData()
         self.updateWord(self.currentIndex)
 
         if self.countRound == 1:
@@ -313,7 +322,7 @@ class RemV(QMainWindow):
             # 是firstTime
             self.nowNum += 1
             self.accumulativeNum += 1
-            # self.saveData()
+            self.saveData()
         else:
             self.firstQuiz = False
             self.noWrongTime = True
@@ -353,7 +362,7 @@ class RemV(QMainWindow):
     def updateAllTest(self):
         self.ui.meaningBrowser_2.setText(self.currentMeaning)
         self.ui.hintEdit.setText(self.convertTohint())
-        self.ui.remainLabel.setText("Remain: %s"% str(self.remain + 1))
+        self.ui.remainLabel.setText("Remain: %s" % str(self.remain + 1))
         self.ui.meaningBrowser_2.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
     def convertTohint(self):
@@ -427,8 +436,8 @@ class RemV(QMainWindow):
         # 把每本书的链接 和 内容 用字典储存
         self.wordsOAB.update({path: self.wordsLFSB})
 
-        # # 保存数据
-        # self.saveData()
+        # 保存数据
+        self.saveData()
 
     def setLessons(self, path):
         """
@@ -446,6 +455,37 @@ class RemV(QMainWindow):
             self.lessonList.append("Lesson " + str(i))
         self.ui.lessonListWidget.addItems(self.lessonList)
 
+    # 保存文件
+    def saveData(self):
+        # 第一个数据：pathList
+        # 第二个数据：accumulativeNum
+        # 第三个数据：totalStudyTime
+        # 第四个数据：上次进度
+        try:
+            with open('myData.pickle', 'wb') as handle:
+                pickle.dump(self.pathList, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(self.accumulativeNum, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(self.totalStudyTime, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                # currentBook 是地址 currentLesson是下标 得加一
+                self.lastProgress = "上次进度: %s Lesson %d  共学习: %d 个单词！" % (
+                    functions.getBookNames([self.currentBook])[0], self.currentLesson+1, self.accumulativeNum)
+                pickle.dump(self.lastProgress, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        except:
+            pass
+
+    def getData(self):
+        try:
+            with open('myData.pickle', 'rb') as handle:
+                self.pathList = pickle.load(handle)
+                self.accumulativeNum = pickle.load(handle)
+                self.totalStudyTime = pickle.load(handle)
+                try:
+                    self.lastProgress = pickle.load(handle)
+                except:
+                    pass
+        except:
+            pass
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -453,5 +493,6 @@ if __name__ == '__main__':
     win.setWindowTitle("RemV - alpha")
     win.setStyleSheet(loadQss())
     win.show()
+
 
     sys.exit(app.exec_())

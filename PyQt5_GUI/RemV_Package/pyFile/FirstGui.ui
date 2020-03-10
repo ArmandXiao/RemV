@@ -111,7 +111,7 @@ background: rgb(42, 51, 60)
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="progressLabel">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -120,8 +120,20 @@ background: rgb(42, 51, 60)
           <height>51</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <family>Times New Roman</family>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <italic>true</italic>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;上次学习进度： SAT Vocabularies, Lesson 1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;上次学习进度： SAT Vocabularies, Lesson 1, 共学习 ———— 词&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
        <widget class="QToolButton" name="helpBtn">
@@ -1365,12 +1377,12 @@ border-width: 1px;</string>
           </size>
          </property>
         </widget>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="quizLabel">
          <property name="geometry">
           <rect>
-           <x>170</x>
+           <x>50</x>
            <y>20</y>
-           <width>381</width>
+           <width>591</width>
            <height>51</height>
           </rect>
          </property>
@@ -1380,7 +1392,10 @@ border-width: 1px;</string>
           </font>
          </property>
          <property name="text">
-          <string>SAT LESSON 1 QUIZ</string>
+          <string>Tmp</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </widget>
