@@ -125,12 +125,12 @@ background: rgb(42, 51, 60)
           <family>Times New Roman</family>
           <pointsize>20</pointsize>
           <weight>75</weight>
-          <italic>true</italic>
+          <italic>false</italic>
           <bold>true</bold>
          </font>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;上次学习进度： SAT Vocabularies, Lesson 1, 共学习 ———— 词&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-style:normal;&quot;&gt;上次学习进度： SAT Vocabularies, Lesson 1, 共学习 ———— 词&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -191,7 +191,7 @@ background: rgb(42, 51, 60)
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="OverviewScene">
         <widget class="QWidget" name="horizontalLayoutWidget_2">
@@ -250,13 +250,13 @@ background: rgb(42, 51, 60)
             <property name="font">
              <font>
               <family>Times New Roman</family>
-              <pointsize>16</pointsize>
+              <pointsize>20</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-style:italic; color:#ff4ea4;&quot;&gt;Word&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-style:italic; color:#964b00;&quot;&gt;Word&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>

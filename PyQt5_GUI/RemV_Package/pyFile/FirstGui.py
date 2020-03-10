@@ -56,7 +56,7 @@ class Ui_MainWindow(object):
         font.setFamily("Times New Roman")
         font.setPointSize(20)
         font.setBold(True)
-        font.setItalic(True)
+        font.setItalic(False)
         font.setWeight(75)
         self.progressLabel.setFont(font)
         self.progressLabel.setAlignment(QtCore.Qt.AlignCenter)
@@ -116,7 +116,7 @@ class Ui_MainWindow(object):
         self.WordLabel_0 = QtWidgets.QLabel(self.horizontalLayoutWidget_3)
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
-        font.setPointSize(16)
+        font.setPointSize(20)
         font.setBold(True)
         font.setWeight(75)
         self.WordLabel_0.setFont(font)
@@ -677,7 +677,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -685,8 +685,8 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.bookListWidget.setToolTip(_translate("MainWindow", "BookList"))
         self.bookListWidget.setSortingEnabled(False)
-        self.progressLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt; font-weight:600;\">上次学习进度： SAT Vocabularies, Lesson 1, 共学习 ———— 词</span></p></body></html>"))
-        self.WordLabel_0.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:24pt; font-style:italic; color:#ff4ea4;\">Word</span></p></body></html>"))
+        self.progressLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt; font-style:normal;\">上次学习进度： SAT Vocabularies, Lesson 1, 共学习 ———— 词</span></p></body></html>"))
+        self.WordLabel_0.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:24pt; font-style:italic; color:#964b00;\">Word</span></p></body></html>"))
         self.MeaningLabel_0.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:24pt; font-weight:600; font-style:italic; color:#4e7af3;\">Meaning</span></p></body></html>"))
         self.MemorizeBtn_0.setText(_translate("MainWindow", "Memorize"))
         self.QuizBtn_0.setText(_translate("MainWindow", "Quiz"))
