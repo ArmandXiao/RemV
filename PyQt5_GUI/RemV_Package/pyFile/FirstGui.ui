@@ -933,7 +933,7 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QPushButton" name="QuizBtn_1">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -1065,7 +1065,7 @@ border-width: 1px;</string>
          <property name="geometry">
           <rect>
            <x>710</x>
-           <y>-20</y>
+           <y>340</y>
            <width>211</width>
            <height>91</height>
           </rect>
@@ -1398,6 +1398,14 @@ border-width: 1px;</string>
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
+        <zorder>wordEnterListWidget</zorder>
+        <zorder>hintEdit</zorder>
+        <zorder>enterEdit</zorder>
+        <zorder>horizontalLayoutWidget_6</zorder>
+        <zorder>remainLabel</zorder>
+        <zorder>groupBox_3</zorder>
+        <zorder>statusBtn</zorder>
+        <zorder>quizLabel</zorder>
        </widget>
       </widget>
      </item>

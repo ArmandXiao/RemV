@@ -166,7 +166,16 @@ class RemV(QMainWindow):
         把OverViewScene设置好
         :return: None
         """
+        # 在测试完后 更新label
+        self.ui.progressLabel.setText(self.lastProgress)
+
         # enable
+        self.ui.translateBtn.setEnabled(True)
+        self.ui.NextBtn.setEnabled(True)
+        # 初始化第二轮的值
+        self.currentIndex = 0
+        self.countRound = 0
+
         self.ui.wordListWidget.setEnabled(True)
         self.ui.lessonListWidget.setEnabled(True)
 
@@ -200,6 +209,7 @@ class RemV(QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.bookListWidget.setEnabled(False)
         self.ui.lessonListWidget.setEnabled(False)
+        self.ui.QuizBtn_1.setVisible(False)
 
         # 把第一个元素更新
         self.updateWord(0)
@@ -213,7 +223,6 @@ class RemV(QMainWindow):
 
     def changeScene_2(self):
         self.ui.stackedWidget.setCurrentIndex(2)
-        self.ui.MenuBtn_2.setEnabled(False)
         self.ui.enterEdit.setEnabled(True)
         self.nextRandWord()
         self.ui.enterEdit.setFocus()
@@ -251,7 +260,7 @@ class RemV(QMainWindow):
             pass
         elif self.currentIndex < self.lessonLen - 1:
             self.ui.translateBtn.setEnabled(True)
-            self.ui.MenuBtn_1.setEnabled(False)
+            self.ui.MenuBtn_1.setVisible(False)
             self.ui.backBtn.setEnabled(True)
 
             # 第一轮要先 index+1 再update
@@ -296,8 +305,8 @@ class RemV(QMainWindow):
             self.ui.meaningBrowser.setText("Quiz is the core of this app!")
             self.ui.backBtn.setEnabled(False)
             self.ui.translateBtn.setEnabled(False)
-            self.ui.MenuBtn_1.setEnabled(True)
-            self.ui.QuizBtn_1.setEnabled(True)
+            self.ui.MenuBtn_1.setVisible(True)
+            self.ui.QuizBtn_1.setVisible(True)
             return
 
     def back(self):
@@ -329,14 +338,10 @@ class RemV(QMainWindow):
 
         if len(self.randomSet) == 20:
             # 结束 Test scene
-            self.ui.MenuBtn_2.setEnabled(True)
+            self.ui.MenuBtn_2.setVisible(True)
             # 其实还需要判断 currentLesson 有没有越界
-            self.currentLesson += 1
-
             self.currentIndex = 0
-
             self.randomSet = set()
-
             self.countRound = 0
             # 更新界面
             self.ui.meaningBrowser_2.setText("Back to the Menu, and Start a new lesson!")
@@ -348,6 +353,11 @@ class RemV(QMainWindow):
             self.remain = 19
             # 清空list里所有组件的
             self.ui.wordEnterListWidget.clear()
+
+            self.saveData()
+            self.getData()
+
+            # self.currentLesson += 1
             return
 
         tmp = random.randint(0, 19)
@@ -372,6 +382,7 @@ class RemV(QMainWindow):
         return tmp
 
     def enterCheck(self):
+        self.ui.MenuBtn_2.setVisible(False)
         if self.ui.enterEdit.text().strip() == self.currentWord:
             # 对的话才让下一个词
             self.nextRandWord()
@@ -391,9 +402,9 @@ class RemV(QMainWindow):
             self.showHint = True
 
         if self.ui.enterEdit.text().strip() == self.currentWord:
-            self.ui.statusBtn.setIcon(QIcon(r"res/image/correct.png"))
+            self.ui.statusBtn.setIcon(QIcon(r"pyFile/res/image/correct.png"))
         else:
-            self.ui.statusBtn.setIcon(QIcon(r"res/image/wrong.png"))
+            self.ui.statusBtn.setIcon(QIcon(r"pyFile/res/image/wrong.png"))
 
     def translate(self):
         ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
