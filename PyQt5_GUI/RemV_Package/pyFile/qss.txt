@@ -1,5 +1,5 @@
 QPushButton#MemorizeBtn_0{
-    color:red;
+    color:brown;
     border-color: black;
     border-style: outset;
     border-width: 2px;
@@ -8,7 +8,7 @@ QPushButton#MemorizeBtn_0{
 }
 
 QPushButton#QuizBtn_0{
-    color:red;
+    color:brown;
     border-color: black;
     border-style: outset;
     border-width: 2px;
@@ -17,7 +17,7 @@ QPushButton#QuizBtn_0{
 
 }
 QPushButton#MenuBtn_1{
-    color:red;
+    color:brown;
     border-color: black;
     border-style: outset;
     border-width: 2px;
@@ -27,7 +27,7 @@ QPushButton#MenuBtn_1{
 }
 
 QPushButton#MenuBtn_2{
-    color:red;
+    color:brown;
     border-color: black;
     border-style: outset;
     border-width: 2px;
@@ -37,7 +37,7 @@ QPushButton#MenuBtn_2{
 }
 
 QPushButton#QuizBtn_1{
-    color:red;
+    color:brown;
     border-color: black;
     border-style: outset;
     border-width: 2px;

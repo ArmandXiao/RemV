@@ -1,10 +1,15 @@
+import FirstGui
+import FirstGui_ChineseVersion
+import functions
+import getTranslationFromYouDao
 import pickle
 import random
 import re
-import sys, FirstGui, functions, os, getTranslationFromYouDao
+import sys
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 
 
 def loadQss():
@@ -15,8 +20,17 @@ def loadQss():
 class RemV(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.ui = FirstGui.Ui_MainWindow()
-        FirstGui.Ui_MainWindow.setupUi(self.ui, self)
+        # 英文版
+        # self.ui = FirstGui.Ui_MainWindow()
+        # FirstGui.Ui_MainWindow.setupUi(self.ui, self)
+
+        # 中文版
+        self.ui = FirstGui_ChineseVersion.Ui_MainWindow()
+        FirstGui_ChineseVersion.Ui_MainWindow.setupUi(self.ui, self)
+
+        # 紧张窗口缩放和拉伸
+        # self.setWindowFlags(Qt.WindowMinimizeButtonHint)
+        self.setFixedSize(self.width(), self.height())
 
         # 更改图片尺寸
         self.image = QPixmap(r"pyFile/res/image/background_3")
@@ -29,7 +43,7 @@ class RemV(QMainWindow):
 
         # 先disable
         self.ui.stackedWidget.setEnabled(False)
-        self.ui.stackedWidget.setCurrentIndex(0)
+        # self.ui.stackedWidget.setCurrentIndex(3)
 
         # 给各个按钮加对应图标
         self.ui.uploadButton.setIcon(QIcon(r"pyFile/res/image/upload_2.png"))
@@ -124,6 +138,15 @@ class RemV(QMainWindow):
         # 解析已存在的excel
         self.parseAllBooks(self.pathList)
 
+        if self.totalStudyTime == 0:
+            QMessageBox.information(self, "介绍和使用说明", "致用户的一封信：\n\n\t欢迎使用RemV,"
+                                                     "这是一款可以帮助你深度记忆单词的\n\t一款软件。"
+                                                     "此软件通过与用户互动提高注意力,从而达\n\t到更好的记忆效果!\n\n"
+                                                     "使用说明：\n\t1.上传文件或者使用本地提供的库。"
+                                                     "\n\t2. 选择一个自动生成的Lesson。\n\t3. 点击\"Memorize\"或\" Quiz\"按钮 \n\n\t"
+                                                     "不再让英语成为负担, 祝你好运!\n\n肖凌奥 "
+                                                     "Armand\n联系方式(微信): xla920338028")
+
     def bookClicked(self, item):
         """
         bookListWidget的单机事件
@@ -143,6 +166,7 @@ class RemV(QMainWindow):
         :return:
         """
         # 判断有没有选择书
+        self.ui.stackedWidget.setCurrentIndex(0)
         if self.currentBook == "":
             return
         # 使左半边变成enabled
@@ -227,9 +251,11 @@ class RemV(QMainWindow):
         self.nextRandWord()
         self.ui.enterEdit.setFocus()
 
+        self.ui.statusBtn.setVisible(True)
         self.ui.bookListWidget.setEnabled(False)
         self.ui.lessonListWidget.setEnabled(False)
-        self.ui.quizLabel.setText("%s Lesson %d Quiz" % (functions.getBookNames([self.currentBook])[0], self.currentLesson+1))
+        self.ui.quizLabel.setText(
+            "%s Lesson %d Quiz" % (functions.getBookNames([self.currentBook])[0], self.currentLesson + 1))
 
     def updateWord(self, index):
         """
@@ -345,9 +371,11 @@ class RemV(QMainWindow):
             self.countRound = 0
             # 更新界面
             self.ui.meaningBrowser_2.setText("Back to the Menu, and Start a new lesson!")
-            self.ui.hintEdit.clear()
             self.ui.remainLabel.setText("Congratulations!")
+            self.ui.hintEdit.setText("")
+            self.ui.statusBtn.setVisible(False)
             self.ui.enterEdit.setEnabled(False)
+            self.ui.MenuBtn_2.setFocus(True)
 
             # self.getData()
             self.remain = 19
@@ -479,7 +507,7 @@ class RemV(QMainWindow):
                 pickle.dump(self.totalStudyTime, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 # currentBook 是地址 currentLesson是下标 得加一
                 self.lastProgress = "上次进度: %s Lesson %d  共学习: %d 个单词！" % (
-                    functions.getBookNames([self.currentBook])[0], self.currentLesson+1, self.accumulativeNum)
+                    functions.getBookNames([self.currentBook])[0], self.currentLesson + 1, self.accumulativeNum)
                 pickle.dump(self.lastProgress, handle, protocol=pickle.HIGHEST_PROTOCOL)
         except:
             pass
@@ -504,6 +532,5 @@ if __name__ == '__main__':
     win.setWindowTitle("RemV - alpha")
     win.setStyleSheet(loadQss())
     win.show()
-
 
     sys.exit(app.exec_())
