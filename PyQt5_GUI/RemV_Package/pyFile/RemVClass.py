@@ -43,6 +43,11 @@ class RemVClass(QMainWindow):
         self.image = QPixmap(resource_path(r"lib/res/image/background_3"))
         self.image = self.image.scaled(1259, 878, Qt.IgnoreAspectRatio, Qt.FastTransformation)
 
+        # titleBar 图片
+        self.titleImage = QPixmap(resource_path(r"lib/res/image/background_5"))
+        self.titleImage = self.titleImage.scaled(1257, 25, Qt.IgnoreAspectRatio, Qt.FastTransformation)
+        self.ui.TitleBar_Label.setPixmap(self.titleImage)
+
         # 添加主窗口背景图
         palette = QPalette()
         palette.setBrush(QPalette.Background, QBrush(QPixmap(self.image)))
@@ -65,7 +70,7 @@ class RemVClass(QMainWindow):
         self.ui.NextBtn.setIcon(QIcon(resource_path(r"lib/res/image/next_2.png")))
         self.ui.showBtn.setIcon(QIcon(resource_path(r"lib/res/image/word.png")))
         self.ui.statusBtn.setIcon(QIcon(resource_path(r"lib/res/image/wrong.png")))
-        self.ui.exitBtn.setIcon(QIcon(resource_path(r"lib/res/image/exit_3.png")))
+        self.ui.exitBtn.setIcon(QIcon(resource_path(r"lib/res/image/exit.png")))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -441,9 +446,9 @@ class RemVClass(QMainWindow):
             self.showHint = True
 
         if self.ui.enterEdit.text().strip() == self.currentWord:
-            self.ui.statusBtn.setIcon(QIcon(resource_path(r"pyFile/res/image/correct.png")))
+            self.ui.statusBtn.setIcon(QIcon(resource_path(r"lib/res/image/correct.png")))
         else:
-            self.ui.statusBtn.setIcon(QIcon(resource_path(r"pyFile/res/image/wrong.png")))
+            self.ui.statusBtn.setIcon(QIcon(resource_path(r"lib/res/image/wrong.png")))
 
     def translate(self):
         ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
