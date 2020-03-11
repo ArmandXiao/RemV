@@ -113,7 +113,7 @@ class RemVClass(QMainWindow):
         # 初始化数据
         # 保存book路径的list
 
-        self.pathList = [r".\lib\res\word_Repository\SatVocabulary.xlsx"]
+        self.pathList = [r"lib\res\word_Repository\SatVocabulary.xlsx"]
 
         # 总共有多少课
         self.lessonNum = 0
@@ -175,7 +175,7 @@ class RemVClass(QMainWindow):
         """
         # self.ui.bookListWidget.row(item) 是获取所以索引
         # 更新 currentBook
-        self.currentBook = self.pathList[self.ui.bookListWidget.row(item)]
+        self.currentBook = toRelativePath(self.pathList[self.ui.bookListWidget.row(item)])
         # 更新这本书对应的课程
         self.setLessons(self.currentBook)
 
@@ -485,7 +485,7 @@ class RemVClass(QMainWindow):
         """
         # 处理 bookList
         tmpList1 = []
-        tmpList1 += functions.getBookNames([path])
+        tmpList1 += functions.getBookNames([toRelativePath(path)])
         # 在 bookList 里添加书籍的名词
         self.ui.bookListWidget.addItems(tmpList1)
 
@@ -493,7 +493,7 @@ class RemVClass(QMainWindow):
         # self.setLessons(path)
 
         # 处理words 把SAT单词书 分成好几节课 然后把SAT这真本书 放到wordsOAB 里面 名字与书的内容
-        self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse(path)))
+        self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse(toRelativePath(path))))
 
         # 把每本书的链接 和 内容 用字典储存
         self.wordsOAB.update({path: self.wordsLFSB})
@@ -510,6 +510,7 @@ class RemVClass(QMainWindow):
         # 初始化
         self.ui.lessonListWidget.clear()
         # 每次都需要初始化 lessonList 不然换书的时候就崩了
+        # currentBook 转成完了
         tmpList2 = functions.excelParse(path)
         self.lessonNum = functions.getLessonNum(tmpList2)
         self.lessonList = []
