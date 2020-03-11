@@ -16,6 +16,7 @@ a = Analysis(['RemV.py'],
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=False)
+
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
@@ -27,7 +28,9 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=True )
+          console=False
+          )
+
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

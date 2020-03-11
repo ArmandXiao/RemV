@@ -441,9 +441,9 @@ class RemVClass(QMainWindow):
             self.showHint = True
 
         if self.ui.enterEdit.text().strip() == self.currentWord:
-            self.ui.statusBtn.setIcon(QIcon(r"pyFile/res/image/correct.png"))
+            self.ui.statusBtn.setIcon(QIcon(resource_path(r"pyFile/res/image/correct.png")))
         else:
-            self.ui.statusBtn.setIcon(QIcon(r"pyFile/res/image/wrong.png"))
+            self.ui.statusBtn.setIcon(QIcon(resource_path(r"pyFile/res/image/wrong.png")))
 
     def translate(self):
         ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
@@ -512,7 +512,7 @@ class RemVClass(QMainWindow):
         # 第三个数据：totalStudyTime
         # 第四个数据：上次进度
         try:
-            with open('myData.pickle', 'wb') as handle:
+            with open(resource_path('myData.pickle'), 'wb') as handle:
                 pickle.dump(self.pathList, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 pickle.dump(self.accumulativeNum, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 pickle.dump(self.totalStudyTime, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -525,7 +525,7 @@ class RemVClass(QMainWindow):
 
     def getData(self):
         try:
-            with open('myData.pickle', 'rb') as handle:
+            with open(resource_path('myData.pickle'), 'rb') as handle:
                 self.pathList = pickle.load(handle)
                 self.accumulativeNum = pickle.load(handle)
                 self.totalStudyTime = pickle.load(handle)
