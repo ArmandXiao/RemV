@@ -10,18 +10,24 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao
 
 
-def resource_path(relative_path):
-    """
-    定义一个读取相对路径的函数
-      """
-    if hasattr(sys, "_MEIPASS"):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
+# def resource_path(relative_path):
+#     """
+#     定义一个读取相对路径的函数
+#       """
+#     if hasattr(sys, "_MEIPASS"):
+#         base_path = sys._MEIPASS
+#     else:
+#         base_path = os.path.abspath(".")
+#     return os.path.join(base_path, relative_path)
+
+def toRelativePath(path):
+    nowPath = os.getcwd()
+    newPath = os.path.join(nowPath, path)
+    return newPath
 
 def loadQss():
-    with open(resource_path(r"lib/qss.txt"), "r") as f:
+
+    with open(toRelativePath(r"lib/qss.txt"), "r") as f:
         return f.read()
 
 
@@ -40,11 +46,11 @@ class RemVClass(QMainWindow):
         self.setWindowFlag(Qt.FramelessWindowHint)
 
         # 更改图片尺寸
-        self.image = QPixmap(resource_path(r"lib/res/image/background_3"))
+        self.image = QPixmap(toRelativePath(r"lib/res/image/background_3"))
         self.image = self.image.scaled(1259, 878, Qt.IgnoreAspectRatio, Qt.FastTransformation)
 
         # titleBar 图片
-        self.titleImage = QPixmap(resource_path(r"lib/res/image/background_5"))
+        self.titleImage = QPixmap(toRelativePath(r"lib/res/image/background_5"))
         self.titleImage = self.titleImage.scaled(1257, 25, Qt.IgnoreAspectRatio, Qt.FastTransformation)
         self.ui.TitleBar_Label.setPixmap(self.titleImage)
 
@@ -58,19 +64,19 @@ class RemVClass(QMainWindow):
         # self.ui.stackedWidget.setCurrentIndex(3)
 
         # 给各个按钮加对应图标
-        self.ui.uploadButton.setIcon(QIcon(resource_path(r"lib/res/image/upload.png")))
-        self.ui.MemorizeBtn_0.setIcon(QIcon(resource_path(r"lib/res/image/brain.png")))
-        self.ui.MenuBtn_1.setIcon(QIcon(resource_path(r"lib/res/image/home_2.png")))
-        self.ui.MenuBtn_2.setIcon(QIcon(resource_path(r"lib/res/image/home_2.png")))
-        self.ui.QuizBtn_0.setIcon(QIcon(resource_path(r"lib/res/image/quiz.png")))
-        self.ui.QuizBtn_1.setIcon(QIcon(resource_path(r"lib/res/image/quiz.png")))
-        self.ui.helpBtn.setIcon(QIcon(resource_path(r"lib/res/image/question.png")))
-        self.ui.translateBtn.setIcon(QIcon(resource_path(r"lib/res/image/translate.png")))
-        self.ui.backBtn.setIcon(QIcon(resource_path(r"lib/res/image/back_2.png")))
-        self.ui.NextBtn.setIcon(QIcon(resource_path(r"lib/res/image/next_2.png")))
-        self.ui.showBtn.setIcon(QIcon(resource_path(r"lib/res/image/word.png")))
-        self.ui.statusBtn.setIcon(QIcon(resource_path(r"lib/res/image/wrong.png")))
-        self.ui.exitBtn.setIcon(QIcon(resource_path(r"lib/res/image/exit.png")))
+        self.ui.uploadButton.setIcon(QIcon(toRelativePath(r"./lib/res/image/upload.png")))
+        self.ui.MemorizeBtn_0.setIcon(QIcon(toRelativePath(r"./lib/res/image/brain.png")))
+        self.ui.MenuBtn_1.setIcon(QIcon(toRelativePath(r"./lib/res/image/home_2.png")))
+        self.ui.MenuBtn_2.setIcon(QIcon(toRelativePath(r"./lib/res/image/home_2.png")))
+        self.ui.QuizBtn_0.setIcon(QIcon(toRelativePath(r"./lib/res/image/quiz.png")))
+        self.ui.QuizBtn_1.setIcon(QIcon(toRelativePath(r"./lib/res/image/quiz.png")))
+        self.ui.helpBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/question.png")))
+        self.ui.translateBtn.setIcon(QIcon(toRelativePath(r"../lib/res/image/translate.png")))
+        self.ui.backBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/back_2.png")))
+        self.ui.NextBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/next_2.png")))
+        self.ui.showBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/word.png")))
+        self.ui.statusBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/wrong.png")))
+        self.ui.exitBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/exit.png")))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -107,7 +113,7 @@ class RemVClass(QMainWindow):
         # 初始化数据
         # 保存book路径的list
 
-        self.pathList = [resource_path(r"lib\res\word_Repository\SatVocabulary.xlsx")]
+        self.pathList = [r".\lib\res\word_Repository\SatVocabulary.xlsx"]
 
         # 总共有多少课
         self.lessonNum = 0
@@ -446,9 +452,9 @@ class RemVClass(QMainWindow):
             self.showHint = True
 
         if self.ui.enterEdit.text().strip() == self.currentWord:
-            self.ui.statusBtn.setIcon(QIcon(resource_path(r"lib/res/image/correct.png")))
+            self.ui.statusBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/correct.png")))
         else:
-            self.ui.statusBtn.setIcon(QIcon(resource_path(r"lib/res/image/wrong.png")))
+            self.ui.statusBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/wrong.png")))
 
     def translate(self):
         ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
@@ -468,7 +474,8 @@ class RemVClass(QMainWindow):
         """
         self.ui.bookListWidget.clear()
         for each in pathList:
-            self.parseFile(each)
+            # 记得转换成相对路径
+            self.parseFile(toRelativePath(each))
 
     def parseFile(self, path):
         """
@@ -517,7 +524,7 @@ class RemVClass(QMainWindow):
         # 第三个数据：totalStudyTime
         # 第四个数据：上次进度
         try:
-            with open(resource_path('myData.pickle'), 'wb') as handle:
+            with open(toRelativePath('./myData.pickle'), 'wb') as handle:
                 pickle.dump(self.pathList, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 pickle.dump(self.accumulativeNum, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 pickle.dump(self.totalStudyTime, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -530,7 +537,7 @@ class RemVClass(QMainWindow):
 
     def getData(self):
         try:
-            with open(resource_path('myData.pickle'), 'rb') as handle:
+            with open(toRelativePath('./myData.pickle'), 'rb') as handle:
                 self.pathList = pickle.load(handle)
                 self.accumulativeNum = pickle.load(handle)
                 self.totalStudyTime = pickle.load(handle)

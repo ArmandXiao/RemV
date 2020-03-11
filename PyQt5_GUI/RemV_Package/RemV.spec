@@ -7,7 +7,7 @@ a = Analysis(['RemV.py'],
              pathex=['C:\\Users\\Armand\\Desktop\\RemV_Package\\pyFile'],
              binaries=[],
              datas=[(r'lib/res/image/*.png', "lib/res/image"), (r'lib/res/word_Repository/*.xlsx', "lib/res/word_Repository")
-                    , (r'lib/*.txt',"lib")],
+                    , (r'lib/*.txt',"lib"),(r'lib/res/image/*.jpg', "lib/res/image")],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -28,7 +28,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False
+          console=True
           )
 
 coll = COLLECT(exe,
@@ -38,4 +38,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='RemV-alpha version')
+               name='RemV')
