@@ -71,7 +71,7 @@ class RemVClass(QMainWindow):
         self.ui.QuizBtn_0.setIcon(QIcon(toRelativePath(r"./lib/res/image/quiz.png")))
         self.ui.QuizBtn_1.setIcon(QIcon(toRelativePath(r"./lib/res/image/quiz.png")))
         self.ui.helpBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/question.png")))
-        self.ui.translateBtn.setIcon(QIcon(toRelativePath(r"../lib/res/image/translate.png")))
+        self.ui.translateBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/translate.png")))
         self.ui.backBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/back_2.png")))
         self.ui.NextBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/next_2.png")))
         self.ui.showBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/word.png")))
