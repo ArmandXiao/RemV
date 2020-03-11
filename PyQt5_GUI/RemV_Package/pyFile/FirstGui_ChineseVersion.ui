@@ -1728,6 +1728,10 @@ border-width: 1px;</string>
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255,255,255,0);
+border-style: insert</string>
+            </property>
             <property name="html">
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -1814,7 +1818,8 @@ color: blue;</string>
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgba(240, 240, 240,120)</string>
+          <string notr="true">background-color: rgba(240, 240, 240,120);
+border-style: outset;</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>

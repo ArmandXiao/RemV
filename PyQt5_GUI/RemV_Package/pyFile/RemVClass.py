@@ -1,23 +1,31 @@
-import FirstGui
-import FirstGui_ChineseVersion
-import functions
-import getTranslationFromYouDao
+import os
 import pickle
-import random
-import re
 import sys
+from random import randint
+import re
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
+from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao
 
+
+def resource_path(relative_path):
+    """
+    定义一个读取相对路径的函数
+      """
+    if hasattr(sys, "_MEIPASS"):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 def loadQss():
-    with open(r"pyFile/qss.txt", "r") as f:
+    with open(resource_path(r"lib/qss.txt"), "r") as f:
         return f.read()
 
 
-class RemV(QMainWindow):
+class RemVClass(QMainWindow):
     def __init__(self):
         super().__init__()
         # 英文版
@@ -32,7 +40,7 @@ class RemV(QMainWindow):
         self.setWindowFlag(Qt.FramelessWindowHint)
 
         # 更改图片尺寸
-        self.image = QPixmap(r"pyFile/res/image/background_3")
+        self.image = QPixmap(resource_path(r"lib/res/image/background_3"))
         self.image = self.image.scaled(1259, 878, Qt.IgnoreAspectRatio, Qt.FastTransformation)
 
         # 添加主窗口背景图
@@ -45,19 +53,19 @@ class RemV(QMainWindow):
         # self.ui.stackedWidget.setCurrentIndex(3)
 
         # 给各个按钮加对应图标
-        self.ui.uploadButton.setIcon(QIcon(r"pyFile/res/image/upload.png"))
-        self.ui.MemorizeBtn_0.setIcon(QIcon(r"pyFile/res/image/brain.png"))
-        self.ui.MenuBtn_1.setIcon(QIcon(r"pyFile/res/image/home_2.png"))
-        self.ui.MenuBtn_2.setIcon(QIcon(r"pyFile/res/image/home_2.png"))
-        self.ui.QuizBtn_0.setIcon(QIcon(r"pyFile/res/image/quiz.png"))
-        self.ui.QuizBtn_1.setIcon(QIcon(r"pyFile/res/image/quiz.png"))
-        self.ui.helpBtn.setIcon(QIcon(r"pyFile/res/image/question.png"))
-        self.ui.translateBtn.setIcon(QIcon(r"pyFile/res/image/translate.png"))
-        self.ui.backBtn.setIcon(QIcon(r"pyFile/res/image/back_2.png"))
-        self.ui.NextBtn.setIcon(QIcon(r"pyFile/res/image/next_2.png"))
-        self.ui.showBtn.setIcon(QIcon(r"pyFile/res/image/word.png"))
-        self.ui.statusBtn.setIcon(QIcon(r"pyFile/res/image/wrong.png"))
-        self.ui.exitBtn.setIcon(QIcon(r"pyFile/res/image/exit_3.png"))
+        self.ui.uploadButton.setIcon(QIcon(resource_path(r"lib/res/image/upload.png")))
+        self.ui.MemorizeBtn_0.setIcon(QIcon(resource_path(r"lib/res/image/brain.png")))
+        self.ui.MenuBtn_1.setIcon(QIcon(resource_path(r"lib/res/image/home_2.png")))
+        self.ui.MenuBtn_2.setIcon(QIcon(resource_path(r"lib/res/image/home_2.png")))
+        self.ui.QuizBtn_0.setIcon(QIcon(resource_path(r"lib/res/image/quiz.png")))
+        self.ui.QuizBtn_1.setIcon(QIcon(resource_path(r"lib/res/image/quiz.png")))
+        self.ui.helpBtn.setIcon(QIcon(resource_path(r"lib/res/image/question.png")))
+        self.ui.translateBtn.setIcon(QIcon(resource_path(r"lib/res/image/translate.png")))
+        self.ui.backBtn.setIcon(QIcon(resource_path(r"lib/res/image/back_2.png")))
+        self.ui.NextBtn.setIcon(QIcon(resource_path(r"lib/res/image/next_2.png")))
+        self.ui.showBtn.setIcon(QIcon(resource_path(r"lib/res/image/word.png")))
+        self.ui.statusBtn.setIcon(QIcon(resource_path(r"lib/res/image/wrong.png")))
+        self.ui.exitBtn.setIcon(QIcon(resource_path(r"lib/res/image/exit_3.png")))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -94,9 +102,7 @@ class RemV(QMainWindow):
         # 初始化数据
         # 保存book路径的list
 
-        self.pathList = [r"pyFile/res/word_Repository/托福45天.xlsx",
-                         r"pyFile/res/word_Repository/四六级.xlsx",
-                         r"pyFile/res/word_Repository/SatVocabulary.xlsx"]
+        self.pathList = [resource_path(r"lib\res\word_Repository\SatVocabulary.xlsx")]
 
         # 总共有多少课
         self.lessonNum = 0
@@ -393,9 +399,9 @@ class RemV(QMainWindow):
             # self.currentLesson += 1
             return
 
-        tmp = random.randint(0, 19)
+        tmp = randint(0, 19)
         while tmp in self.randomSet:
-            tmp = random.randint(0, 19)
+            tmp = randint(0, 19)
         self.currentIndex = tmp
         self.currentWord = self.wordsOAB[self.currentBook][self.currentLesson][self.currentIndex][0]
         self.currentMeaning = self.wordsOAB[self.currentBook][self.currentLesson][self.currentIndex][1][1]
@@ -553,12 +559,3 @@ class RemV(QMainWindow):
         self.m_drag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
 
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    win = RemV()
-    win.setWindowTitle("RemV - alpha")
-    win.setStyleSheet(loadQss())
-    win.show()
-
-    sys.exit(app.exec_())

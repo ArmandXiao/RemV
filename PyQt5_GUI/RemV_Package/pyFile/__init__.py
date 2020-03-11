@@ -1,14 +1,12 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication
-
-from RemVClass import RemV, loadQss
+from pyFile.RemVClass import RemVClass, loadQss
 
 
 def main():
     app = QApplication(sys.argv)
-    win = RemV()
-    win.setWindowTitle("RemV - alpha")
+    win = RemVClass()
     win.setStyleSheet(loadQss())
     win.show()
 

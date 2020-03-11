@@ -691,6 +691,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.textEdit = QtWidgets.QTextEdit(self.verticalLayoutWidget)
         self.textEdit.setEnabled(False)
+        self.textEdit.setStyleSheet("background-color: rgb(255,255,255,0);\n"
+"border-style: insert")
         self.textEdit.setObjectName("textEdit")
         self.verticalLayout_5.addWidget(self.textEdit)
         self.toolButton_2 = QtWidgets.QToolButton(self.page)
@@ -717,7 +719,8 @@ class Ui_MainWindow(object):
         self.toolButton_3.setObjectName("toolButton_3")
         self.frame_6 = QtWidgets.QFrame(self.page)
         self.frame_6.setGeometry(QtCore.QRect(0, 0, 959, 787))
-        self.frame_6.setStyleSheet("background-color: rgba(240, 240, 240,120)")
+        self.frame_6.setStyleSheet("background-color: rgba(240, 240, 240,120);\n"
+"border-style: outset;")
         self.frame_6.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_6.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_6.setObjectName("frame_6")
