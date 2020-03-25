@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -154,7 +157,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="OverviewScene">
         <property name="autoFillBackground">
@@ -343,9 +346,9 @@
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>0</y>
+           <y>20</y>
            <width>959</width>
-           <height>787</height>
+           <height>730</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1185,9 +1188,9 @@ p, li { white-space: pre-wrap; }
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>0</y>
+           <y>20</y>
            <width>959</width>
-           <height>787</height>
+           <height>730</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1316,11 +1319,23 @@ border-width: 1px;</string>
            <pointsize>20</pointsize>
           </font>
          </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgba(255, 255, 255, 150)</string>
+         </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
+         <property name="layoutMode">
+          <enum>QListView::SinglePass</enum>
+         </property>
          <property name="spacing">
           <number>20</number>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::ListMode</enum>
+         </property>
+         <property name="uniformItemSizes">
+          <bool>false</bool>
          </property>
         </widget>
         <widget class="QLabel" name="remainLabel">
@@ -1591,7 +1606,7 @@ border-width: 1px;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">color: black;
-border-style: outset;
+border-style: insert;
 border-radius:15;
 border-color:black;
 border-width: 1px;</string>
@@ -1684,9 +1699,9 @@ border-width: 1px;</string>
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>0</y>
+           <y>20</y>
            <width>959</width>
-           <height>787</height>
+           <height>730</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -1816,9 +1831,9 @@ background-color: rgba(164, 255, 195, 0)</string>
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>0</y>
+           <y>20</y>
            <width>959</width>
-           <height>787</height>
+           <height>730</height>
           </rect>
          </property>
          <property name="contextMenuPolicy">
@@ -1974,11 +1989,8 @@ color: blue;</string>
      </item>
      <item row="2" column="0">
       <widget class="QListWidget" name="bookListWidget">
-       <property name="toolTip">
-        <string>BookList</string>
-       </property>
        <property name="toolTipDuration">
-        <number>2</number>
+        <number>-1</number>
        </property>
        <property name="autoFillBackground">
         <bool>true</bool>
@@ -2026,6 +2038,9 @@ background: rgb(42, 51, 60)
          <italic>false</italic>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="toolTip">
+        <string>选课列表</string>
        </property>
        <property name="autoFillBackground">
         <bool>true</bool>
@@ -2155,6 +2170,10 @@ background: rgb(42, 51, 60)
       </layout>
      </item>
     </layout>
+    <zorder>lessonListWidget</zorder>
+    <zorder>frame</zorder>
+    <zorder>stackedWidget</zorder>
+    <zorder>bookListWidget</zorder>
    </widget>
   </widget>
  </widget>

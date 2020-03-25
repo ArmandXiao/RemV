@@ -13,6 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
+        MainWindow.setEnabled(True)
         MainWindow.resize(1259, 878)
         MainWindow.setTabletTracking(False)
         MainWindow.setWindowOpacity(0.98)
@@ -161,7 +162,7 @@ class Ui_MainWindow(object):
         self.QuizBtn_0.setObjectName("QuizBtn_0")
         self.verticalLayout.addWidget(self.QuizBtn_0)
         self.frame_5 = QtWidgets.QFrame(self.OverviewScene)
-        self.frame_5.setGeometry(QtCore.QRect(0, 0, 959, 787))
+        self.frame_5.setGeometry(QtCore.QRect(0, 20, 959, 730))
         self.frame_5.setStyleSheet("background-color: rgba(240, 240, 240,120)")
         self.frame_5.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_5.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -475,7 +476,7 @@ class Ui_MainWindow(object):
 "padding:20px")
         self.countBrowser_1.setObjectName("countBrowser_1")
         self.frame_4 = QtWidgets.QFrame(self.MemorizeScene)
-        self.frame_4.setGeometry(QtCore.QRect(0, 0, 959, 787))
+        self.frame_4.setGeometry(QtCore.QRect(0, 20, 959, 730))
         self.frame_4.setStyleSheet("background-color: rgba(240, 240, 240,120)")
         self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -537,7 +538,11 @@ class Ui_MainWindow(object):
         font.setFamily("Times New Roman")
         font.setPointSize(20)
         self.wordEnterListWidget.setFont(font)
+        self.wordEnterListWidget.setStyleSheet("background-color: rgba(255, 255, 255, 150)")
         self.wordEnterListWidget.setAlternatingRowColors(True)
+        self.wordEnterListWidget.setLayoutMode(QtWidgets.QListView.SinglePass)
+        self.wordEnterListWidget.setViewMode(QtWidgets.QListView.ListMode)
+        self.wordEnterListWidget.setUniformItemSizes(False)
         self.wordEnterListWidget.setObjectName("wordEnterListWidget")
         self.remainLabel = QtWidgets.QLabel(self.QuizScene)
         self.remainLabel.setGeometry(QtCore.QRect(690, 130, 251, 41))
@@ -636,7 +641,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.meaningBrowser_2.setFont(font)
         self.meaningBrowser_2.setStyleSheet("color: black;\n"
-"border-style: outset;\n"
+"border-style: insert;\n"
 "border-radius:15;\n"
 "border-color:black;\n"
 "border-width: 1px;")
@@ -667,7 +672,7 @@ class Ui_MainWindow(object):
         self.quizLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.quizLabel.setObjectName("quizLabel")
         self.frame_3 = QtWidgets.QFrame(self.QuizScene)
-        self.frame_3.setGeometry(QtCore.QRect(0, 0, 959, 787))
+        self.frame_3.setGeometry(QtCore.QRect(0, 20, 959, 730))
         self.frame_3.setStyleSheet("background-color: rgba(240, 240, 240,120)")
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -722,7 +727,7 @@ class Ui_MainWindow(object):
 "background-color: rgba(164, 255, 195, 0)")
         self.toolButton_3.setObjectName("toolButton_3")
         self.frame_6 = QtWidgets.QFrame(self.page)
-        self.frame_6.setGeometry(QtCore.QRect(0, 0, 959, 787))
+        self.frame_6.setGeometry(QtCore.QRect(0, 20, 959, 730))
         self.frame_6.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.frame_6.setToolTipDuration(-2)
         self.frame_6.setAutoFillBackground(False)
@@ -794,7 +799,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.uploadButton)
         self.gridLayout.addLayout(self.verticalLayout_2, 1, 0, 1, 2)
         self.bookListWidget = QtWidgets.QListWidget(self.layoutWidget)
-        self.bookListWidget.setToolTipDuration(2)
+        self.bookListWidget.setToolTipDuration(-1)
         self.bookListWidget.setAutoFillBackground(True)
         self.bookListWidget.setStyleSheet("font: 75 12pt \"Times New Roman\";\n"
 "font-style: bold;\n"
@@ -875,10 +880,14 @@ class Ui_MainWindow(object):
         self.gridLayout.setRowStretch(0, 2)
         self.gridLayout.setRowStretch(1, 4)
         self.gridLayout.setRowStretch(2, 60)
+        self.lessonListWidget.raise_()
+        self.frame.raise_()
+        self.stackedWidget.raise_()
+        self.bookListWidget.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -939,7 +948,7 @@ class Ui_MainWindow(object):
         self.toolButton_5.setText(_translate("MainWindow", "X"))
         self.uploadButton.setText(_translate("MainWindow", "上传Excel文档"))
         self.uploadButton.setShortcut(_translate("MainWindow", "Ctrl+U"))
-        self.bookListWidget.setToolTip(_translate("MainWindow", "BookList"))
         self.bookListWidget.setSortingEnabled(False)
+        self.lessonListWidget.setToolTip(_translate("MainWindow", "选课列表"))
         self.exitBtn.setShortcut(_translate("MainWindow", "Ctrl+X"))
         self.label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:12pt; font-weight:600; font-style:italic; color:#ffffff;\">RemV</span></p></body></html>"))
