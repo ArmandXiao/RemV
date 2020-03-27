@@ -10,5 +10,5 @@
 ### How to use it?
 - It is now finished with alpha-version, but it has not been encapsulated. 
 - If you have the interest of using it right now, you can download the project through Github.
-  - Then run the **RemV.py** file in PyQt5_GUI/MyPackages in a python environment.
+  - Then run the **RemV.py** file in PyQt5_GUI/RemV_Package in a python environment.
 - It is safe and completely open source. 
