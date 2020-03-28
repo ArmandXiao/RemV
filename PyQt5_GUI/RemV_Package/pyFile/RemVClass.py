@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao
+import openpyxl
 
 
 def toRelativePath(path):
@@ -137,7 +138,7 @@ class RemVClass(QMainWindow):
         self.lastProgress = "欢迎使用这个软件，希望你可以喜欢"
         self.randomSet = set()
         self.noWrongTime = True
-        self.remain = 19
+        self.remain = 0
         self.wrongSpel = False
         self.firstQuiz = True
 
@@ -147,10 +148,17 @@ class RemVClass(QMainWindow):
         except:
             pass
 
+        # Update the record of latest progress.
         self.ui.progressLabel.setText(self.lastProgress)
-        # 调用方法
+
         # 解析已存在的excel
-        self.parseAllBooks(self.pathList)
+        '''
+        Do not parse all excels at the beginning. It wastes memories and affects the speed.
+        Parse the excel when user gives clear sign of opening a specific excel.
+        '''
+        # self.parseAllBooks(self.pathList)
+        self.creatErrorBook();
+        self.loadBookNames(self.pathList)
 
         if self.totalStudyTime == 0:
             QMessageBox.information(self, "介绍和使用说明", "致用户的一封信：\n\n\t欢迎使用RemV,"
@@ -161,7 +169,18 @@ class RemVClass(QMainWindow):
                                                      "不再让英语成为负担, 祝你好运!\n\n肖凌奥 "
                                                      "Armand\n联系方式(微信): xla920338028")
 
+    def loadBookNames(self, pathList):
+        """
+        Load book names but does not load the content of books.
+        :param pathList:
+        :return:
+        """
+        tmpList1 = []
+        for path in pathList:
+            tmpList1 += functions.getBookNames([path])
 
+        # add book names in bookList
+        self.ui.bookListWidget.addItems(tmpList1)
 
     def bookClicked(self, item):
         """
@@ -170,8 +189,16 @@ class RemVClass(QMainWindow):
         :return:
         """
         # self.ui.bookListWidget.row(item) 是获取所以索引
+
+        index = self.ui.bookListWidget.row(item)
+        bookPath = toRelativePath(self.pathList[index])
+
+        # If the book has been already parsed, do not parse it again.
+        if (bookPath not in self.wordsOAB.keys()) or (index == 0):
+            self.parseBook(bookPath)
+
         # 更新 currentBook
-        self.currentBook = toRelativePath(self.pathList[self.ui.bookListWidget.row(item)])
+        self.currentBook = bookPath
         # 更新这本书对应的课程
         self.setLessons(self.currentBook)
 
@@ -190,7 +217,7 @@ class RemVClass(QMainWindow):
         else:
             self.ui.stackedWidget.setCurrentIndex(0)
 
-        # 使左半边变成enabled
+        # 使右半边变成enabled
         self.ui.stackedWidget.setEnabled(True)
         # 更新 currentLesson, lessonLen
         # the reason to minus one is there is a 'lessons' word in position of index of 0 always.
@@ -244,7 +271,8 @@ class RemVClass(QMainWindow):
         filePath, _ = QFileDialog.getOpenFileName(self, "上传文件", "./", "Excel (*.xlsx)")  # 设置文件扩展名过滤,注意用双分号间隔
         # _ 是返回的type 如果是excel 就返回 "Excel (*.xlsx)"
         if _ != "":
-            self.parseFile(filePath)
+            self.loadBookNames([filePath])
+            self.parseBook(filePath)
             # 查重
             if filePath not in self.pathList:
                 self.pathList.append(filePath)
@@ -252,7 +280,17 @@ class RemVClass(QMainWindow):
         else:
             print("上传动作取消")
 
+    def changeScene_0(self):
+        self.setOverViewScene()
+        self.ui.stackedWidget.setCurrentIndex(0)
+        self.ui.bookListWidget.setDisabled(False)
+        self.ui.lessonListWidget.setDisabled(False)
+
     def changeScene_1(self):
+        """
+        Go to memorizing scene
+        :return: None
+        """
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.bookListWidget.setEnabled(False)
         self.ui.lessonListWidget.setEnabled(False)
@@ -262,13 +300,16 @@ class RemVClass(QMainWindow):
         self.updateWord(0)
         self.ui.countBrowser_1.setText("  1")
         self.ui.backBtn.setEnabled(False)
-        self.ui.showBtn.setVisible(False)
+        # self.ui.showBtn.setVisible(False)
 
-    def changeScene_0(self):
-        self.setOverViewScene()
-        self.ui.stackedWidget.setCurrentIndex(0)
+        self.currentIndex = 0
 
     def changeScene_2(self):
+        """
+        Go to test scene
+        :return: None
+        """
+        self.remain = self.lessonLen
         self.ui.stackedWidget.setCurrentIndex(2)
         self.ui.enterEdit.setEnabled(True)
         # reset firstQuiz to True
@@ -282,6 +323,8 @@ class RemVClass(QMainWindow):
         self.ui.lessonListWidget.setEnabled(False)
         self.ui.quizLabel.setText(
             "%s Lesson %d Quiz" % (functions.getBookNames([self.currentBook])[0], self.currentLesson + 1))
+
+
 
     def updateWord(self, index):
         """
@@ -312,6 +355,7 @@ class RemVClass(QMainWindow):
             pass
         elif self.currentIndex < self.lessonLen - 1:
             self.ui.translateBtn.setEnabled(True)
+            self.ui.showBtn.setEnabled(True)
             self.ui.MenuBtn_1.setVisible(False)
             self.ui.backBtn.setEnabled(True)
 
@@ -325,8 +369,6 @@ class RemVClass(QMainWindow):
 
             # 第二轮 要先update 再加一
             elif self.countRound == 1:
-                self.ui.showBtn.setVisible(True)
-
                 self.currentIndex += 1
                 if self.currentIndex == 0:
                     self.ui.backBtn.setEnabled(False)
@@ -346,6 +388,7 @@ class RemVClass(QMainWindow):
             self.ui.meaningBrowser.setText("这回可没有中文意思了哦！\n不过你可以点击show来查看\nAre you Ready?")
             self.ui.countBrowser_1.setText("")
             self.countRound = 1
+            self.ui.showBtn.setEnabled(False)
             self.ui.translateBtn.setEnabled(False)
 
         # 第二轮结束
@@ -391,7 +434,7 @@ class RemVClass(QMainWindow):
             self.noWrongTime = True
 
         # reset randomSet is in function CheckSyllable
-        if len(self.randomSet) == 20:
+        if len(self.randomSet) == self.lessonLen:
             # 结束 Test scene
             self.ui.MenuBtn_2.setVisible(True)
             # 其实还需要判断 currentLesson 有没有越界
@@ -404,8 +447,6 @@ class RemVClass(QMainWindow):
             self.ui.enterEdit.setEnabled(False)
             self.ui.MenuBtn_2.setFocus(True)
 
-            # self.getData()
-            self.remain = 19
             # 清空list里所有组件的
             self.ui.wordEnterListWidget.clear()
 
@@ -415,9 +456,9 @@ class RemVClass(QMainWindow):
             # self.currentLesson += 1
             return
 
-        tmp = randint(0, 19)
+        tmp = randint(0, self.lessonLen-1)
         while tmp in self.randomSet:
-            tmp = randint(0, 19)
+            tmp = randint(0, self.lessonLen-1)
         self.currentIndex = tmp
         self.currentWord = self.wordsOAB[self.currentBook][self.currentLesson][self.currentIndex][0]
         self.currentMeaning = self.wordsOAB[self.currentBook][self.currentLesson][self.currentIndex][1][1]
@@ -427,7 +468,7 @@ class RemVClass(QMainWindow):
     def updateAllTest(self):
         self.ui.meaningBrowser_2.setText(self.currentMeaning)
         self.ui.hintEdit.setText(self.convertTohint())
-        self.ui.remainLabel.setText("Remain: %s" % str(self.remain + 1))
+        self.ui.remainLabel.setText("Remain: %s" % str(self.remain))
         self.ui.meaningBrowser_2.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
     def convertTohint(self):
@@ -442,7 +483,8 @@ class RemVClass(QMainWindow):
         move to next word | stay this -> nextRand()
         :return: None
         """
-
+        self.ui.bookListWidget.setDisabled(True)
+        self.ui.lessonListWidget.setDisabled(True)
         self.ui.MenuBtn_2.setVisible(False)
         if self.ui.enterEdit.text().strip() == self.currentWord:
             # 对的话才让下一个词
@@ -452,6 +494,9 @@ class RemVClass(QMainWindow):
             self.ui.hintEdit.setText(self.currentWord)
             self.noWrongTime = False
             self.wrongSpel = True
+
+            # add the number in to ErrorBook
+            self.addToErrorBook(self.currentWord)
 
         # clear Entry
         self.ui.enterEdit.clear()
@@ -477,7 +522,7 @@ class RemVClass(QMainWindow):
             self.ui.statusBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/wrong.png")))
 
         # check the whether the last term
-        if len(self.randomSet) == 20:
+        if len(self.randomSet) == self.lessonLen:
             self.ui.hintEdit.clear()
             self.randomSet = set()
             self.ui.statusBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/correct.png")))
@@ -498,6 +543,7 @@ class RemVClass(QMainWindow):
             tmp += each + "\n"
         self.ui.meaningBrowser.setText(tmp)
 
+    # abandoned, waste too many memory at a time
     def parseAllBooks(self, pathList):
         """
         parse all paths provided
@@ -507,28 +553,20 @@ class RemVClass(QMainWindow):
         self.ui.bookListWidget.clear()
         for each in pathList:
             # convert relative format to absolute one in one's computer, and then parse.
-            self.parseFile(toRelativePath(each))
+            self.parseBook(toRelativePath(each))
 
-    def parseFile(self, path):
+    def parseBook(self, path):
         """
         parse the first sheet of a excel, and update bookList.
         :param path: the relative path of the book
         :return: None
         """
-        # 处理 bookList
-        tmpList1 = []
-        tmpList1 += functions.getBookNames([toRelativePath(path)])
-        # 在 bookList 里添加书籍的名词
-        self.ui.bookListWidget.addItems(tmpList1)
-
-        # # 处理 lessonList
-        # self.setLessons(path)
 
         # 处理words 把SAT单词书 分成好几节课 然后把SAT这真本书 放到wordsOAB 里面 名字与书的内容
         self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse(toRelativePath(path))))
 
         # 把每本书的链接 和 内容 用字典储存
-        self.wordsOAB.update({path: self.wordsLFSB})
+        self.wordsOAB.update({toRelativePath(path): self.wordsLFSB})
 
         # 保存数据
         self.saveData()
@@ -542,14 +580,20 @@ class RemVClass(QMainWindow):
         """
         # initialize
         # lessonList needs to be initialized every time when book is clicked
+
         self.ui.lessonListWidget.clear()
         self.ui.lessonListWidget.addItem("Lessons")
 
         tmpList2 = functions.excelParse(path)
+
+        if not tmpList2:
+            self.ui.lessonListWidget.clear()
+            return
+
         self.lessonNum = functions.getLessonNum(tmpList2)
         self.lessonList = []
         for i in range(1, self.lessonNum + 1):
-            self.lessonList.append("   " + str(i))
+            self.lessonList.append(" L - " + str(i))
         self.ui.lessonListWidget.addItems(self.lessonList)
 
     # saveData in pickle
@@ -587,6 +631,39 @@ class RemVClass(QMainWindow):
                     pass
         except:
             pass
+
+    def creatErrorBook(self):
+        path = toRelativePath('./lib/res/word_Repository/ErrorBook.xlsx')
+        if path in self.pathList:
+            return
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "RemV_ErrorBook"
+
+        wb.save(path)
+        self.pathList.insert(0, path)
+
+    def addToErrorBook(self, word):
+        wb = openpyxl.load_workbook(self.pathList[0])
+        ws = wb.active
+        try: # ws may be a blank page
+            for eachRow in ws:
+                if word == str(eachRow[0].value):
+                    return
+        except:
+            pass
+
+        data = [word, None]
+        try:
+            _, mean = getTranslationFromYouDao.translate(word)
+            # deBug cell type error: a cell cannot take a two dimension array
+            data.append(mean[0])
+        except:
+            pass
+
+        ws.append(data)
+        wb.save(toRelativePath('./lib/res/word_Repository/ErrorBook.xlsx'))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

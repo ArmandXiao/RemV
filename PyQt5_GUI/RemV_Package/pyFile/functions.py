@@ -51,19 +51,24 @@ def excelParse(path_):
     findNum = re.compile(r"[0-9]")
 
     myList = []
-    for eachRow in ws3:
-        # eachRow[0]是每行第一个cell，加上 .value 是cell里面的值
-        # debug: None Obejct has no attribute: encode()
-        # debug: int has no attribute: encode()
-        if len(findNum.findall(str(eachRow[0].value))) > 0:
-            continue
 
-        if (eachRow[0].value is not None) and (
-                str(eachRow[0].value).strip().replace(" ", "a").encode("utf-8").isalpha()):
-            # myList[index][0]是 单词
-            # myList[index][1][0] 是 词性
-            # myList[index][1][1] 是 意思
-            myList.append((eachRow[0].value.strip(), (eachRow[1].value, eachRow[2].value)))
+    # use try here because ErrorBook may have nothing in it
+    try:
+        for eachRow in ws3:
+            # eachRow[0]是每行第一个cell，加上 .value 是cell里面的值
+            # debug: None Obejct has no attribute: encode()
+            # debug: int has no attribute: encode()
+            if len(findNum.findall(str(eachRow[0].value))) > 0:
+                continue
+
+            if (eachRow[0].value is not None) and (
+                    str(eachRow[0].value).strip().replace(" ", "a").encode("utf-8").isalpha()):
+                # myList[index][0]是 单词
+                # myList[index][1][0] 是 词性
+                # myList[index][1][1] 是 意思
+                myList.append((eachRow[0].value.strip(), (eachRow[1].value, eachRow[2].value)))
+    except:
+        pass
 
     return myList
 
