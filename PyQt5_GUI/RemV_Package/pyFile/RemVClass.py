@@ -93,8 +93,7 @@ class RemVClass(QMainWindow):
 
         # uploadBtn 添加点击事件
         self.ui.uploadButton.clicked.connect(self.uploadBtnClicked)
-        self.ui.addBookBtn.clicked.connect(
-            lambda: self.secondWin.show() and self.secondWin.ui_CB.enterNameEdit.setFocus())
+        self.ui.addBookBtn.clicked.connect(self.goToAddScene)
 
         # 给 memorize, quiz, menu 添加事件 切屏事件
         self.ui.MenuBtn_1.clicked.connect(self.changeScene_0)
@@ -246,6 +245,7 @@ class RemVClass(QMainWindow):
         # 调高透明度
         self.ui.wordListWidget.setStyleSheet("background-color: rgb(255,255,255)")
         self.ui.meaningListWidget.setStyleSheet("background-color: rgb(255,255,255)")
+
 
     def setOverViewScene(self):
         """
@@ -664,6 +664,12 @@ class RemVClass(QMainWindow):
         :param name: the name of the excel
         :return: None
         """
+        count = 0
+        for i in functions.getBookNames(self.pathList):
+            if self.createdBookName == i:
+                index = count
+            count += 1
+
         wb = openpyxl.load_workbook(self.pathList[index])
         ws = wb.active
         try:  # ws may be a blank page
@@ -677,7 +683,10 @@ class RemVClass(QMainWindow):
         try:
             _, mean = getTranslationFromYouDao.translate(word)
             # deBug cell type error: a cell cannot take a two dimension array
-            data.append(mean[0])
+            if mean:
+                data.append(mean[0])
+            else:
+                data.append("NO MEANING FOUND")
         except:
             pass
 
@@ -707,6 +716,10 @@ class RemVClass(QMainWindow):
         self.m_drag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
 
+    def goToAddScene(self):
+        self.secondWin.show()
+        self.secondWin.ui_CB.enterNameEdit.setFocus()
+
     def accessSecond(self):
         outterClass = self
 
@@ -722,13 +735,14 @@ class RemVClass(QMainWindow):
                 self.creatBook(name)
 
             def creatBook(self, name):
+                outterClass.createdBookName = name
                 if name == "":
                     return
 
                 path = "lib\\res\\word_Repository\\" + name + ".xlsx"
-                outterClass.createdBookName = name
                 if path in outterClass.pathList:
-                    outterClass.createdBookName = name
+                    outterClass.secondWin.hide()
+                    outterClass.thirdWin.show()
                     return
 
                 wb = openpyxl.Workbook()
@@ -736,6 +750,7 @@ class RemVClass(QMainWindow):
                 ws.title = name
 
                 wb.save(path)
+
                 outterClass.pathList.append(path)
 
                 outterClass.saveData()
@@ -762,10 +777,12 @@ class RemVClass(QMainWindow):
                 self.ui_AW.wordEnter.clear()
 
             def closeWin(self):
+                self.enterPressed()
                 outterClass.saveData()
                 outterClass.getData()
                 outterClass.ui.bookListWidget.clear()
                 outterClass.loadBookNames(outterClass.pathList)
+                outterClass.ui.lessonListWidget.clear()
                 outterClass.thirdWin.hide()
 
         return DialogWin_2
