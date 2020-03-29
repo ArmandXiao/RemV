@@ -6,10 +6,9 @@ import re
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QApplication, QDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QDialog
 
-import addWordScene
-from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao, createBookScene
+from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao, createBookScene, addWordScene
 import openpyxl
 
 
@@ -34,9 +33,6 @@ class RemVClass(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        # 英文版
-        # self.ui = FirstGui.Ui_MainWindow()
-        # FirstGui.Ui_MainWindow.setupUi(self.ui, self)
 
         # 中文版
         self.ui = FirstGui_ChineseVersion.Ui_MainWindow()
