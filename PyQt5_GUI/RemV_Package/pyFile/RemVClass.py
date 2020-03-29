@@ -12,13 +12,19 @@ import openpyxl
 
 
 def toRelativePath(path):
-    nowPath = os.getcwd()
-    newPath = os.path.join(nowPath, path)
-    return newPath
+    # nowPath = os.getcwd()
+    # newPath = os.path.join(nowPath, path)
+    # return newPath
+
+    if getattr(sys, 'frozen', False):  # 是否Bundle Resource
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, path)
 
 
 def loadQss():
-    with open(toRelativePath(r"lib/qss.txt"), "r") as f:
+    with open(toRelativePath("lib\\qss.txt"), "r") as f:
         return f.read()
 
 
@@ -39,11 +45,11 @@ class RemVClass(QMainWindow):
         self.setWindowFlag(Qt.FramelessWindowHint)
 
         # 更改图片尺寸
-        self.image = QPixmap(toRelativePath(r"lib/res/image/background_3"))
+        self.image = QPixmap(toRelativePath("lib\\res\\image\\background_3"))
         self.image = self.image.scaled(1259, 878, Qt.IgnoreAspectRatio, Qt.FastTransformation)
 
         # titleBar 图片
-        self.titleImage = QPixmap(toRelativePath(r"lib/res/image/background_5"))
+        self.titleImage = QPixmap(toRelativePath("lib\\res\\image\\background_5"))
         self.titleImage = self.titleImage.scaled(1257, 25, Qt.IgnoreAspectRatio, Qt.FastTransformation)
         self.ui.TitleBar_Label.setPixmap(self.titleImage)
 
@@ -56,19 +62,19 @@ class RemVClass(QMainWindow):
         self.ui.stackedWidget.setEnabled(False)
 
         # 给各个按钮加对应图标
-        self.ui.uploadButton.setIcon(QIcon(toRelativePath(r"./lib/res/image/upload.png")))
-        self.ui.MemorizeBtn_0.setIcon(QIcon(toRelativePath(r"./lib/res/image/brain.png")))
-        self.ui.MenuBtn_1.setIcon(QIcon(toRelativePath(r"./lib/res/image/home_2.png")))
-        self.ui.MenuBtn_2.setIcon(QIcon(toRelativePath(r"./lib/res/image/home_2.png")))
-        self.ui.QuizBtn_0.setIcon(QIcon(toRelativePath(r"./lib/res/image/quiz.png")))
-        self.ui.QuizBtn_1.setIcon(QIcon(toRelativePath(r"./lib/res/image/quiz.png")))
-        self.ui.helpBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/question.png")))
-        self.ui.translateBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/translate.png")))
-        self.ui.backBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/back_2.png")))
-        self.ui.NextBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/next_2.png")))
-        self.ui.showBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/word.png")))
-        self.ui.statusBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/wrong.png")))
-        self.ui.exitBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/exit.png")))
+        self.ui.uploadButton.setIcon(QIcon(toRelativePath("lib\\res\\image\\upload.png")))
+        self.ui.MemorizeBtn_0.setIcon(QIcon(toRelativePath("lib\\res\\image\\brain.png")))
+        self.ui.MenuBtn_1.setIcon(QIcon(toRelativePath("lib\\res\\image\\home_2.png")))
+        self.ui.MenuBtn_2.setIcon(QIcon(toRelativePath("lib\\res\\image\\home_2.png")))
+        self.ui.QuizBtn_0.setIcon(QIcon(toRelativePath("lib\\res\\image\\quiz.png")))
+        self.ui.QuizBtn_1.setIcon(QIcon(toRelativePath("lib\\res\\image\\quiz.png")))
+        self.ui.helpBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\question.png")))
+        self.ui.translateBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\translate.png")))
+        self.ui.backBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\back_2.png")))
+        self.ui.NextBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\next_2.png")))
+        self.ui.showBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\word.png")))
+        self.ui.statusBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\wrong.png")))
+        self.ui.exitBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\exit.png")))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -105,10 +111,7 @@ class RemVClass(QMainWindow):
         self.ui.enterEdit.returnPressed.connect(self.enterCheck)
         self.ui.enterEdit.textChanged.connect(self.checkEverySyllable)
 
-        # 初始化数据
-        # 保存book路径的list
-
-        self.pathList = [r"lib\res\word_Repository\SatVocabulary.xlsx"]
+        self.pathList = ["lib\\res\\word_Repository\\SatVocabulary.xlsx"]
 
         # 总共有多少课
         self.lessonNum = 0
@@ -165,7 +168,7 @@ class RemVClass(QMainWindow):
                                                      "这是一款可以帮助你深度记忆单词的\n\t一款软件。"
                                                      "此软件通过与用户互动提高注意力,从而达\n\t到更好的记忆效果!\n\n"
                                                      "使用说明：\n\t1.上传文件或者使用本地提供的库。"
-                                                     "\n\t2. 选择一个自动生成的Lesson。\n\t3. 点击\"Memorize\"或\" Quiz\"按钮 \n\n\t"
+                                                     "\n\t2. 选择一个自动生成的Lesson。\n\t3. 点击\"Memorize\"或\"Quiz\"按钮 \n\n\t"
                                                      "不再让英语成为负担, 祝你好运!\n\n肖凌奥 "
                                                      "Armand\n联系方式(微信): xla920338028")
 
@@ -191,7 +194,7 @@ class RemVClass(QMainWindow):
         # self.ui.bookListWidget.row(item) 是获取所以索引
 
         index = self.ui.bookListWidget.row(item)
-        bookPath = toRelativePath(self.pathList[index])
+        bookPath = (self.pathList[index])
 
         # If the book has been already parsed, do not parse it again.
         if (bookPath not in self.wordsOAB.keys()) or (index == 0):
@@ -268,7 +271,7 @@ class RemVClass(QMainWindow):
                 )
 
     def uploadBtnClicked(self):
-        filePath, _ = QFileDialog.getOpenFileName(self, "上传文件", "./", "Excel (*.xlsx)")  # 设置文件扩展名过滤,注意用双分号间隔
+        filePath, _ = QFileDialog.getOpenFileName(self, "上传文件", "\\ ", "Excel (*.xlsx)")  # 设置文件扩展名过滤,注意用双分号间隔
         # _ 是返回的type 如果是excel 就返回 "Excel (*.xlsx)"
         if _ != "":
             self.loadBookNames([filePath])
@@ -323,8 +326,6 @@ class RemVClass(QMainWindow):
         self.ui.lessonListWidget.setEnabled(False)
         self.ui.quizLabel.setText(
             "%s Lesson %d Quiz" % (functions.getBookNames([self.currentBook])[0], self.currentLesson + 1))
-
-
 
     def updateWord(self, index):
         """
@@ -456,9 +457,9 @@ class RemVClass(QMainWindow):
             # self.currentLesson += 1
             return
 
-        tmp = randint(0, self.lessonLen-1)
+        tmp = randint(0, self.lessonLen - 1)
         while tmp in self.randomSet:
-            tmp = randint(0, self.lessonLen-1)
+            tmp = randint(0, self.lessonLen - 1)
         self.currentIndex = tmp
         self.currentWord = self.wordsOAB[self.currentBook][self.currentLesson][self.currentIndex][0]
         self.currentMeaning = self.wordsOAB[self.currentBook][self.currentLesson][self.currentIndex][1][1]
@@ -517,15 +518,15 @@ class RemVClass(QMainWindow):
 
         # Check spelling and update status icon
         if self.ui.enterEdit.text().strip() == self.currentWord:
-            self.ui.statusBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/correct.png")))
+            self.ui.statusBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\correct.png")))
         else:
-            self.ui.statusBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/wrong.png")))
+            self.ui.statusBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\wrong.png")))
 
         # check the whether the last term
         if len(self.randomSet) == self.lessonLen:
             self.ui.hintEdit.clear()
             self.randomSet = set()
-            self.ui.statusBtn.setIcon(QIcon(toRelativePath(r"./lib/res/image/correct.png")))
+            self.ui.statusBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\correct.png")))
             QMessageBox.information(self, "Congratulations!", "恭喜你完成了本节课的全部测试~\n现在可以点击Menu回到主页面啦~")
             return
 
@@ -553,7 +554,7 @@ class RemVClass(QMainWindow):
         self.ui.bookListWidget.clear()
         for each in pathList:
             # convert relative format to absolute one in one's computer, and then parse.
-            self.parseBook(toRelativePath(each))
+            self.parseBook(each)
 
     def parseBook(self, path):
         """
@@ -566,7 +567,7 @@ class RemVClass(QMainWindow):
         self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse(toRelativePath(path))))
 
         # 把每本书的链接 和 内容 用字典储存
-        self.wordsOAB.update({toRelativePath(path): self.wordsLFSB})
+        self.wordsOAB.update({path: self.wordsLFSB})
 
         # 保存数据
         self.saveData()
@@ -607,7 +608,7 @@ class RemVClass(QMainWindow):
         """
 
         try:
-            with open(toRelativePath('./myData.pickle'), 'wb') as handle:
+            with open(toRelativePath('myData.pickle'), 'wb') as handle:
                 pickle.dump(self.pathList, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 pickle.dump(self.accumulativeNum, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 pickle.dump(self.totalStudyTime, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -621,7 +622,8 @@ class RemVClass(QMainWindow):
     # getData in pickle
     def getData(self):
         try:
-            with open(toRelativePath('./myData.pickle'), 'rb') as handle:
+            # 不要变成绝对地址
+            with open(toRelativePath('myData.pickle'), 'rb') as handle:
                 self.pathList = pickle.load(handle)
                 self.accumulativeNum = pickle.load(handle)
                 self.totalStudyTime = pickle.load(handle)
@@ -633,7 +635,7 @@ class RemVClass(QMainWindow):
             pass
 
     def creatErrorBook(self):
-        path = toRelativePath('./lib/res/word_Repository/ErrorBook.xlsx')
+        path = 'lib\\res\\word_Repository\\ErrorBook.xlsx'
         if path in self.pathList:
             return
 
@@ -647,7 +649,7 @@ class RemVClass(QMainWindow):
     def addToErrorBook(self, word):
         wb = openpyxl.load_workbook(self.pathList[0])
         ws = wb.active
-        try: # ws may be a blank page
+        try:  # ws may be a blank page
             for eachRow in ws:
                 if word == str(eachRow[0].value):
                     return
@@ -663,7 +665,7 @@ class RemVClass(QMainWindow):
             pass
 
         ws.append(data)
-        wb.save(toRelativePath('./lib/res/word_Repository/ErrorBook.xlsx'))
+        wb.save('lib\\res\\word_Repository\\ErrorBook.xlsx')
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
