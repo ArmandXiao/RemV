@@ -14,4 +14,4 @@
 - A quick word entry system.
 - A vocabulary list that automatically collects the wrong spelling words in Quiz Scene for later use.
 ### Tips for use
-
+![image](preview_1.jpg)
