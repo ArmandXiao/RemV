@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['RemV.py'],
-             pathex=['C:\\Users\\Armand\\PycharmProjects\\RemV\\PyQt5_GUI\\RemV_Package'],
+             pathex=['C:\\Users\\Armand\\Desktop\\RemV_Package\\pyFile'],
              binaries=[],
              datas=[(r'lib/res/image/*.png', "lib/res/image"), (r'lib/res/word_Repository/*.xlsx', "lib/res/word_Repository")
                     , (r'lib/*.txt',"lib"),(r'lib/res/image/*.jpg', "lib/res/image")],

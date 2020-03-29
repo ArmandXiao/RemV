@@ -262,7 +262,7 @@ class RemVClass(QMainWindow):
             )
             if self.wordsOAB[self.currentBook][self.currentLesson][i][1][0] is not None:
                 self.ui.meaningListWidget.addItem(
-                    str(self.wordsOAB[self.currentBook][self.currentLesson][i][1][0]) +
+                    str(self.wordsOAB[self.currentBook][self.currentLesson][i][1][0]) + "  " +
                     self.wordsOAB[self.currentBook][self.currentLesson][i][1][1]
                 )
             else:
