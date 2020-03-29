@@ -1,13 +1,13 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication
-import RemVClass
+from RemVClass import RemVClass,loadQss
 
 
 def main():
     app = QApplication(sys.argv)
-    win = RemVClass.RemVClass()
-    win.setStyleSheet(RemVClass.loadQss())
+    win = RemVClass()
+    win.setStyleSheet(loadQss())
     win.show()
 
     win.totalStudyTime += 1
