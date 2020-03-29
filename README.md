@@ -12,3 +12,6 @@
 - If you have the interest of using it right now, you can download the project through Github.
   - Then run the **RemV.py** file in PyQt5_GUI/RemV_Package in a python environment.
 - It is safe and completely open source. 
+
+## Download
+***WIndows: https://share.weiyun.com/53OJHOc*** - Alpha Version
