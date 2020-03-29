@@ -11,7 +11,7 @@
 - The Lastest Version is written with PYQT_5
 - It can be easily used and applied to users who are not Chinese in recent future. 
 ### Things to add
-- A quick word entry system.
-- A vocabulary list that automatically collects the wrong spelling words in Quiz Scene for later use.
+- [ ] A quick word entry system.
+- [X] A vocabulary list that automatically collects the wrong spelling words in Quiz Scene for later use.
 ### Tips for use
 ![image](preview_1.jpg)
