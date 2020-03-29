@@ -6,8 +6,10 @@ import re
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QApplication, QDialog
+
+import addWordScene
+from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao, createBookScene
 import openpyxl
 
 
@@ -29,6 +31,7 @@ def loadQss():
 
 
 class RemVClass(QMainWindow):
+
     def __init__(self):
         super().__init__()
         # 英文版
@@ -38,6 +41,10 @@ class RemVClass(QMainWindow):
         # 中文版
         self.ui = FirstGui_ChineseVersion.Ui_MainWindow()
         FirstGui_ChineseVersion.Ui_MainWindow.setupUi(self.ui, self)
+
+        # Create second and third scene
+        self.secondWin = self.accessSecond()()
+        self.thirdWin = self.accessThird()()
 
         self.ui.stackedWidget.setCurrentIndex(3)
 
@@ -75,6 +82,8 @@ class RemVClass(QMainWindow):
         self.ui.showBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\word.png")))
         self.ui.statusBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\wrong.png")))
         self.ui.exitBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\exit.png")))
+        self.ui.miniBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\minimize.png")))
+        self.ui.addBookBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\enter.png")))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -88,6 +97,8 @@ class RemVClass(QMainWindow):
 
         # uploadBtn 添加点击事件
         self.ui.uploadButton.clicked.connect(self.uploadBtnClicked)
+        self.ui.addBookBtn.clicked.connect(
+            lambda: self.secondWin.show() and self.secondWin.ui_CB.enterNameEdit.setFocus())
 
         # 给 memorize, quiz, menu 添加事件 切屏事件
         self.ui.MenuBtn_1.clicked.connect(self.changeScene_0)
@@ -103,6 +114,7 @@ class RemVClass(QMainWindow):
         self.ui.showBtn.clicked.connect(lambda: self.updateWord(self.currentIndex))
         self.ui.exitBtn.clicked.connect(lambda: self.close())
 
+        self.ui.miniBtn.clicked.connect(lambda: self.showMinimized())
         # wordList item单击事件
         # self.ui.wordListWidget.ScrollPerPixel.con
 
@@ -145,6 +157,8 @@ class RemVClass(QMainWindow):
         self.wrongSpel = False
         self.firstQuiz = True
 
+        # Createbook
+        self.createdBookName = ""
         # 获取上次进度
         try:
             self.getData()
@@ -160,7 +174,7 @@ class RemVClass(QMainWindow):
         Parse the excel when user gives clear sign of opening a specific excel.
         '''
         # self.parseAllBooks(self.pathList)
-        self.creatErrorBook();
+        self.creatErrorBook()
         self.loadBookNames(self.pathList)
 
         if self.totalStudyTime == 0:
@@ -497,7 +511,7 @@ class RemVClass(QMainWindow):
             self.wrongSpel = True
 
             # add the number in to ErrorBook
-            self.addToErrorBook(self.currentWord)
+            self.addToBook(self.currentWord)
 
         # clear Entry
         self.ui.enterEdit.clear()
@@ -646,8 +660,15 @@ class RemVClass(QMainWindow):
         wb.save(path)
         self.pathList.insert(0, path)
 
-    def addToErrorBook(self, word):
-        wb = openpyxl.load_workbook(self.pathList[0])
+    def addToBook(self, word, index=0, name="ErrorBook"):
+        """
+        add a word in to a excel
+        :param word: the word needed to be entered
+        :param index: 0 is ErrorBook , len(self.pathList)-1 is newly added book
+        :param name: the name of the excel
+        :return: None
+        """
+        wb = openpyxl.load_workbook(self.pathList[index])
         ws = wb.active
         try:  # ws may be a blank page
             for eachRow in ws:
@@ -665,7 +686,7 @@ class RemVClass(QMainWindow):
             pass
 
         ws.append(data)
-        wb.save('lib\\res\\word_Repository\\ErrorBook.xlsx')
+        wb.save("lib\\res\\word_Repository\\" + name + ".xlsx")
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -689,3 +710,66 @@ class RemVClass(QMainWindow):
     def mouseReleaseEvent(self, QMouseEvent):
         self.m_drag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
+
+    def accessSecond(self):
+        outterClass = self
+
+        class DialogWin_1(QDialog):
+            def __init__(self):
+                super().__init__()
+                self.ui_CB = createBookScene.Ui_Dialog()
+                createBookScene.Ui_Dialog.setupUi(self.ui_CB, self)
+                self.ui_CB.createBookBtn.clicked.connect(self.openBook)
+
+            def openBook(self):
+                name = self.ui_CB.enterNameEdit.text()
+                self.creatBook(name)
+
+            def creatBook(self, name):
+                if name == "":
+                    return
+
+                path = "lib\\res\\word_Repository\\" + name + ".xlsx"
+                outterClass.createdBookName = name
+                if path in outterClass.pathList:
+                    outterClass.createdBookName = name
+                    return
+
+                wb = openpyxl.Workbook()
+                ws = wb.active
+                ws.title = name
+
+                wb.save(path)
+                outterClass.pathList.append(path)
+
+                outterClass.saveData()
+                outterClass.secondWin.hide()
+                outterClass.thirdWin.show()
+
+        return DialogWin_1
+
+    def accessThird(self):
+        outterClass = self
+
+        class DialogWin_2(QDialog):
+            def __init__(self):
+                super().__init__()
+                self.ui_AW = addWordScene.Ui_Dialog()
+                addWordScene.Ui_Dialog.setupUi(self.ui_AW, self)
+
+                self.ui_AW.doneBtn.clicked.connect(self.closeWin)
+                self.ui_AW.wordEnter.returnPressed.connect(self.enterPressed)
+
+            def enterPressed(self):
+                outterClass.addToBook(
+                    self.ui_AW.wordEnter.text(), len(outterClass.pathList) - 1, outterClass.createdBookName)
+                self.ui_AW.wordEnter.clear()
+
+            def closeWin(self):
+                outterClass.saveData()
+                outterClass.getData()
+                outterClass.ui.bookListWidget.clear()
+                outterClass.loadBookNames(outterClass.pathList)
+                outterClass.thirdWin.hide()
+
+        return DialogWin_2
