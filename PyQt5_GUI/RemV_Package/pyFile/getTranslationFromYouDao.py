@@ -1,6 +1,13 @@
 from urllib import parse, request
 import re
 
+"""
+@copyright   Copyright 2020 RemV
+@license     GPL-3.0 (http://www.gnu.org/licenses/gpl-3.0.html)
+@author      Lingao Xiao 肖凌奥 <920338028@qq.com>
+@version     Alpha version
+@link        https://github.com/ArmandXiao/RemV.git
+"""
 
 def translate(word):
     '''

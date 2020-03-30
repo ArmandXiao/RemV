@@ -3,6 +3,13 @@ import sys
 from PyQt5.QtWidgets import QApplication
 from RemVClass import RemVClass, loadQss
 
+"""
+@copyright   Copyright 2020 RemV
+@license     GPL-3.0 (http://www.gnu.org/licenses/gpl-3.0.html)
+@author      Lingao Xiao 肖凌奥 <920338028@qq.com>
+@version     Alpha version
+@link        https://github.com/ArmandXiao/RemV.git
+"""
 
 def main():
     app = QApplication(sys.argv)
