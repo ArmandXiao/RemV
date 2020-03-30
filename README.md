@@ -1,9 +1,9 @@
 # RemV
-**Note：This open source project follows [Mozilla Public License, v. 2.0](LICENSE), and the right of authorship is comopletely held by Lingao, Xiao.**  
-**注意: 这个开源项目遵从 [Mozilla公共许可协议 2.0](Mozilla公开许可协议_2.0)，著名权被 *肖凌奥* 全权持有.**
+**Note：This open source project follows [GNU General Public License v3.0](LICENSE), and the right of authorship is comopletely held by Lingao, Xiao.**  
+**注意: 这个开源项目遵从 [GUN通用公开许可协议 v3.0](GUN通用公开许可协议)，著名权被 *肖凌奥* 全权持有.**
 ***
 - This is a multi-platform software that can run without python environment.
-## 下载 (Download)
+## 下载 (Download)Mozilla Public License, v. 2.0
 ### Windows: *https://share.weiyun.com/53OJHOc* Code: t5qsb1
   - It is Alpha Version.
   - **RemV.exe** 是可执行文件.
