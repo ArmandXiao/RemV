@@ -80,3 +80,11 @@
 6. 完成第一轮背诵，祝你好运~
 
 ## 6. 项目预览
+- ![image](image/pic_1.png) 
+- ![image](image/pic_2.png) 
+- ![image](image/pic_3.png) 
+- ![image](image/pic_4.png) 
+- ![image](image/pic_5.png) 
+- ![image](image/pic_6.png) 
+- ![image](image/pic_7.png) 
+- ![image](image/pic_8.png) 
