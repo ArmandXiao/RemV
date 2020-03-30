@@ -7,7 +7,8 @@
   - It is Beta Version
   - **RemV.exe** is the executable application.
   - WordBook Repository is where you can find the book you need.
-    - Then upload through RemV app.
+    - Then upload through RemV app.  
+**MacOS: ** 敬请期待...
 ## RemV is a software that helps Chinese to remember vocabularies.
 - The Lastest Version is written with PYQT_5
 - It can be easily used and applied to users who are not Chinese in recent future. 
