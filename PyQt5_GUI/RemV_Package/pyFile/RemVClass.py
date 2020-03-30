@@ -206,7 +206,7 @@ class RemVClass(QMainWindow):
         bookPath = (self.pathList[index])
 
         # If the book has been already parsed, do not parse it again.
-        if (bookPath not in self.wordsOAB.keys()) or (index == 0):
+        if (self.createdBookName in self.wordsOAB.keys()) or (bookPath not in self.wordsOAB.keys()) or (index == 0):
             self.parseBook(bookPath)
 
         # 更新 currentBook
