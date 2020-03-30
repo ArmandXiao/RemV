@@ -1,6 +1,6 @@
 # RemV
 **Note：This open source follows Mozilla Public License, v. 2.0, and the right of authorship is comopletely held by Lingao, Xiao.**  
-**注意: 这个开源项目遵从Mozilla公共许可协议，著名权被 *肖凌奥* 全权持有.**
+**注意: 这个开源项目遵从Mozilla公共许可协议 2.0，著名权被 *肖凌奥* 全权持有.**
 ***
 - This is a multi-platform software that can run without python environment.
 ## 下载 (Download)
