@@ -18,5 +18,5 @@
 - [X] 快速录入功能.
 - [X] 错词本.
 ## 小提示
-![image](preview_1.jpg)
+![image](image/tip_1.jpg)
 ## 项目截图
