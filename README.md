@@ -80,7 +80,7 @@
 ### Windows: https://github.com/ArmandXiao/RemV/releases/tag/Beta-Version
   - 测试版本已发布.
   - **RemV.exe** 是可执行文件.
-  - **WordBook Repository** 是整合的书籍的目录.
+  - **[WordBook Repository](#WordRepository)** 是整合的书籍的目录.
     - 下载想要背的单词书.  
     - 通过RemV上传.
 ### MacOS: 敬请期待...
@@ -105,7 +105,9 @@
 
 ## 5. 如何使用  
 
-[回到目录](#Catalog)
+[回到目录](#Catalog)  
+
+<div id="WordRepository"></div>  
 
 1. 下载需要的单词库
     - 链接: *https://share.weiyun.com/53OJHOc* Code: t5qsb1  
