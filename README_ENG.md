@@ -135,10 +135,10 @@ Especially for learner whose native language is not English.
 
 [Go to Catalog](#Catalog)
 
-- ![image](PyQt5/Preview-Beta/preview1.jpg) 
-- ![image](PyQt5/Preview-Beta/English/preview_2.png) 
-- ![image](PyQt5/Preview-Beta/English/preview_3.png) 
-- ![image](PyQt5/Preview-Beta/English/preview_4.png) 
-- ![image](PyQt5/Preview-Beta/English/preview_5.png) 
-- ![image](PyQt5/Preview-Beta/English/preview_6.png) 
-- ![image](PyQt5/Preview-Beta/English/preview_7.png) 
+- ![image](PyQt5_GUI/Preview-Beta/preview1.jpg) 
+- ![image](PyQt5_GUI/Preview-Beta/English/preview_2.png) 
+- ![image](PyQt5_GUI/Preview-Beta/English/preview_3.png) 
+- ![image](PyQt5_GUI/Preview-Beta/English/preview_4.png) 
+- ![image](PyQt5_GUI/Preview-Beta/English/preview_5.png) 
+- ![image](PyQt5_GUI/Preview-Beta/English/preview_6.png) 
+- ![image](PyQt5_GUI/Preview-Beta/English/preview_7.png) 
