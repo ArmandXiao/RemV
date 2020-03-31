@@ -3,6 +3,7 @@ import pickle
 import sys
 from random import randint
 import re
+import webbrowser
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor
@@ -19,12 +20,9 @@ import openpyxl
 @link        https://github.com/ArmandXiao/RemV.git
 """
 
-def toRelativePath(path):
-    # nowPath = os.getcwd()
-    # newPath = os.path.join(nowPath, path)
-    # return newPath
 
-    if getattr(sys, 'frozen', False):  # 是否Bundle Resource
+def toRelativePath(path):
+    if getattr(sys, 'frozen', False):
         base_path = sys._MEIPASS
     else:
         base_path = os.path.abspath(".")
@@ -51,7 +49,7 @@ class RemVClass(QMainWindow):
 
         self.ui.stackedWidget.setCurrentIndex(3)
 
-        # 紧张窗口缩放和拉伸
+        # 禁止窗口缩放和拉伸
         self.setWindowFlag(Qt.FramelessWindowHint)
 
         # 更改图片尺寸
@@ -80,6 +78,7 @@ class RemVClass(QMainWindow):
         self.ui.QuizBtn_1.setIcon(QIcon(toRelativePath("lib\\res\\image\\quiz.png")))
         self.ui.helpBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\question.png")))
         self.ui.translateBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\translate.png")))
+        self.ui.translateBtn_2.setIcon(QIcon(toRelativePath("lib\\res\\image\\translate.png")))
         self.ui.backBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\back_2.png")))
         self.ui.NextBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\next_2.png")))
         self.ui.showBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\word.png")))
@@ -96,6 +95,7 @@ class RemVClass(QMainWindow):
 
         # 给列表添加 点击事件
         self.ui.bookListWidget.itemClicked.connect(self.bookClicked)
+        self.ui.bookListWidget.itemDoubleClicked.connect(self.bookDoubleClicked)
         self.ui.lessonListWidget.itemClicked.connect(self.lessonClicked)
 
         # uploadBtn 添加点击事件
@@ -108,22 +108,25 @@ class RemVClass(QMainWindow):
         self.ui.MemorizeBtn_0.clicked.connect(self.changeScene_1)
         self.ui.QuizBtn_0.clicked.connect(self.changeScene_2)
         self.ui.QuizBtn_1.clicked.connect(self.changeScene_2)
+        self.ui.helpBtn.clicked.connect(self.help)
 
         # next, back, translate, show, exit 添加点击事件
         self.ui.NextBtn.clicked.connect(self.next)
         self.ui.backBtn.clicked.connect(self.back)
         self.ui.translateBtn.clicked.connect(self.translate)
+        self.ui.translateBtn_2.clicked.connect(self.translate)
         self.ui.showBtn.clicked.connect(lambda: self.updateWord(self.currentIndex))
         self.ui.exitBtn.clicked.connect(lambda: self.close())
 
         self.ui.miniBtn.clicked.connect(lambda: self.showMinimized())
-        # wordList item单击事件
-        # self.ui.wordListWidget.ScrollPerPixel.con
 
         # QuizScene 事件
         # 回车键叫return
         self.ui.enterEdit.returnPressed.connect(self.enterCheck)
         self.ui.enterEdit.textChanged.connect(self.checkEverySyllable)
+
+        # add styleSheet for scrollBars
+        self.setScrollBarStyle()
 
         self.pathList = ["lib\\res\\word_Repository\\SatVocabulary.xlsx"]
 
@@ -184,9 +187,22 @@ class RemVClass(QMainWindow):
                                                      "这是一款可以帮助你深度记忆单词的\n\t一款软件。"
                                                      "此软件通过与用户互动提高注意力,从而达\n\t到更好的记忆效果!\n\n"
                                                      "使用说明：\n\t1.上传文件或者使用本地提供的库。"
-                                                     "\n\t2. 选择一个自动生成的Lesson。\n\t3. 点击\"Memorize\"或\"Quiz\"按钮 \n\n\t"
+                                                     "\n\t2. 选择一个自动生成的Lesson。\n\t3. 点击\"背单词\"或\"小测\"按钮 \n\n\t"
                                                      "不再让英语成为负担, 祝你好运!\n\n肖凌奥 "
                                                      "Armand\n联系方式(微信): xla920338028")
+
+    def help(self):
+        responese = QMessageBox.question(self, "帮助", "联系方式: 920338028@qq.com (邮箱)"
+                                                     "\n\t xla920338028 (微信)"
+                                                     "\n "
+                                                     "\n有任何使用问题请前往: "
+                                                     "\n https://github.com/ArmandXiao/RemV.git"
+                                                     "\n"
+                                                     "\n - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+                                                     "\n - -                          是否前往？                        - -"
+                                                     "\n - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ")
+        if responese != 65536:
+            webbrowser.open("https://github.com/ArmandXiao/RemV.git")
 
     def loadBookNames(self, pathList):
         """
@@ -194,6 +210,7 @@ class RemVClass(QMainWindow):
         :param pathList:
         :return:
         """
+
         tmpList1 = []
         for path in pathList:
             tmpList1 += functions.getBookNames([path])
@@ -213,13 +230,41 @@ class RemVClass(QMainWindow):
         bookPath = (self.pathList[index])
 
         # If the book has been already parsed, do not parse it again.
-        if (self.createdBookName in self.wordsOAB.keys()) or (bookPath not in self.wordsOAB.keys()) or (index == 0):
-            self.parseBook(bookPath)
+        if (self.createdBookName == functions.getExcelName(bookPath)) or (bookPath not in self.wordsOAB.keys()) or (
+                index == 0):
+            tmp = self.parseBook(bookPath)
+            if tmp is not None:
+                response = QMessageBox.question(self, "删除请求", "您是否需要从目录删除这本书")
+                if response != 65536:
+                    self.bookDoubleClicked(item)
+                return
 
         # 更新 currentBook
         self.currentBook = bookPath
         # 更新这本书对应的课程
         self.setLessons(self.currentBook)
+
+    def bookDoubleClicked(self, item):
+        """
+        Delete book from bookList
+        :param item: the book item selected
+        :return: None
+        """
+
+        reply = QMessageBox.question(self, "确认", "你确定要从目录删除这本书吗？",
+                                     QMessageBox.Yes | QMessageBox.No)
+
+        if reply != 65536:
+            index = self.ui.bookListWidget.row(item)
+            self.pathList.pop(index)
+            self.ui.lessonListWidget.clear()
+            self.ui.bookListWidget.clear()
+            self.saveData()
+            self.getData()
+            self.loadBookNames(self.pathList)
+            self.ui.stackedWidget.setCurrentIndex(3)
+        else:
+            return
 
     def lessonClicked(self, item):
         """
@@ -249,16 +294,15 @@ class RemVClass(QMainWindow):
 
         self.setOverViewScene()
 
-        # 调高透明度
-        self.ui.wordListWidget.setStyleSheet("background-color: rgb(255,255,255)")
-        self.ui.meaningListWidget.setStyleSheet("background-color: rgb(255,255,255)")
-
-
     def setOverViewScene(self):
         """
         把OverViewScene设置好
         :return: None
         """
+
+        self.ui.wordListWidget.clear()
+        self.ui.meaningListWidget.clear()
+
         # 在测试完后 更新label
         self.ui.progressLabel.setText(self.lastProgress)
 
@@ -291,11 +335,14 @@ class RemVClass(QMainWindow):
         filePath, _ = QFileDialog.getOpenFileName(self, "上传文件", "\\ ", "Excel (*.xlsx)")  # 设置文件扩展名过滤,注意用双分号间隔
         # _ 是返回的type 如果是excel 就返回 "Excel (*.xlsx)"
         if _ != "":
-            self.loadBookNames([filePath])
-            self.parseBook(filePath)
+            name = functions.getExcelName(filePath)
+            tmpList = functions.getBookNames(self.pathList)
             # 查重
-            if filePath not in self.pathList:
+            if name not in tmpList:
                 self.pathList.append(filePath)
+                self.loadBookNames([filePath])
+            else:
+                return
             self.saveData()
         else:
             print("上传动作取消")
@@ -402,8 +449,10 @@ class RemVClass(QMainWindow):
             self.ui.backBtn.setEnabled(False)
 
             self.currentIndex = -1  # 设置成-1 就可以先更新变量 再update了
-            self.ui.wordBrowser.setText("SecondRound")
-            self.ui.meaningBrowser.setText("这回可没有中文意思了哦！\n不过你可以点击show来查看\nAre you Ready?")
+            self.ui.wordBrowser.setText("确认环节")
+            self.ui.meaningBrowser.setText("\t中文意思没有啦"
+                                           "\n\t不过你同样可以点击显示按钮来查看"
+                                           "\n\t准备好了吗？")
             self.ui.countBrowser_1.setText("")
             self.countRound = 1
             self.ui.showBtn.setEnabled(False)
@@ -414,8 +463,9 @@ class RemVClass(QMainWindow):
             # self.currentIndex = 0
             self.ui.showBtn.setVisible(False)
             self.ui.NextBtn.setEnabled(False)
-            self.ui.wordBrowser.setText("Take a Quiz")
-            self.ui.meaningBrowser.setText("Quiz is the core of this app!")
+            self.ui.wordBrowser.setText("\t快来小测吧~")
+            self.ui.meaningBrowser.setText("\t检查单词拼写"
+                                           "\n\t才是这个软件的核心")
             self.ui.backBtn.setEnabled(False)
             self.ui.translateBtn.setEnabled(False)
             self.ui.MenuBtn_1.setVisible(True)
@@ -459,15 +509,15 @@ class RemVClass(QMainWindow):
             self.currentIndex = 0
             self.countRound = 0
             # 更新界面
-            self.ui.meaningBrowser_2.setText("Back to the Menu, and Start a new lesson!")
             self.ui.remainLabel.setText("Congratulations!")
             self.ui.statusBtn.setVisible(False)
             self.ui.enterEdit.setEnabled(False)
-            self.ui.MenuBtn_2.setFocus(True)
+            self.ui.stackedWidget.setCurrentIndex(3)
 
             # 清空list里所有组件的
             self.ui.wordEnterListWidget.clear()
-
+            self.ui.bookListWidget.setEnabled(True)
+            self.ui.lessonListWidget.setEnabled(True)
             self.saveData()
             self.getData()
 
@@ -544,7 +594,7 @@ class RemVClass(QMainWindow):
             self.ui.hintEdit.clear()
             self.randomSet = set()
             self.ui.statusBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\correct.png")))
-            QMessageBox.information(self, "Congratulations!", "恭喜你完成了本节课的全部测试~\n现在可以点击Menu回到主页面啦~")
+            QMessageBox.information(self, "Congratulations!", "恭喜你完成了本节课的全部单词的测试！")
             return
 
     def translate(self):
@@ -552,7 +602,11 @@ class RemVClass(QMainWindow):
         get pronunciations, part of speech, and meanings from internet.
         :return:
         """
-        ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
+        try:
+            ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
+        except:
+            ProunceList = [""]
+            MeaningList = ["抱歉，请检查您的网络连接"]
         tmp = "音标:"
         for each in ProunceList:
             tmp += each
@@ -560,28 +614,21 @@ class RemVClass(QMainWindow):
         for each in MeaningList:
             tmp += each + "\n"
         self.ui.meaningBrowser.setText(tmp)
-
-    # abandoned, waste too many memory at a time
-    def parseAllBooks(self, pathList):
-        """
-        parse all paths provided
-        :param pathList: a pathList that contains lots of paths (notice all paths are in relative format)
-        :return: None
-        """
-        self.ui.bookListWidget.clear()
-        for each in pathList:
-            # convert relative format to absolute one in one's computer, and then parse.
-            self.parseBook(each)
+        self.ui.meaningBrowser_2.setText(tmp)
 
     def parseBook(self, path):
         """
         parse the first sheet of a excel, and update bookList.
         :param path: the relative path of the book
-        :return: None
+        :return: None if this function runs properly, else return "Error"
         """
 
         # 处理words 把SAT单词书 分成好几节课 然后把SAT这真本书 放到wordsOAB 里面 名字与书的内容
-        self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse(toRelativePath(path))))
+        try:
+            self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse(toRelativePath(path))))
+        except:
+            QMessageBox.about(self, "温馨提示", "目标路径中不存在该文件")
+            return "Error"
 
         # 把每本书的链接 和 内容 用字典储存
         self.wordsOAB.update({path: self.wordsLFSB})
@@ -695,7 +742,7 @@ class RemVClass(QMainWindow):
             else:
                 data.append("NO MEANING FOUND")
         except:
-            pass
+            QMessageBox.about(self, "提示", "抱歉, 此功能必须需要网络连接。\n请检查您的网络连接")
 
         ws.append(data)
         wb.save("lib\\res\\word_Repository\\" + name + ".xlsx")
@@ -789,7 +836,67 @@ class RemVClass(QMainWindow):
                 outterClass.getData()
                 outterClass.ui.bookListWidget.clear()
                 outterClass.loadBookNames(outterClass.pathList)
+                outterClass.ui.stackedWidget.setCurrentIndex(3)
                 outterClass.ui.lessonListWidget.clear()
                 outterClass.thirdWin.hide()
 
         return DialogWin_2
+
+    def setScrollBarStyle(self):
+        verticalScrollBarStyle = """
+            QScrollBar{
+                background: transparent;
+                width: 12px;
+                margin: 0px 0px 0px 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                }   
+                
+            QScrollBar:handle {
+                background: rgba(0, 0, 0, 50);
+                width: 12px;
+                border-radius: 6px;
+                border: none;
+                }
+                
+            QScrollBar::handle:hover {
+                background: rgba(0, 0, 0, 100);
+                }
+                
+            QScrollBar:sub-line {
+                height: 12px;
+                width: 10px;
+                background: transparent;
+                subcontrol-position: top;
+                }
+            
+            QScrollBar:add-line{
+                height: 12px;
+                width: 10px;
+                background: transparent;
+                subcontrol-position: bottom;
+                }
+                              
+
+}
+        """
+        self.ui.bookListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.bookListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+
+        self.ui.lessonListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.lessonListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+
+        self.ui.wordListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.wordListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+
+        self.ui.meaningListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.meaningListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+
+        self.ui.wordEnterListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.wordEnterListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+
+        self.ui.meaningBrowser.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.meaningBrowser.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+
+        self.ui.meaningBrowser_2.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.meaningBrowser_2.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
