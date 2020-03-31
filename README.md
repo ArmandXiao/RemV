@@ -80,10 +80,10 @@
 
 ### Windows: https://github.com/ArmandXiao/RemV/releases/tag/Beta-Version
   - 测试版本已发布.
-  - **RemV.exe** 是可执行文件.
+  - **`RemV.exe`** 是可执行文件.
   - **[WordBook Repository](#WordRepository)** 是整合的书籍的目录.
     - 下载想要背的单词书.  
-    - 通过RemV上传.
+    - 通过`RemV`上传.
 ### MacOS: 敬请期待...
 
 <div id="Fourth"></div>  
@@ -92,15 +92,15 @@
 
 [回到目录](#Catalog)  
 
-1. 下载RemV_setup.exe
-2. 根据安装提示，安装RemV
-3. 打开RemV文件夹
-4. 下拉，找到RemV.exe
+1. 下载`RemV_setup.exe`
+2. 根据安装提示，安装`RemV`
+3. 打开`RemV`文件夹`
+4. 下拉，找到`RemV.exe
 5. 双击启动  
-6. *可选：右键RemV.exe, 创建快捷方式，剪贴快捷方式到桌面 
+6. *可选：右键`RemV.exe`, 创建快捷方式，剪贴快捷方式到桌面 
 7. 若出现对话框，则成功运行 
 
-**切记不可讲RemV.exe移动至其他文件夹或目录**  
+**切记不可讲`RemV.exe`移动至其他文件夹或目录**  
 
 <div id="Fifth"></div>  
 
