@@ -130,11 +130,10 @@
 
 [回到目录](#Catalog)
 
-- ![image](image/pic_1.png) 
-- ![image](image/pic_2.png) 
-- ![image](image/pic_3.png) 
-- ![image](image/pic_4.png) 
-- ![image](image/pic_5.png) 
-- ![image](image/pic_6.png) 
-- ![image](image/pic_7.png) 
-- ![image](image/pic_8.png) 
+- ![image](PyQt5/Preview-Beta/preview1.jpg) 
+- ![image](PyQt5/Preview-Beta/Chinese/preview_2.png) 
+- ![image](PyQt5/Preview-Beta/Chinese/preview_3.png) 
+- ![image](PyQt5/Preview-Beta/Chinese/preview_4.png) 
+- ![image](PyQt5/Preview-Beta/Chinese/preview_5.png) 
+- ![image](PyQt5/Preview-Beta/Chinese/preview_6.png) 
+- ![image](PyQt5/Preview-Beta/Chinese/preview_7.png) 
