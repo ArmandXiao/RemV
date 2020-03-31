@@ -6,13 +6,7 @@
 ***
 - 此软件可以在多平台上运行
 ## 目录
-  * [1. 为什么选择 *RemV*](#1----为什么选择--remv-)
-  * [2. 功能](#2---)
-  * 3. **下载**
-  * 4. 如何安装
-  * 5. 如何使用
-  * 6. 项目预览
-  
+  [这句话是想要跳转到Mark处的锚点链接，点击即会跳转](#Mark)
 ## 1. 为什么选择 *RemV*
 > RemV 是一个可以帮助用户建立对单词深度的记忆的软件。
 #### 与其他产品不同, *RemV* 拥有3个单词测试环节。
@@ -31,7 +25,6 @@
 - 书本无法同一自动记录错词
 
 ## 2. 功能
-goToTwo
 ## 通用
 - [x] 可上传总结好的生词书 (*.xlsx)
     > 总是背这几本单词书，人家有自己总结好的生词！
@@ -55,7 +48,6 @@ goToTwo
 - [x] 错词回滚，输错了，你以为一遍就可以过了？
 - [x] 错词自动加入错题本：都错了哪些词，不记得了？不要担心！
 ## 3. 下载 (Download)
-goToThree
 ### Windows: https://github.com/ArmandXiao/RemV/releases/tag/Beta-Version
   - 测试版本已发布.
   - **RemV.exe** 是可执行文件.
@@ -64,7 +56,6 @@ goToThree
     - 通过RemV上传.
 ### MacOS: 敬请期待...
 ## 4. 如何安装
-goToFour
 1. 下载RemV_setup.exe
 2. 根据安装提示，安装RemV
 3. 打开RemV文件夹
@@ -75,7 +66,6 @@ goToFour
 
 **切记不可讲RemV.exe移动至其他文件夹或目录**
 ## 5. 如何使用
-goToFive
 1. 下载需要的单词库
     - 链接: *https://share.weiyun.com/53OJHOc* Code: t5qsb1  
 2. 点击左上角上次按钮，上次下载好的，想要学习的excel
@@ -92,7 +82,6 @@ goToFive
 6. 完成第一轮背诵，祝你好运~
 
 ## 6. 项目预览
-goToSix
 - ![image](image/pic_1.png) 
 - ![image](image/pic_2.png) 
 - ![image](image/pic_3.png) 
@@ -101,3 +90,4 @@ goToSix
 - ![image](image/pic_6.png) 
 - ![image](image/pic_7.png) 
 - ![image](image/pic_8.png) 
+<div id="Mark"></div>
