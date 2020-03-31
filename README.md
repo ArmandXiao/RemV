@@ -2,7 +2,7 @@
 **Note：This open source project follows [GNU General Public License v3.0](LICENSE), and the right of authorship is comopletely held by Lingao, Xiao.**  
 **注意: 这个开源项目遵从 [GUN通用公开许可协议 v3.0](GUN通用公开许可协议)，著名权被 *肖凌奥* 全权持有.**
 ***
-**English Introduction <-- Click me**
+**[English Introduction](README_ENG.md) <-- Click me**
 ***
 - 此软件可以在多平台上运行
 <div id="Catalog"></div>  
@@ -61,6 +61,7 @@
 - [x] 书本自动划分成20个单词为一节课
 - [x] 学习进度记录，不用担心忘记上次学到哪里了
 - [x] 学习总单词数记录，成就感满满的 o(\*￣▽￣\*)ブ
+- [x] 双击删除从目录删除书籍，文件仍然保留在电脑上
 
 ### 记忆环节
 - [x] 在线获取单词读音，词性，以及对应的释义
