@@ -461,7 +461,7 @@ class RemVClass(QMainWindow):
         # 第二轮结束
         elif self.currentIndex == self.lessonLen - 1 and self.countRound == 1:
             # self.currentIndex = 0
-            self.ui.showBtn.setVisible(False)
+
             self.ui.NextBtn.setEnabled(False)
             self.ui.wordBrowser.setText("\t快来小测吧~")
             self.ui.meaningBrowser.setText("\t检查单词拼写"
