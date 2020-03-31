@@ -57,7 +57,7 @@ goToTwo
 - [x] 错词自动加入错题本：都错了哪些词，不记得了？不要担心！
 ## 3. 下载 (Download)
 goToThree
-### Windows: *https://share.weiyun.com/53OJHOc* Code: t5qsb1
+### Windows: https://github.com/ArmandXiao/RemV/releases/tag/Beta-Version
   - 测试版本已发布.
   - **RemV.exe** 是可执行文件.
   - **WordBook Repository** 是整合的书籍的目录.
@@ -78,7 +78,7 @@ goToFour
 ## 5. 如何使用
 goToFive
 1. 下载需要的单词库
-    - link: *https://share.weiyun.com/53OJHOc* Code: t5qsb1  
+    - 链接: *https://share.weiyun.com/53OJHOc* Code: t5qsb1  
 2. 点击左上角上次按钮，上次下载好的，想要学习的excel
 3. 点击书的名字
 4. 点击想学的课程
