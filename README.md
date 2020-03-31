@@ -5,18 +5,28 @@
 **English Introduction <-- Click me**
 ***
 - 此软件可以在多平台上运行
+<div id="Catalog"></div>  
+
 ## 目录
-<div id="Catalog"></div>
-  [1.为什么选择 *RemV*](#First)
-  [2. 功能](#Second)
-  [3. **下载**](#Third)
-  [4. 如何安装](#Fourth)
-  [5. 如何使用](#Fifth)
-  [6. 项目预览](#Sixth)
+ 
+
+  [1.为什么选择 *RemV*](#First)  
   
+  [2. 功能](#Second)  
+  
+  [3. **下载**](#Third)  
+  
+  [4. 如何安装](#Fourth)  
+  
+  [5. 如何使用](#Fifth)  
+  
+  [6. 项目预览](#Sixth)  
+  
+<div id="First"></div>  
+
 ## 1. 为什么选择 *RemV*
 [回到目录](#Catalog)
-<div id="First"></div>
+
 > RemV 是一个可以帮助用户建立对单词深度的记忆的软件。
 #### 与其他产品不同, *RemV* 拥有3个单词测试环节。
 1. 记忆环节
@@ -33,9 +43,12 @@
 - 通过不断的与计算机互动，不会产生困意
 - 书本无法同一自动记录错词
 
-## 2. 功能
-[回到目录](#Catalog)
 <div id="Second"></div>
+
+## 2. 功能  
+
+[回到目录](#Catalog)
+
 ## 通用
 - [x] 可上传总结好的生词书 (*.xlsx)
     > 总是背这几本单词书，人家有自己总结好的生词！
@@ -57,10 +70,13 @@
 - [x] 根据提示输入正确单词，拼写检测
 - [x] 实时拼写检测，避免不必要的错误，节省时间
 - [x] 错词回滚，输错了，你以为一遍就可以过了？
-- [x] 错词自动加入错题本：都错了哪些词，不记得了？不要担心！
-## 3. 下载 (Download)
+- [x] 错词自动加入错题本：都错了哪些词，不记得了？不要担心！  
+<div id="Third"></div>  
+
+## 3. 下载 (Download)  
+
 [回到目录](#Catalog)
-<div id="Third"></div>
+
 ### Windows: https://github.com/ArmandXiao/RemV/releases/tag/Beta-Version
   - 测试版本已发布.
   - **RemV.exe** 是可执行文件.
@@ -68,9 +84,12 @@
     - 下载想要背的单词书.  
     - 通过RemV上传.
 ### MacOS: 敬请期待...
-## 4. 
-[回到目录](#Catalog)
-<div id="Fourth"></div>
+[回到目录](#Catalog)  
+
+## 4. 如何安装
+
+<div id="Fourth"></div>  
+
 1. 下载RemV_setup.exe
 2. 根据安装提示，安装RemV
 3. 打开RemV文件夹
@@ -79,10 +98,14 @@
 6. *可选：右键RemV.exe, 创建快捷方式，剪贴快捷方式到桌面 
 7. 若出现对话框，则成功运行 
 
-**切记不可讲RemV.exe移动至其他文件夹或目录**
-## 5. 如何使用
+**切记不可讲RemV.exe移动至其他文件夹或目录**  
+
+<div id="Fifth"></div>  
+
+## 5. 如何使用  
+
 [回到目录](#Catalog)
-<div id="Fifth"></div>
+
 1. 下载需要的单词库
     - 链接: *https://share.weiyun.com/53OJHOc* Code: t5qsb1  
 2. 点击左上角上次按钮，上次下载好的，想要学习的excel
@@ -95,12 +118,14 @@
     - **从上到下, 按钮功能分别为, 显示录入的翻译和获取网络翻译**  
 
 6. 或点击小测按钮，进行直接小测 ("不推荐")  
+7. 完成第一轮背诵，祝你好运~  
 
-6. 完成第一轮背诵，祝你好运~
+<div id="Sixth"></div>  
 
-## 6. 项目预览
+## 6. 项目预览  
+
 [回到目录](#Catalog)
-<div id="Sixth"></div>
+
 - ![image](image/pic_1.png) 
 - ![image](image/pic_2.png) 
 - ![image](image/pic_3.png) 
