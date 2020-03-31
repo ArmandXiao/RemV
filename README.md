@@ -84,11 +84,12 @@
     - 下载想要背的单词书.  
     - 通过RemV上传.
 ### MacOS: 敬请期待...
-[回到目录](#Catalog)  
+
+<div id="Fourth"></div>  
 
 ## 4. 如何安装
 
-<div id="Fourth"></div>  
+[回到目录](#Catalog)  
 
 1. 下载RemV_setup.exe
 2. 根据安装提示，安装RemV
