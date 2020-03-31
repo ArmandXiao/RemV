@@ -2,7 +2,7 @@
 **Note：This open source project follows [GNU General Public License v3.0](LICENSE), and the right of authorship is comopletely held by Lingao, Xiao.**  
 **注意: 这个开源项目遵从 [GUN通用公开许可协议 v3.0](GUN通用公开许可协议)，著名权被 *肖凌奥* 全权持有.**
 ***
-**中文版 <- 点我**
+**[中文版](README.md) <- 点我**
 ***
 - This software can run on multi-platform.
 <div id="Catalog"></div>  
@@ -135,7 +135,7 @@ Especially for learner whose native language is not English.
 
 [Go to Catalog](#Catalog)
 
-- ![image](PyQt5_GUI/Preview-Beta/preview1.jpg) 
+- ![image](PyQt5_GUI/Preview-Beta/preview_1.jpg) 
 - ![image](PyQt5_GUI/Preview-Beta/English/preview_2.png) 
 - ![image](PyQt5_GUI/Preview-Beta/English/preview_3.png) 
 - ![image](PyQt5_GUI/Preview-Beta/English/preview_4.png) 

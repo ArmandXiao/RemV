@@ -130,7 +130,7 @@
 
 [回到目录](#Catalog)
 
-- ![image](PyQt5_GUI/Preview-Beta/preview1.jpg) 
+- ![image](PyQt5_GUI/Preview-Beta/preview_1.jpg) 
 - ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_2.png) 
 - ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_3.png) 
 - ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_4.png) 
