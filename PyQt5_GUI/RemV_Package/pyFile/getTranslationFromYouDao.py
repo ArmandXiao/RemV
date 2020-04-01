@@ -9,17 +9,31 @@ import re
 @link        https://github.com/ArmandXiao/RemV.git
 """
 
+
+def getHtml(word):
+    word = word.replace(" ", "%20")
+    url = "http://dict.youdao.com/w/" + word + "/#keyfrom=dict2.top"
+
+    try:
+        res = request.urlopen(url)
+    except:
+        print("搜索失败")
+        return
+
+    html = res.read().decode("utf-8")
+    return html
+
+
 def translate(word):
     '''
     Can translate from English to Chinese Only
     :param word: an English word
     :return: two lists. One contains pronounciations of the word. The other gives all meanings gotten from the website.
     '''
-    word = word.replace(" ", "%20")
-    url = "http://dict.youdao.com/w/" + word + "/#keyfrom=dict2.top"
-    res = request.urlopen(url)
 
-    html = res.read().decode("utf-8")
+    html = getHtml(word)
+    if not html:
+        return [], []
     pronounce = re.compile(r"<span class=\"phonetic\">.+?</span>")
     meaning = re.compile(r"<li>[^<>].*?</li>")
 
@@ -39,7 +53,29 @@ def translate(word):
     return proList, meanList
 
 
+def getFrequency(word):
+    """
+    Return the frequency of the word
+    :param word: word
+    :return: int: the frequency of the word
+    """
+    html = getHtml(word)
+    if not html:
+        return -1
+    findFre = re.compile("\"star star[123456]?\"")
+
+    if not findFre.search(html):
+        return -1
+
+    freListRaw = findFre.search(html).group()
+
+    fre = re.search("[0123456]", freListRaw).group()
+
+    return int(fre)
+
+
 if __name__ == '__main__':
-    lista, listb = translate("pig")
-    print(lista)
-    print(listb)
+    # lista, listb = translate("pig")
+    # print(lista)
+    # print(listb)
+    getFrequency("there")

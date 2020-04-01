@@ -12,7 +12,11 @@ def downloadMP3FromYouDao(word, type_):
     filePath = os.path.join(path, fileName)
 
     if not os.path.exists(filePath):
-        urllib.request.urlretrieve(url, filePath)
+        try:
+            urllib.request.urlretrieve(url, filePath)
+        except:
+            sayTipSound()
+            return ""
     else:
         print("mp3文件已存在")
 
@@ -21,9 +25,10 @@ def downloadMP3FromYouDao(word, type_):
 
 def playSound(word, type_):
     path = downloadMP3FromYouDao(word, type_)
-    playsound(path)
-    # del
-    os.remove(path)
+    if path != "":
+        playsound(path)
+        # del
+        os.remove(path)
 
 
 def sayTipSound():

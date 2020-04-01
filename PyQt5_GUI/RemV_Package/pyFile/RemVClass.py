@@ -92,6 +92,17 @@ class RemVClass(QMainWindow):
         self.ui.proENGBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\ENG.png")))
         self.ui.proUSBtn_2.setIcon(QIcon(toRelativePath("lib\\res\\image\\US.png")))
         self.ui.proENGBtn_2.setIcon(QIcon(toRelativePath("lib\\res\\image\\ENG.png")))
+        self.ui.starBtn_1.setIcon(QIcon(toRelativePath("lib\\res\\image\\star.png")))
+        self.ui.starBtn_2.setIcon(QIcon(toRelativePath("lib\\res\\image\\star.png")))
+        self.ui.starBtn_3.setIcon(QIcon(toRelativePath("lib\\res\\image\\star.png")))
+        self.ui.starBtn_4.setIcon(QIcon(toRelativePath("lib\\res\\image\\star.png")))
+        self.ui.starBtn_5.setIcon(QIcon(toRelativePath("lib\\res\\image\\star.png")))
+
+        self.ui.starBtn_1.hide()
+        self.ui.starBtn_2.hide()
+        self.ui.starBtn_3.hide()
+        self.ui.starBtn_4.hide()
+        self.ui.starBtn_5.hide()
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -119,8 +130,8 @@ class RemVClass(QMainWindow):
         # next, back, translate, show, exit, pronouce 添加点击事件
         self.ui.NextBtn.clicked.connect(self.next)
         self.ui.backBtn.clicked.connect(self.back)
-        self.ui.translateBtn.clicked.connect(self.translate)
-        self.ui.translateBtn_2.clicked.connect(self.translate)
+        self.ui.translateBtn.clicked.connect(self.translateBtnClicked)
+        self.ui.translateBtn_2.clicked.connect(self.translateBtnClicked)
         self.ui.showBtn.clicked.connect(lambda: self.updateWord(self.currentIndex))
         self.ui.exitBtn.clicked.connect(lambda: self.close())
         self.ui.miniBtn.clicked.connect(lambda: self.showMinimized())
@@ -425,6 +436,11 @@ class RemVClass(QMainWindow):
         self.ui.meaningBrowser.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
     def next(self):
+        # Thread to clear Frequency
+        t1 = threading.Thread(target=self.clearFrequency())
+        t1.setDaemon(True)
+        t1.start()
+
         if len(self.wordsOAB) == 0:
             pass
         elif self.currentIndex < self.lessonLen - 1:
@@ -482,6 +498,11 @@ class RemVClass(QMainWindow):
             return
 
     def back(self):
+        # Thread to clear Frequency
+        t1 = threading.Thread(target=self.clearFrequency())
+        t1.setDaemon(True)
+        t1.start()
+
         self.currentIndex -= 1
 
         if self.currentIndex == 0:
@@ -608,6 +629,22 @@ class RemVClass(QMainWindow):
             QMessageBox.information(self, "Congratulations!", "恭喜你完成了本节课的全部单词的测试！")
             return
 
+    def translateBtnClicked(self):
+        """
+        When Translate Button is clicked multiple tasks should run at the same time
+        :return: None
+        """
+        self.translate()
+        # # start a thread of translation
+        # t1 = threading.Thread(target=self.translate)
+        # t1.setDaemon(True)
+        # t1.start()
+
+        # start a thread of setFrequency
+        t2 = threading.Thread(target=self.setFrequency)
+        t2.setDaemon(True)
+        t2.start()
+
     def translate(self):
         """
         get pronunciations, part of speech, and meanings from internet.
@@ -646,6 +683,36 @@ class RemVClass(QMainWindow):
 
         # 保存数据
         self.saveData()
+
+    def setFrequency(self):
+        fre = getTranslationFromYouDao.getFrequency(self.currentWord)
+
+        if fre == -1:
+            return
+        for i in range(fre):
+            if i == 0:
+                self.ui.starBtn_1.show()
+            if i == 1:
+                self.ui.starBtn_2.show()
+            if i == 2:
+                self.ui.starBtn_3.show()
+            if i == 3:
+                self.ui.starBtn_4.show()
+            if i == 4:
+                self.ui.starBtn_5.show()
+
+    def clearFrequency(self):
+        for i in range(5):
+            if i == 0:
+                self.ui.starBtn_1.hide()
+            if i == 1:
+                self.ui.starBtn_2.hide()
+            if i == 2:
+                self.ui.starBtn_3.hide()
+            if i == 3:
+                self.ui.starBtn_4.hide()
+            if i == 4:
+                self.ui.starBtn_5.hide()
 
     def setLessons(self, path):
         """
@@ -782,12 +849,9 @@ class RemVClass(QMainWindow):
         self.setCursor(QCursor(Qt.ArrowCursor))
 
     def prounciate(self, word, type_):
-        try:
-            t1 = threading.Thread(target=getPronFromYouDao.playSound, args=(word, type_))
-            t1.setDaemon(True)
-            t1.start()
-        except:
-            getPronFromYouDao.sayTipSound()
+        t1 = threading.Thread(target=getPronFromYouDao.playSound, args=(word, type_))
+        t1.setDaemon(True)
+        t1.start()
 
     def goToAddScene(self):
         self.secondWin.show()
@@ -845,7 +909,8 @@ class RemVClass(QMainWindow):
                 self.ui_AW.wordEnter.returnPressed.connect(self.enterPressed)
 
             def enterPressed(self):
-                t1 = threading.Thread(target=outterClass.addToBook, args=(self.ui_AW.wordEnter.text(), len(outterClass.pathList) - 1, outterClass.createdBookName))
+                t1 = threading.Thread(target=outterClass.addToBook, args=(
+                self.ui_AW.wordEnter.text(), len(outterClass.pathList) - 1, outterClass.createdBookName))
                 t1.setDaemon(True)
                 t1.start()
                 self.ui_AW.wordEnter.clear()
