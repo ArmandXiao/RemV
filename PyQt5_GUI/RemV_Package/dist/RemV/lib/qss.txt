@@ -1,0 +1,83 @@
+QPushButton#MemorizeBtn_0{
+    color:brown;
+    border-color: black;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: rgb(255,255,255)
+}
+
+QPushButton#QuizBtn_0{
+    color:brown;
+    border-color: black;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: rgb(255,255,255)
+
+}
+QPushButton#MenuBtn_1{
+    color:brown;
+    border-color: black;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: rgb(255,255,255)
+
+}
+
+QPushButton#MenuBtn_2{
+    color:brown;
+    border-color: black;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: rgb(255,255,255)
+
+}
+
+QPushButton#QuizBtn_1{
+    color:brown;
+    border-color: black;
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: rgb(255,255,255)
+
+}
+QPushButton#MemorizeBtn_0:Pressed{
+    color:black
+
+}
+
+QPushButton#QuizBtn_0:Pressed{
+    color:black
+}
+
+QPushButton#QuizBtn_1:Pressed{
+    color:black
+}
+
+QPushButton#MenuBtn_1:Pressed{
+    color:black
+}
+
+QPushButton#MenuBtn_1:Pressed{
+    color:white
+}
+QListWidget#wordListWidget{
+    font: 20px;
+    font-style: bold;
+    font-style: italic;
+    background-color: rgba(0,0,0,0)
+}
+
+QListWidget#meaningListWidget{
+    font: 20px;
+    font-style: bold;
+    background-color: rgba(0,0,0,0)
+}
+
+QPushButton#uploadButton{
+    font: 20px
+}

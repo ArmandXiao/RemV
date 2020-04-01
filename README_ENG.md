@@ -22,6 +22,8 @@
   
   [6. Project preview](#Sixth)  
   
+  [7. Added Functions of new releases](#Seventh)
+  
 <div id="First"></div>  
 
 ## 1. Why do I choose *RemV*
@@ -67,6 +69,7 @@ Especially for learner whose native language is not English.
 - [x] Double Click to Remove a book. Note: the excel still remains on your computer.
 
 ### Memorizing Scene
+- [x] Pronounce words
 - [x] Acquire part of speech and corresponding meanings of each POS online.
 - [x] Able to hide/show the meanings of words.
 
@@ -142,3 +145,11 @@ Especially for learner whose native language is not English.
 - ![image](PyQt5_GUI/Preview-Beta/English/preview_5.png) 
 - ![image](PyQt5_GUI/Preview-Beta/English/preview_6.png) 
 - ![image](PyQt5_GUI/Preview-Beta/English/preview_7.png) 
+
+<div id="Seventh"></div>  
+
+## 7. Added Functions of new releases  
+[Go to Catalog](#Catalog)  
+- run in multi-threading
+- ![image](PyQt5_GUI/Preview-v1.0/English/preview_1.png)
+- ![image](PyQt5_GUI/Preview-v1.0/English/preview_2.png) 

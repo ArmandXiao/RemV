@@ -66,6 +66,7 @@
 - [x] 双击删除从目录删除书籍，文件仍然保留在电脑上
 
 ### 记忆环节
+- [x] 发音朗读
 - [x] 在线获取单词读音，词性，以及对应的释义
 - [x] 可显示/隐藏单词解释
 
@@ -140,10 +141,11 @@
 - ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_6.png) 
 - ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_7.png) 
 
-<div id="First"></div>   
+<div id="Seventh"></div>   
 
 ## 7. 版本新增功能  
 [回到目录](#Catalog)  
-- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_8.png)
-- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_9.png) 
+- 多线程运行
+- ![image](PyQt5_GUI/Preview-v1.0/Chinese/preview_1.jpg)
+- ![image](PyQt5_GUI/Preview-v1.0/Chinese/preview_2.png) 
 
