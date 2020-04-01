@@ -476,7 +476,7 @@ color: white;</string>
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="OverviewScene">
         <property name="autoFillBackground">
@@ -1537,6 +1537,56 @@ p, li { white-space: pre-wrap; }
           </size>
          </property>
         </widget>
+        <widget class="QToolButton" name="proUSBtn">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>230</y>
+           <width>71</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: transparent;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>50</width>
+           <height>50</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="proENGBtn">
+         <property name="geometry">
+          <rect>
+           <x>500</x>
+           <y>230</y>
+           <width>81</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: transparent;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>50</width>
+           <height>50</height>
+          </size>
+         </property>
+        </widget>
         <zorder>frame_4</zorder>
         <zorder>groupBox</zorder>
         <zorder>groupBox_2</zorder>
@@ -1544,6 +1594,8 @@ p, li { white-space: pre-wrap; }
         <zorder>horizontalLayoutWidget_5</zorder>
         <zorder>countBrowser_1</zorder>
         <zorder>showBtn</zorder>
+        <zorder>proUSBtn</zorder>
+        <zorder>proENGBtn</zorder>
        </widget>
        <widget class="QWidget" name="QuizScene">
         <widget class="QLineEdit" name="hintEdit">
@@ -2063,6 +2115,56 @@ p, li { white-space: pre-wrap; }
           </size>
          </property>
         </widget>
+        <widget class="QToolButton" name="proUSBtn_2">
+         <property name="geometry">
+          <rect>
+           <x>210</x>
+           <y>400</y>
+           <width>71</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: transparent;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>50</width>
+           <height>50</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="proENGBtn_2">
+         <property name="geometry">
+          <rect>
+           <x>410</x>
+           <y>400</y>
+           <width>81</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: transparent;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>50</width>
+           <height>50</height>
+          </size>
+         </property>
+        </widget>
         <zorder>frame_3</zorder>
         <zorder>groupBox_3</zorder>
         <zorder>wordEnterListWidget</zorder>
@@ -2073,6 +2175,8 @@ p, li { white-space: pre-wrap; }
         <zorder>statusBtn</zorder>
         <zorder>quizLabel</zorder>
         <zorder>translateBtn_2</zorder>
+        <zorder>proUSBtn_2</zorder>
+        <zorder>proENGBtn_2</zorder>
        </widget>
        <widget class="QWidget" name="page">
         <property name="autoFillBackground">

@@ -1,6 +1,7 @@
 import os
 import pickle
 import sys
+import threading
 from random import randint
 import re
 import webbrowser
@@ -9,6 +10,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QDialog
 
+import getPronFromYouDao
 from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao, createBookScene, addWordScene
 import openpyxl
 
@@ -86,6 +88,10 @@ class RemVClass(QMainWindow):
         self.ui.exitBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\exit.png")))
         self.ui.miniBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\minimize.png")))
         self.ui.addBookBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\enter.png")))
+        self.ui.proUSBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\US.png")))
+        self.ui.proENGBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\ENG.png")))
+        self.ui.proUSBtn_2.setIcon(QIcon(toRelativePath("lib\\res\\image\\US.png")))
+        self.ui.proENGBtn_2.setIcon(QIcon(toRelativePath("lib\\res\\image\\ENG.png")))
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -110,15 +116,18 @@ class RemVClass(QMainWindow):
         self.ui.QuizBtn_1.clicked.connect(self.changeScene_2)
         self.ui.helpBtn.clicked.connect(self.help)
 
-        # next, back, translate, show, exit 添加点击事件
+        # next, back, translate, show, exit, pronouce 添加点击事件
         self.ui.NextBtn.clicked.connect(self.next)
         self.ui.backBtn.clicked.connect(self.back)
         self.ui.translateBtn.clicked.connect(self.translate)
         self.ui.translateBtn_2.clicked.connect(self.translate)
         self.ui.showBtn.clicked.connect(lambda: self.updateWord(self.currentIndex))
         self.ui.exitBtn.clicked.connect(lambda: self.close())
-
         self.ui.miniBtn.clicked.connect(lambda: self.showMinimized())
+        self.ui.proUSBtn.clicked.connect(lambda: self.prounciate(self.currentWord, 0))
+        self.ui.proENGBtn.clicked.connect(lambda: self.prounciate(self.currentWord, 1))
+        self.ui.proUSBtn_2.clicked.connect(lambda: self.prounciate(self.currentWord, 0))
+        self.ui.proENGBtn_2.clicked.connect(lambda: self.prounciate(self.currentWord, 1))
 
         # QuizScene 事件
         # 回车键叫return
@@ -563,8 +572,10 @@ class RemVClass(QMainWindow):
             self.noWrongTime = False
             self.wrongSpel = True
 
-            # add the number in to ErrorBook
-            self.addToBook(self.currentWord)
+            # add the number in to ErrorBook in another thread
+            t2 = threading.Thread(target=self.addToBook, args=(self.currentWord,))
+            t2.setDaemon(True)
+            t2.start()
 
         # clear Entry
         self.ui.enterEdit.clear()
@@ -770,6 +781,14 @@ class RemVClass(QMainWindow):
         self.m_drag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
 
+    def prounciate(self, word, type_):
+        try:
+            t1 = threading.Thread(target=getPronFromYouDao.playSound, args=(word, type_))
+            t1.setDaemon(True)
+            t1.start()
+        except:
+            getPronFromYouDao.sayTipSound()
+
     def goToAddScene(self):
         self.secondWin.show()
         self.secondWin.ui_CB.enterNameEdit.setFocus()
@@ -826,8 +845,9 @@ class RemVClass(QMainWindow):
                 self.ui_AW.wordEnter.returnPressed.connect(self.enterPressed)
 
             def enterPressed(self):
-                outterClass.addToBook(
-                    self.ui_AW.wordEnter.text(), len(outterClass.pathList) - 1, outterClass.createdBookName)
+                t1 = threading.Thread(target=outterClass.addToBook, args=(self.ui_AW.wordEnter.text(), len(outterClass.pathList) - 1, outterClass.createdBookName))
+                t1.setDaemon(True)
+                t1.start()
                 self.ui_AW.wordEnter.clear()
 
             def closeWin(self):
