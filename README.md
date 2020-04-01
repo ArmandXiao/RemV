@@ -22,6 +22,8 @@
   
   [6. 项目预览](#Sixth)  
   
+  [7. 版本新增功能](#Seventh)
+  
 <div id="First"></div>  
 
 ## 1. 为什么选择 *RemV*
@@ -137,3 +139,11 @@
 - ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_5.png) 
 - ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_6.png) 
 - ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_7.png) 
+
+<div id="First"></div>   
+
+## 7. 版本新增功能  
+[回到目录](#Catalog)  
+- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_8.png)
+- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_9.png) 
+
