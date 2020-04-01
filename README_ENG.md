@@ -85,8 +85,8 @@ Especially for learner whose native language is not English.
 
 [回到目录](#Catalog)
 
-### Windows: https://github.com/ArmandXiao/RemV/releases/tag/Beta-Version
-  - Beta-Version is now released.
+### Windows: https://github.com/ArmandXiao/RemV/releases/tag/v1.0
+  - 1.0 Version is now released.
   - **`RemV.exe`** is the executable software.
   - **[WordBook Repository](#WordRepository)** is the library where I integrate the resources of popular book.
     - Download the ones that you need.
