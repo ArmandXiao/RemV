@@ -7,8 +7,9 @@ a = Analysis(['RemV.py'],
              pathex=[r'C:\Users\Armand\PycharmProjects\RemV\PyQt5_GUI\RemV_Package\pyFile'],
              binaries=[],
              datas=[(r'lib/res/image/*.png', "lib/res/image"), (r'lib/res/word_Repository/*.xlsx', "lib/res/word_Repository")
-                    , (r'lib/*.txt',"lib"),(r'lib/res/image/*.jpg', "lib/res/image")],
-             hiddenimports=[],
+                    , (r'lib/*.txt',"lib"),(r'lib/res/image/*.jpg', "lib/res/image")
+                    ,(r'lib/res/pron/*.mp3', "lib/res/pron")],
+             hiddenimports=["playsound.module"],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
