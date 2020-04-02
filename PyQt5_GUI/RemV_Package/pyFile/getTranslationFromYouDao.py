@@ -1,3 +1,4 @@
+import os
 from urllib import parse, request
 import re
 
@@ -15,7 +16,7 @@ def getHtml(word):
     url = "http://dict.youdao.com/w/" + word + "/#keyfrom=dict2.top"
 
     try:
-        res = request.urlopen(url)
+        res = request.urlopen(url, timeout=3)
     except:
         print("搜索失败")
         return
@@ -72,6 +73,8 @@ def getFrequency(word):
     fre = re.search("[0123456]", freListRaw).group()
 
     return int(fre)
+
+    return filePath
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 from urllib import parse, request
 import re
-
+import time
 """
 @copyright   Copyright 2020 RemV
 @license     GPL-3.0 (http://www.gnu.org/licenses/gpl-3.0.html)
@@ -15,7 +15,7 @@ def getHtml(word):
     url = "http://www.cgdict.com/index.php?app=cigen&ac=word&w=" + word
 
     try:
-        res = request.urlopen(url)
+        res = request.urlopen(url, timeout=3)
     except:
         print("搜索失败")
         return
@@ -82,8 +82,6 @@ def getPreOrSuf(word):
 
         resultSux.append(tmp)
 
-    print(resultPre)
-    print(resultSux)
     return resultPre, resultSux
 
 

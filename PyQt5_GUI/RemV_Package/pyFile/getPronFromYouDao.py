@@ -9,9 +9,12 @@ def downloadMP3FromYouDao(word, type_):
     url = "http://dict.youdao.com/dictvoice?type=%d&audio=%s" % (type_, word)
     path = os.getcwd() + r"\lib\res\pron"
     fileName = word + "_" + str(type_) + ".mp3"
+
     filePath = os.path.join(path, fileName)
 
     if not os.path.exists(filePath):
+        if not os.path.exists(path):
+            os.makedirs(path)
         try:
             urllib.request.urlretrieve(url, filePath)
         except:
@@ -33,3 +36,7 @@ def playSound(word, type_):
 
 def sayTipSound():
     playsound(r"lib\res\pron\Please%20check%20your%20internet%20connection_0.mp3")
+
+
+if __name__ == '__main__':
+    playSound("perennial", 1)

@@ -5,12 +5,16 @@ import threading
 from random import randint
 import re
 import webbrowser
+import time
 
+import requests
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor
+from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor, QImage
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QDialog
 
 import getPronFromYouDao
+import getSourceFromOuLu
+import getSuffixFromCgdict
 from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao, createBookScene, addWordScene
 import openpyxl
 
@@ -98,11 +102,15 @@ class RemVClass(QMainWindow):
         self.ui.starBtn_4.setIcon(QIcon(toRelativePath("lib\\res\\image\\star.png")))
         self.ui.starBtn_5.setIcon(QIcon(toRelativePath("lib\\res\\image\\star.png")))
 
+        # hide widgets
         self.ui.starBtn_1.hide()
         self.ui.starBtn_2.hide()
         self.ui.starBtn_3.hide()
         self.ui.starBtn_4.hide()
         self.ui.starBtn_5.hide()
+
+        self.ui.PreSufBox.setVisible(False)
+        self.ui.PreSufBrowser.setVisible(False)
 
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
@@ -131,7 +139,7 @@ class RemVClass(QMainWindow):
         self.ui.NextBtn.clicked.connect(self.next)
         self.ui.backBtn.clicked.connect(self.back)
         self.ui.translateBtn.clicked.connect(self.translateBtnClicked)
-        self.ui.translateBtn_2.clicked.connect(self.translateBtnClicked)
+        self.ui.translateBtn_2.clicked.connect(self.translate)
         self.ui.showBtn.clicked.connect(lambda: self.updateWord(self.currentIndex))
         self.ui.exitBtn.clicked.connect(lambda: self.close())
         self.ui.miniBtn.clicked.connect(lambda: self.showMinimized())
@@ -378,10 +386,14 @@ class RemVClass(QMainWindow):
         Go to memorizing scene
         :return: None
         """
+        # start a thread to download pic
+        self.downloadPic()
+
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.bookListWidget.setEnabled(False)
         self.ui.lessonListWidget.setEnabled(False)
         self.ui.QuizBtn_1.setVisible(False)
+        self.ui.MenuBtn_1.setEnabled(True)
 
         # 把第一个元素更新
         self.updateWord(0)
@@ -396,6 +408,9 @@ class RemVClass(QMainWindow):
         Go to test scene
         :return: None
         """
+        # start a thread to delete pic
+        self.deletePic()
+
         self.remain = self.lessonLen
         self.ui.stackedWidget.setCurrentIndex(2)
         self.ui.enterEdit.setEnabled(True)
@@ -436,10 +451,13 @@ class RemVClass(QMainWindow):
         self.ui.meaningBrowser.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
     def next(self):
+        self.ui.wordPic.hide()
         # Thread to clear Frequency
-        t1 = threading.Thread(target=self.clearFrequency())
-        t1.setDaemon(True)
-        t1.start()
+        self.clearFrequency()
+        self.clearTags()
+
+        self.ui.PreSufBox.setVisible(False)
+        self.ui.PreSufBrowser.setVisible(False)
 
         if len(self.wordsOAB) == 0:
             pass
@@ -499,9 +517,13 @@ class RemVClass(QMainWindow):
 
     def back(self):
         # Thread to clear Frequency
-        t1 = threading.Thread(target=self.clearFrequency())
-        t1.setDaemon(True)
-        t1.start()
+        self.ui.wordPic.hide()
+        self.clearFrequency()
+        self.clearTags()
+
+        self.ui.PreSufBox.setVisible(False)
+        self.ui.PreSufBrowser.setVisible(False)
+        self.ui.wordPic.hide()
 
         self.currentIndex -= 1
 
@@ -634,16 +656,25 @@ class RemVClass(QMainWindow):
         When Translate Button is clicked multiple tasks should run at the same time
         :return: None
         """
+        # MainThread
         self.translate()
-        # # start a thread of translation
-        # t1 = threading.Thread(target=self.translate)
-        # t1.setDaemon(True)
-        # t1.start()
+
+        # start a thread of load pic
+        t1 = threading.Thread(target=self.loadWordPic)
+        t1.setDaemon(True)
+        t1.start()
 
         # start a thread of setFrequency
         t2 = threading.Thread(target=self.setFrequency)
         t2.setDaemon(True)
         t2.start()
+
+        # start a thread of setTags
+        t3 = threading.Thread(target=self.setTags)
+        t3.setDaemon(True)
+        t3.start()
+
+        self.setPreOrSuf()
 
     def translate(self):
         """
@@ -663,6 +694,8 @@ class RemVClass(QMainWindow):
             tmp += each + "\n"
         self.ui.meaningBrowser.setText(tmp)
         self.ui.meaningBrowser_2.setText(tmp)
+
+        return
 
     def parseBook(self, path):
         """
@@ -684,7 +717,38 @@ class RemVClass(QMainWindow):
         # 保存数据
         self.saveData()
 
+    def setPreOrSuf(self):
+        """
+        Set Prefix and Suffix for each word
+        :return: None
+        """
+
+        PreList, SufList = getSuffixFromCgdict.getPreOrSuf(self.currentWord)
+
+        if len(PreList) != 0:
+            self.ui.PreSufBox.setVisible(True)
+            self.ui.PreSufBrowser.setVisible(True)
+            self.ui.PreSufBrowser.clear()
+            for eachPre in PreList:
+                self.ui.PreSufBrowser.append(eachPre)
+                self.ui.PreSufBrowser.append("\n")
+            return
+
+        if len(SufList) != 0:
+            self.ui.PreSufBrowser.clear()
+            self.ui.PreSufBox.setVisible(True)
+            self.ui.PreSufBrowser.setVisible(True)
+            for eachSuf in SufList:
+                self.ui.PreSufBrowser.append(eachSuf)
+                self.ui.PreSufBrowser.append("\n")
+            return
+
     def setFrequency(self):
+        """
+        Set Frequency of use for each word
+        :return: None
+        """
+
         fre = getTranslationFromYouDao.getFrequency(self.currentWord)
 
         if fre == -1:
@@ -701,6 +765,8 @@ class RemVClass(QMainWindow):
             if i == 4:
                 self.ui.starBtn_5.show()
 
+        return
+
     def clearFrequency(self):
         for i in range(5):
             if i == 0:
@@ -713,6 +779,94 @@ class RemVClass(QMainWindow):
                 self.ui.starBtn_4.hide()
             if i == 4:
                 self.ui.starBtn_5.hide()
+
+        return
+
+    def loadWordPic(self):
+        """
+        load Pic in local files
+        :return:
+        """
+
+        wordPath = self.currentWord.replace(" ", "%20").strip() + ".jpg"
+        path_ = os.getcwd() + r"\lib\res\pic"
+        filePath = os.path.join(path_, wordPath)
+        if os.path.exists(filePath):
+            img = QPixmap(filePath)
+            img = img.scaled(241, 261, Qt.IgnoreAspectRatio, Qt.FastTransformation)
+            self.ui.wordPic.setPixmap(img)
+            self.ui.wordPic.show()
+        else:
+            self.loadWordPicOnline()
+        return
+
+    def loadWordPicOnline(self):
+        url = getSourceFromOuLu.getPicUrl(self.currentWord)
+        print(url)
+        if url is not None:
+            try:
+                res = requests.get(url, timeout=3)
+                img = QImage.fromData(res.content)
+                img = img.scaled(241, 261, Qt.IgnoreAspectRatio, Qt.FastTransformation)
+                self.ui.wordPic.setPixmap(QPixmap(img))
+                self.ui.wordPic.show()
+                return
+
+            except BaseException:
+                print("图片解析错误")
+        else:
+            return
+
+    def downloadPic(self):
+
+        def download(lessonLen, wordsOAB, book, lesson):
+            for i in range(lessonLen):
+                word = wordsOAB[book][lesson][i][0]
+                t1 = threading.Thread(target=getSourceFromOuLu.downloadPicFromOuLu, args=(word,))
+                # Daemon should be False!!! When the mainThread is done, I want the sub thread to run as well
+                t1.setDaemon(False)
+                t1.start()
+
+        td = threading.Thread(target=download,
+                              args=(self.lessonLen, self.wordsOAB, self.currentBook, self.currentLesson))
+        td.setDaemon(False)
+        td.start()
+
+    def deletePic(self):
+        def delete():
+            path_ = os.getcwd() + r"\lib\res\pic"
+            # 遍历删除所有lib\res\pic 下的文件
+            for root, dirs, files in os.walk(path_, topdown=False):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    os.rmdir(os.path.join(root, name))
+            return
+
+        t1 = threading.Thread(target=delete)
+        t1.setDaemon(True)
+        t1.start()
+
+    def setTags(self):
+        tagList = getSourceFromOuLu.getTags(self.currentWord)
+        length = len(tagList)
+        if length != 0:
+            for i in range(length):
+                if i == 0:
+                    self.ui.tag_1.setText(tagList[i])
+                if i == 1:
+                    self.ui.tag_2.setText(tagList[i])
+                if i == 2:
+                    self.ui.tag_3.setText(tagList[i])
+                if i == 3:
+                    self.ui.tag_4.setText(tagList[i])
+        return
+
+    def clearTags(self):
+        self.ui.tag_1.setText("")
+        self.ui.tag_2.setText("")
+        self.ui.tag_3.setText("")
+        self.ui.tag_4.setText("")
 
     def setLessons(self, path):
         """
@@ -831,9 +985,7 @@ class RemVClass(QMainWindow):
 
             self.m_DragPosition = event.globalPos() - self.pos()
             self.setCursor(QCursor(Qt.OpenHandCursor))
-            # print(event.globalPos())
-            # print(event.pos())
-            # print(self.pos())
+
         if event.button() == Qt.RightButton:
             self.close()
 
@@ -910,7 +1062,7 @@ class RemVClass(QMainWindow):
 
             def enterPressed(self):
                 t1 = threading.Thread(target=outterClass.addToBook, args=(
-                self.ui_AW.wordEnter.text(), len(outterClass.pathList) - 1, outterClass.createdBookName))
+                    self.ui_AW.wordEnter.text(), len(outterClass.pathList) - 1, outterClass.createdBookName))
                 t1.setDaemon(True)
                 t1.start()
                 self.ui_AW.wordEnter.clear()
@@ -985,3 +1137,6 @@ class RemVClass(QMainWindow):
 
         self.ui.meaningBrowser_2.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
         self.ui.meaningBrowser_2.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+
+class MyThread(threading.Thread):
+    pass
