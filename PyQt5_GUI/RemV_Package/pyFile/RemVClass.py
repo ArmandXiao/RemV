@@ -658,11 +658,7 @@ class RemVClass(QMainWindow):
         """
         # MainThread
         self.translate()
-
-        # start a thread of load pic
-        t1 = threading.Thread(target=self.loadWordPic)
-        t1.setDaemon(True)
-        t1.start()
+        self.setPreOrSuf()
 
         # start a thread of setFrequency
         t2 = threading.Thread(target=self.setFrequency)
@@ -674,7 +670,10 @@ class RemVClass(QMainWindow):
         t3.setDaemon(True)
         t3.start()
 
-        self.setPreOrSuf()
+        # start a thread of load pic
+        t1 = threading.Thread(target=self.loadWordPic)
+        t1.setDaemon(True)
+        t1.start()
 
     def translate(self):
         """
@@ -819,18 +818,25 @@ class RemVClass(QMainWindow):
 
     def downloadPic(self):
 
-        def download(lessonLen, wordsOAB, book, lesson):
-            for i in range(lessonLen):
+        def download(start, lessonLen, wordsOAB, book, lesson):
+            for i in range(start, lessonLen):
                 word = wordsOAB[book][lesson][i][0]
-                t1 = threading.Thread(target=getSourceFromOuLu.downloadPicFromOuLu, args=(word,))
-                # Daemon should be False!!! When the mainThread is done, I want the sub thread to run as well
-                t1.setDaemon(False)
-                t1.start()
+                getSourceFromOuLu.downloadPicFromOuLu(word)
 
-        td = threading.Thread(target=download,
-                              args=(self.lessonLen, self.wordsOAB, self.currentBook, self.currentLesson))
-        td.setDaemon(False)
-        td.start()
+        num = 0
+        while num < self.lessonLen:
+            if (num + 4) <= self.lessonLen:
+                t0 = threading.Thread(target=download,
+                                      args=(num, num + 4, self.wordsOAB, self.currentBook, self.currentLesson))
+                t0.setDaemon(True)
+                t0.start()
+            else:
+                t0 = threading.Thread(target=download,
+                                      args=(num, self.lessonLen, self.wordsOAB, self.currentBook, self.currentLesson))
+                t0.setDaemon(True)
+                t0.start()
+            num = num + 4
+
 
     def deletePic(self):
         def delete():
@@ -844,7 +850,7 @@ class RemVClass(QMainWindow):
             return
 
         t1 = threading.Thread(target=delete)
-        t1.setDaemon(True)
+        t1.setDaemon(False)
         t1.start()
 
     def setTags(self):
@@ -1138,5 +1144,17 @@ class RemVClass(QMainWindow):
         self.ui.meaningBrowser_2.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
         self.ui.meaningBrowser_2.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
 
-class MyThread(threading.Thread):
-    pass
+# class MyThread(threading.Thread):
+#
+#     def __init__(self, target,:
+#         threading.Thread.__init__(self)
+#         self.target = target
+#         self.args = args
+#
+#     def run(self):
+#         self.target(self.args)
+#         t = threading.Timer(5, self.quitSelf)
+#         t.start()
+#
+#     def quitSelf(self):
+#         quit()
