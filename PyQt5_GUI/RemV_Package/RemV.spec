@@ -7,7 +7,7 @@ a = Analysis(['RemV.py'],
              pathex=[r'C:\Users\Armand\PycharmProjects\RemV\PyQt5_GUI\RemV_Package\pyFile'],
              binaries=[],
              datas=[(r'lib/res/image/*.png', "lib/res/image"), (r'lib/res/word_Repository/*.xlsx', "lib/res/word_Repository")
-                    , (r'lib/*.txt',"lib"),(r'lib/res/image/*.jpg', "lib/res/image")
+                    , (r'lib/*.txt',"lib"),(r'lib/res/image/*.jpg', "lib/res/image"),(r'lib/res/image/*.jpeg', "lib/res/image")
                     ,(r'lib/res/pron/*.mp3', "lib/res/pron"),(r'lib/res/*.txt',"lib/res")
                     ,(r'lib/res/image/*.ico',"lib/res/image")],
              hiddenimports=["playsound.module"],
@@ -17,8 +17,7 @@ a = Analysis(['RemV.py'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher,
-             noarchive=False,
-             icon=r"lib/res/image/logo_1_128x128")
+             noarchive=False)
 
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
@@ -31,7 +30,8 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False
+          console=False,
+          icon=r"lib/res/image/logo_1_128x128.ico"
           )
 
 coll = COLLECT(exe,
