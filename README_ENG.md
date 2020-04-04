@@ -1,4 +1,4 @@
-# RemV
+# RemV  ![](https://img.shields.io/badge/license-GPL3.0-000000.svg)![](https://img.shields.io/badge/platform-Windows-green.svg)![](https://img.shields.io/badge/version-v1.1-red.svg)
 **Note：This open source project follows [GNU General Public License v3.0](LICENSE), and the right of authorship is comopletely held by Lingao, Xiao.**  
 **注意: 这个开源项目遵从 [GUN通用公开许可协议 v3.0](GUN通用公开许可协议)，著名权被 *肖凌奥* 全权持有.**
 ***
@@ -6,6 +6,9 @@
 ***
 - This software can run on multi-platform.
 <div id="Catalog"></div>  
+
+## Latest Release Version
+- Version 1.1
 
 ## Catalog
  
@@ -19,10 +22,13 @@
   [4. How to set up](#Fourth)  
   
   [5. How to use](#Fifth)  
-  
-  [6. Project preview](#Sixth)  
-  
+    
   [7. Added Functions of new releases](#Seventh)
+  -   [7.1. Project preview](#Sixth)  
+  
+  [8. APIs](#Eighth)
+  
+  [9. Special Acknowledgement](#Ninth)
   
 <div id="First"></div>  
 
@@ -67,11 +73,17 @@ Especially for learner whose native language is not English.
 - [x] Record the progess
 - [x] Record the cumulative words you have remembered. When the number gets bigger, you will have sense of achievement. I swear. o(\*￣▽￣\*)ブ
 - [x] Double Click to Remove a book. Note: the excel still remains on your computer.
+- [x] Sentences from great people
 
 ### Memorizing Scene
 - [x] Pronounce words
 - [x] Acquire part of speech and corresponding meanings of each POS online.
 - [x] Able to hide/show the meanings of words.
+- [x] Frequency of word use
+- [x] Tags of words
+- [x] Corresponding pictures of words
+- [x] Prefix and Suffix of words
+
 
 ### Quiz Scene
 - [x] Words in quiz scene are given randomly.
@@ -132,24 +144,47 @@ Especially for learner whose native language is not English.
 6. Click Quiz on the right part, to start a quiz directly. ("**NOT** RECOMMANDED")
 7. Complete!
 
-<div id="Sixth"></div>  
-
-## 6. Project Preview.
-
-[Go to Catalog](#Catalog)
-
-- ![image](PyQt5_GUI/Preview-Beta/preview_1.jpg) 
-- ![image](PyQt5_GUI/Preview-Beta/English/preview_2.png) 
-- ![image](PyQt5_GUI/Preview-Beta/English/preview_3.png) 
-- ![image](PyQt5_GUI/Preview-Beta/English/preview_4.png) 
-- ![image](PyQt5_GUI/Preview-Beta/English/preview_5.png) 
-- ![image](PyQt5_GUI/Preview-Beta/English/preview_6.png) 
-- ![image](PyQt5_GUI/Preview-Beta/English/preview_7.png) 
-
 <div id="Seventh"></div>  
 
 ## 7. Added Functions of new releases  
 [Go to Catalog](#Catalog)  
+### v1.1
+- **整体布局修改：大小调整**
+- Frequency of word use
+- Picture of words, if they have
+- Prefix and suffix
+- Tags of words
+- Sentences from great people
+- ![image](PyQt5_GUI/version_previews/Preview-v1.1/English/preview_1.jpg)
+- ![image](PyQt5_GUI/version_previews/Preview-v1.1/English/preview_2.jpg)
+- ![image](PyQt5_GUI/version_previews/Preview-v1.1/English/preview_3.jpg)
+### v1.0
 - run in multi-threading
-- ![image](PyQt5_GUI/Preview-v1.0/English/preview_1.png)
-- ![image](PyQt5_GUI/Preview-v1.0/English/preview_2.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-v1.0/English/preview_1.png)
+- ![image](PyQt5_GUI/version_previews/Preview-v1.0/English/preview_2.png) 
+<div id="Sixth"></div>  
+
+## 7.1. Project Preview.
+
+[Go to Catalog](#Catalog)
+### This is the preview for Aplha Version
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/preview_1.jpg) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/English/preview_2.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/English/preview_3.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/English/preview_4.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/English/preview_5.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/English/preview_6.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/English/preview_7.png) 
+
+<div id="Eighth"></div>   
+
+## 8. APIs
+- **YouDao Dictionary: translation，part of speech，phonetic symbol** 
+- **YouDao Dictionary voice: American pronunciation，British pronunciation**
+- **Cg Dictionary: Frequency of word use**
+- **OuLu Dictionary: Pictures，Tags of words**
+
+<div id="Ninth"></div>   
+
+## 9. Special Acknowledgement
+- The inspiration of RemV icon came from ***杨其霖, Gary Young***

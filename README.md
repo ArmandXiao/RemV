@@ -1,4 +1,4 @@
-# RemV
+# RemV  ![](https://img.shields.io/badge/license-GPL3.0-000000.svg)![](https://img.shields.io/badge/platform-Windows-green.svg)![](https://img.shields.io/badge/version-v1.1-red.svg)
 **Note：This open source project follows [GNU General Public License v3.0](LICENSE), and the right of authorship is comopletely held by Lingao, Xiao.**  
 **注意: 这个开源项目遵从 [GUN通用公开许可协议 v3.0](GUN通用公开许可协议)，著名权被 *肖凌奥* 全权持有.**
 ***
@@ -6,6 +6,9 @@
 ***
 - 此软件可以在多平台上运行
 <div id="Catalog"></div>  
+
+## 最新版本号
+- Version 1.1
 
 ## 目录
  
@@ -19,10 +22,13 @@
   [4. 如何安装](#Fourth)  
   
   [5. 如何使用](#Fifth)  
-  
-  [6. 项目预览](#Sixth)  
-  
+    
   [7. 版本新增功能](#Seventh)
+  -   [7.1. 项目预览](#Sixth)
+  
+  [8. 接口使用](#Eighth)
+  
+  [9. 特别鸣谢](#Ninth)
   
 <div id="First"></div>  
 
@@ -64,11 +70,16 @@
 - [x] 学习进度记录，不用担心忘记上次学到哪里了
 - [x] 学习总单词数记录，成就感满满的 o(\*￣▽￣\*)ブ
 - [x] 双击删除从目录删除书籍，文件仍然保留在电脑上
+- [x] 名人名言
 
 ### 记忆环节
 - [x] 发音朗读
 - [x] 在线获取单词读音，词性，以及对应的释义
 - [x] 可显示/隐藏单词解释
+- [x] 词汇使用频率
+- [x] 词汇标签
+- [x] 词汇对应网络图片
+- [x] 词跟词缀
 
 ### 测试环节
 - [x] 根据提示输入正确单词，拼写检测
@@ -127,25 +138,51 @@
 6. 或点击小测按钮，进行直接小测 ("不推荐")  
 7. 完成第一轮背诵，祝你好运~  
 
-<div id="Sixth"></div>  
-
-## 6. 项目预览  
-
-[回到目录](#Catalog)
-
-- ![image](PyQt5_GUI/Preview-Beta/preview_1.jpg) 
-- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_2.png) 
-- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_3.png) 
-- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_4.png) 
-- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_5.png) 
-- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_6.png) 
-- ![image](PyQt5_GUI/Preview-Beta/Chinese/preview_7.png) 
 
 <div id="Seventh"></div>   
 
 ## 7. 版本新增功能  
 [回到目录](#Catalog)  
+### v1.1
+- **整体布局修改：大小调整**
+- 词频
+- 图片
+- 词跟词缀
+- 词汇标签
+- 名人名言
+- ![image](PyQt5_GUI/version_previews/Preview-v1.1/Chinese/preview_1.jpg)
+- ![image](PyQt5_GUI/version_previews/Preview-v1.1/Chinese/preview_2.jpg)
+- ![image](PyQt5_GUI/version_previews/Preview-v1.1/Chinese/preview_3.jpg) 
+### v1.0
 - 多线程运行
-- ![image](PyQt5_GUI/Preview-v1.0/Chinese/preview_1.jpg)
-- ![image](PyQt5_GUI/Preview-v1.0/Chinese/preview_2.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-v1.0/Chinese/preview_1.jpg)
+- ![image](PyQt5_GUI/version_previews/Preview-v1.0/Chinese/preview_2.png)
+
+<div id="Sixth"></div>  
+
+## 7.1. 项目预览  
+
+[回到目录](#Catalog)
+
+### 内测版界面
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/preview_1.jpg) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/Chinese/preview_2.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/Chinese/preview_3.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/Chinese/preview_4.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/Chinese/preview_5.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/Chinese/preview_6.png) 
+- ![image](PyQt5_GUI/version_previews/Preview-Beta/Chinese/preview_7.png)  
+
+<div id="Eighth"></div>   
+
+## 8. 使用接口
+- **有道词典: 翻译，词性，音标**
+- **有道语音库: 美式发音，英式发音**
+- **词跟字典: 词频**
+- **欧陆词典: 图片，标签**
+
+<div id="Ninth"></div>   
+
+## 9. 特别鸣谢
+- 图标设计灵感来自 ***杨其霖, Gary Young***
 
