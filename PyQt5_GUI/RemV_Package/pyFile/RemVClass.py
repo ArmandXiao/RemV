@@ -5,17 +5,18 @@ import threading
 from random import randint
 import re
 import webbrowser
-import time
+from urllib import request
 
 import requests
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QIcon, QPalette, QBrush, QCursor, QImage
+from PyQt5.QtGui import QPixmap, QIcon, QCursor, QImage
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QDialog
 
 import getPronFromYouDao
 import getSourceFromOuLu
 import getSuffixFromCgdict
-from pyFile import FirstGui_ChineseVersion, functions, getTranslationFromYouDao, createBookScene, addWordScene
+from pyFile import functions, getTranslationFromYouDao, createBookScene, addWordScene, \
+    GUI_Chinese_Adjust, getGreatSentences
 import openpyxl
 
 """
@@ -40,37 +41,38 @@ def loadQss():
         return f.read()
 
 
+def internetCheck():
+    try:
+        response = requests.get("http://www.baidu.com", timeout=2)
+    except:
+        return False
+    return True
+
+
 class RemVClass(QMainWindow):
 
     def __init__(self):
         super().__init__()
 
         # 中文版
-        self.ui = FirstGui_ChineseVersion.Ui_MainWindow()
-        FirstGui_ChineseVersion.Ui_MainWindow.setupUi(self.ui, self)
+        self.ui = GUI_Chinese_Adjust.Ui_MainWindow()
+        GUI_Chinese_Adjust.Ui_MainWindow.setupUi(self.ui, self)
 
         # Create second and third scene
         self.secondWin = self.accessSecond()()
         self.thirdWin = self.accessThird()()
 
-        self.ui.stackedWidget.setCurrentIndex(3)
+        self.ui.stackedWidget.setCurrentIndex(4)
 
         # 禁止窗口缩放和拉伸
         self.setWindowFlag(Qt.FramelessWindowHint)
 
-        # 更改图片尺寸
-        self.image = QPixmap(toRelativePath("lib\\res\\image\\background_3"))
-        self.image = self.image.scaled(1259, 878, Qt.IgnoreAspectRatio, Qt.FastTransformation)
-
         # titleBar 图片
-        self.titleImage = QPixmap(toRelativePath("lib\\res\\image\\background_5"))
-        self.titleImage = self.titleImage.scaled(1257, 25, Qt.IgnoreAspectRatio, Qt.FastTransformation)
-        self.ui.TitleBar_Label.setPixmap(self.titleImage)
+        self.ui.TitleBar_Widget.setStyleSheet("#TitleBar_Widget{border-image:url(./lib/res/image/background_5);}")
+        self.ui.centralwidget.setStyleSheet("#centralwidget{border-image:url(./lib/res/image/background_yellow);}")
 
-        # 添加主窗口背景图
-        palette = QPalette()
-        palette.setBrush(QPalette.Background, QBrush(QPixmap(self.image)))
-        self.setPalette(palette)
+        self.setWindowIcon(QIcon("lib\\res\\image\\logo_1_128x128.ico"))
+        self.ui.icoBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\logo_1_128x128.ico")))
 
         # 先disable
         self.ui.stackedWidget.setEnabled(False)
@@ -103,11 +105,11 @@ class RemVClass(QMainWindow):
         self.ui.starBtn_5.setIcon(QIcon(toRelativePath("lib\\res\\image\\star.png")))
 
         # hide widgets
-        self.ui.starBtn_1.hide()
-        self.ui.starBtn_2.hide()
-        self.ui.starBtn_3.hide()
-        self.ui.starBtn_4.hide()
-        self.ui.starBtn_5.hide()
+        self.ui.starBtn_1.setVisible(False)
+        self.ui.starBtn_2.setVisible(False)
+        self.ui.starBtn_3.setVisible(False)
+        self.ui.starBtn_4.setVisible(False)
+        self.ui.starBtn_5.setVisible(False)
 
         self.ui.PreSufBox.setVisible(False)
         self.ui.PreSufBrowser.setVisible(False)
@@ -152,6 +154,9 @@ class RemVClass(QMainWindow):
         # 回车键叫return
         self.ui.enterEdit.returnPressed.connect(self.enterCheck)
         self.ui.enterEdit.textChanged.connect(self.checkEverySyllable)
+
+        # MenuBar 事件
+        self.ui.updateCheckBtn.pressed.connect(self.updateCheck)
 
         # add styleSheet for scrollBars
         self.setScrollBarStyle()
@@ -387,7 +392,7 @@ class RemVClass(QMainWindow):
         :return: None
         """
         # start a thread to download pic
-        self.downloadPic()
+        # self.downloadPic()
 
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.bookListWidget.setEnabled(False)
@@ -408,8 +413,8 @@ class RemVClass(QMainWindow):
         Go to test scene
         :return: None
         """
-        # start a thread to delete pic
-        self.deletePic()
+        # # start a thread to delete pic
+        # self.deletePic()
 
         self.remain = self.lessonLen
         self.ui.stackedWidget.setCurrentIndex(2)
@@ -573,7 +578,6 @@ class RemVClass(QMainWindow):
             self.saveData()
             self.getData()
 
-            # self.currentLesson += 1
             return
 
         tmp = randint(0, self.lessonLen - 1)
@@ -648,7 +652,10 @@ class RemVClass(QMainWindow):
             self.ui.hintEdit.clear()
             self.randomSet = set()
             self.ui.statusBtn.setIcon(QIcon(toRelativePath("lib\\res\\image\\correct.png")))
-            QMessageBox.information(self, "Congratulations!", "恭喜你完成了本节课的全部单词的测试！")
+
+            engSentence, chiSentence = getGreatSentences.getSentences()
+            self.ui.greatSentenceEng.setText(engSentence)
+            self.ui.greatSentenceCHI.setText(chiSentence)
             return
 
     def translateBtnClicked(self):
@@ -656,35 +663,36 @@ class RemVClass(QMainWindow):
         When Translate Button is clicked multiple tasks should run at the same time
         :return: None
         """
-        # MainThread
-        self.translate()
-        self.setPreOrSuf()
+        if internetCheck():
+            # MainThread
+            self.translate()
+            self.setPreOrSuf()
 
-        # start a thread of setFrequency
-        t2 = threading.Thread(target=self.setFrequency)
-        t2.setDaemon(True)
-        t2.start()
+            # start a thread of setFrequency
+            t2 = threading.Thread(target=self.setFrequency)
+            t2.setDaemon(True)
+            t2.start()
 
-        # start a thread of setTags
-        t3 = threading.Thread(target=self.setTags)
-        t3.setDaemon(True)
-        t3.start()
+            # start a thread of setTags
+            t3 = threading.Thread(target=self.setTags)
+            t3.setDaemon(True)
+            t3.start()
 
-        # start a thread of load pic
-        t1 = threading.Thread(target=self.loadWordPic)
-        t1.setDaemon(True)
-        t1.start()
+            # start a thread of load pic
+            t1 = threading.Thread(target=self.loadWordPic)
+            t1.setDaemon(True)
+            t1.start()
+        else:
+            self.ui.meaningBrowser.setText("抱歉，请检查您的网络连接\n/(ㄒoㄒ)/~~")
+            self.loadExistPic(r"lib/res/image/menhera-3.png")
 
     def translate(self):
         """
         get pronunciations, part of speech, and meanings from internet.
         :return:
         """
-        try:
-            ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
-        except:
-            ProunceList = [""]
-            MeaningList = ["抱歉，请检查您的网络连接"]
+        ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
+
         tmp = "音标:"
         for each in ProunceList:
             tmp += each
@@ -754,30 +762,30 @@ class RemVClass(QMainWindow):
             return
         for i in range(fre):
             if i == 0:
-                self.ui.starBtn_1.show()
+                self.ui.starBtn_1.setVisible(True)
             if i == 1:
-                self.ui.starBtn_2.show()
+                self.ui.starBtn_2.setVisible(True)
             if i == 2:
-                self.ui.starBtn_3.show()
+                self.ui.starBtn_3.setVisible(True)
             if i == 3:
-                self.ui.starBtn_4.show()
+                self.ui.starBtn_4.setVisible(True)
             if i == 4:
-                self.ui.starBtn_5.show()
+                self.ui.starBtn_5.setVisible(True)
 
         return
 
     def clearFrequency(self):
         for i in range(5):
             if i == 0:
-                self.ui.starBtn_1.hide()
+                self.ui.starBtn_1.setVisible(False)
             if i == 1:
-                self.ui.starBtn_2.hide()
+                self.ui.starBtn_2.setVisible(False)
             if i == 2:
-                self.ui.starBtn_3.hide()
+                self.ui.starBtn_3.setVisible(False)
             if i == 3:
-                self.ui.starBtn_4.hide()
+                self.ui.starBtn_4.setVisible(False)
             if i == 4:
-                self.ui.starBtn_5.hide()
+                self.ui.starBtn_5.setVisible(False)
 
         return
 
@@ -791,17 +799,21 @@ class RemVClass(QMainWindow):
         path_ = os.getcwd() + r"\lib\res\pic"
         filePath = os.path.join(path_, wordPath)
         if os.path.exists(filePath):
-            img = QPixmap(filePath)
-            img = img.scaled(241, 261, Qt.IgnoreAspectRatio, Qt.FastTransformation)
-            self.ui.wordPic.setPixmap(img)
-            self.ui.wordPic.show()
+            self.loadExistPic(filePath)
         else:
             self.loadWordPicOnline()
         return
 
+    def loadExistPic(self, filePath):
+        img = QPixmap(filePath)
+        img = img.scaled(self.ui.picWidget.width(), self.ui.picWidget.height(),
+                         Qt.IgnoreAspectRatio, Qt.FastTransformation)
+        self.ui.wordPic.setPixmap(img)
+        self.ui.wordPic.show()
+
     def loadWordPicOnline(self):
         url = getSourceFromOuLu.getPicUrl(self.currentWord)
-        print(url)
+
         if url is not None:
             try:
                 res = requests.get(url, timeout=3)
@@ -817,39 +829,22 @@ class RemVClass(QMainWindow):
             return
 
     def downloadPic(self):
-
-        def download(start, lessonLen, wordsOAB, book, lesson):
-            for i in range(start, lessonLen):
-                word = wordsOAB[book][lesson][i][0]
-                getSourceFromOuLu.downloadPicFromOuLu(word)
-
         num = 0
         while num < self.lessonLen:
             if (num + 4) <= self.lessonLen:
-                t0 = threading.Thread(target=download,
-                                      args=(num, num + 4, self.wordsOAB, self.currentBook, self.currentLesson))
+                t0 = MyThread(args=(num, num + 4, self.wordsOAB, self.currentBook, self.currentLesson),
+                              func="download")
                 t0.setDaemon(True)
                 t0.start()
             else:
-                t0 = threading.Thread(target=download,
-                                      args=(num, self.lessonLen, self.wordsOAB, self.currentBook, self.currentLesson))
+                t0 = MyThread(args=(num, self.lessonLen, self.wordsOAB, self.currentBook, self.currentLesson),
+                              func="download")
                 t0.setDaemon(True)
                 t0.start()
             num = num + 4
 
-
     def deletePic(self):
-        def delete():
-            path_ = os.getcwd() + r"\lib\res\pic"
-            # 遍历删除所有lib\res\pic 下的文件
-            for root, dirs, files in os.walk(path_, topdown=False):
-                for name in files:
-                    os.remove(os.path.join(root, name))
-                for name in dirs:
-                    os.rmdir(os.path.join(root, name))
-            return
-
-        t1 = threading.Thread(target=delete)
+        t1 = MyThread(func="delete")
         t1.setDaemon(False)
         t1.start()
 
@@ -1006,6 +1001,43 @@ class RemVClass(QMainWindow):
         self.m_drag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
 
+    def updateCheck(self):
+        currentVersion = ""
+        newVersion = ""
+        with open(r"lib/version.txt", "r") as f:
+            currentVersion = f.readline().strip()
+        try:
+            res = request.urlopen(
+                r"https://github.com/ArmandXiao/RemV/blob/master/PyQt5_GUI/RemV_Package/lib/version.txt",
+                timeout=3)
+            html = res.read().decode("utf-8")
+
+            findVersion = re.compile(
+                "(<td id=\"LC1\" class=\"blob-code blob-code-inner js-file-line\">)(.*?)(</td>)")
+            newVersion =findVersion.findall(html)[0][1].strip()
+            if newVersion != currentVersion:
+                response = QMessageBox.question(self, "软件更新提示", "新版本: %s "
+                                                                "\n当前版本:\n %s\n"
+                                                                "\n"
+                                                                "\n 是否前去官网查看或下载最新版"
+                                                                "\n\n https://github.com/ArmandXiao/RemV.git\n"
+                                                                "\n\n\t是否前往？"
+                                                % (newVersion, currentVersion))
+                if response != 65536:
+                    webbrowser.open("https://github.com/ArmandXiao/RemV.git")
+            else:
+                response = QMessageBox.information(self, "软件更新提示", "当前版本: %s"
+                                                                   "\n已经是最新般啦！"
+                                                                   "\n请放心使用"
+                                                   % currentVersion)
+        except:
+            response = QMessageBox.question(self, "提示", "自动检测版本更新失败: 连接超时"
+                                                        "\n请前往官网进行查看:"
+                                                        "\n\nhttps://github.com/ArmandXiao/RemV.git"
+                                                        "\n\n\t是否前往？")
+            if response != 65536:
+                webbrowser.open("https://github.com/ArmandXiao/RemV.git")
+
     def prounciate(self, word, type_):
         t1 = threading.Thread(target=getPronFromYouDao.playSound, args=(word, type_))
         t1.setDaemon(True)
@@ -1079,7 +1111,7 @@ class RemVClass(QMainWindow):
                 outterClass.getData()
                 outterClass.ui.bookListWidget.clear()
                 outterClass.loadBookNames(outterClass.pathList)
-                outterClass.ui.stackedWidget.setCurrentIndex(3)
+                outterClass.ui.stackedWidget.setCurrentIndex(4)
                 outterClass.ui.lessonListWidget.clear()
                 outterClass.thirdWin.hide()
 
@@ -1144,17 +1176,36 @@ class RemVClass(QMainWindow):
         self.ui.meaningBrowser_2.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
         self.ui.meaningBrowser_2.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
 
-# class MyThread(threading.Thread):
-#
-#     def __init__(self, target,:
-#         threading.Thread.__init__(self)
-#         self.target = target
-#         self.args = args
-#
-#     def run(self):
-#         self.target(self.args)
-#         t = threading.Timer(5, self.quitSelf)
-#         t.start()
-#
-#     def quitSelf(self):
-#         quit()
+        self.ui.PreSufBrowser.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
+
+
+class MyThread(threading.Thread):
+    def __init__(self, func="download", args=()):
+        threading.Thread.__init__(self)
+        self.result = None
+        self.error = None
+        self.func = func
+        self.args = args
+
+    def run(self):
+        print("%s 执行啦" % self.name)
+        if self.func == "download":
+            self.download(*self.args)
+        if self.func == "delete":
+            self.delete()
+
+    def download(self, startNum, lessonLen, wordsOAB, book, lesson):
+        print("download 成功执行")
+
+        for i in range(startNum, lessonLen):
+            word = wordsOAB[book][lesson][i][0]
+            getSourceFromOuLu.downloadPicFromOuLu(word)
+
+    def delete(self):
+        path_ = os.getcwd() + r"\lib\res\pic"
+        # 遍历删除所有lib\res\pic 下的文件
+        for root, dirs, files in os.walk(path_, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))

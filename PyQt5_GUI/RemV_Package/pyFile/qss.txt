@@ -79,18 +79,6 @@ QPushButton#MenuBtn_2:Pressed{
 QPushButton#MenuBtn_3:Pressed{
     color:black
 }
-QListWidget#wordListWidget{
-    font: 20px;
-    font-style: bold;
-    font-style: italic;
-    background-color: rgba(0,0,0,0)
-}
-
-QListWidget#meaningListWidget{
-    font: 20px;
-    font-style: bold;
-    background-color: rgba(0,0,0,0)
-}
 
 QPushButton#uploadButton{
     font: 20px

@@ -1,5 +1,6 @@
 import sys
 
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
 from RemVClass import RemVClass, loadQss
 
@@ -11,9 +12,13 @@ from RemVClass import RemVClass, loadQss
 @link        https://github.com/ArmandXiao/RemV.git
 """
 
+
 def main():
     app = QApplication(sys.argv)
     win = RemVClass()
+
+
+
     win.setStyleSheet(loadQss())
     win.show()
 

@@ -1,4 +1,5 @@
 import os
+import threading
 import time
 import urllib
 from urllib import parse, request
@@ -30,7 +31,7 @@ def getPicUrl(word):
     word = word.replace(" ", "%20").strip()
     html = getHtml(word)
 
-    picUrl = re.compile("(<img src=\"(.*?)\")(\s*?)(alt=\"[^(二维码)]*?>)")
+    picUrl = re.compile("(<img src=\"(.*?)\")((/\s)|(\s*?))(alt=\"[^(二维码)]*?>)")
     list_ = picUrl.findall(html)
 
     if len(list_) > 0:
@@ -45,11 +46,14 @@ def getPicUrl(word):
 
 
 def downloadPicFromOuLu(word):
+    t = threading.Timer(5, lambda: quit())
+    t.start()
+
     word = word.replace(" ", "%20").strip()
     url = getPicUrl(word)
 
     if url is None:
-        print(word + ": failed")
+        print("图片地址不存在: " + word)
 
     path = os.getcwd() + r"\lib\res\pic"
     fileName = word + ".jpg"
@@ -66,9 +70,9 @@ def downloadPicFromOuLu(word):
                                   'Presto/2.8.149 Version/11.10')]
             urllib.request.install_opener(opener)
             urllib.request.urlretrieve(url, filePath)
-            print("成功")
+            print("成功: " + word)
         except:
-            print("获取失败:%s\n" % word)
+            print("请求连接网络失败: %s\n" % word)
 
 
 def getTags(word):
@@ -82,3 +86,7 @@ def getTags(word):
         resultList.append(each[1])
 
     return resultList
+
+
+if __name__ == '__main__':
+    print(getPicUrl("harness"))
