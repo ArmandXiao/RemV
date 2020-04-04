@@ -1,8 +1,8 @@
-# RemV  ![](https://img.shields.io/badge/license-GPL3.0-000000.svg)![](https://img.shields.io/badge/platform-Windows-green.svg)![](https://img.shields.io/badge/version-v1.1-red.svg)
+# RemV :thumbsup: <br/>![](https://img.shields.io/badge/license-GPL3.0-000000.svg)![](https://img.shields.io/badge/platform-Windows-green.svg)![](https://img.shields.io/badge/version-v1.1-red.svg)
 **Note：This open source project follows [GNU General Public License v3.0](LICENSE), and the right of authorship is comopletely held by Lingao, Xiao.**  
 **注意: 这个开源项目遵从 [GUN通用公开许可协议 v3.0](GUN通用公开许可协议)，著名权被 *肖凌奥* 全权持有.**
 ***
-**[English Introduction](README_ENG.md) <-- Click me**
+**:point_right:[English Introduction](README_ENG.md):point_left:** 
 ***
 - 此软件可以在多平台上运行
 <div id="Catalog"></div>  
@@ -176,6 +176,7 @@
 <div id="Eighth"></div>   
 
 ## 8. 使用接口
+[回到目录](#Catalog)
 - **有道词典: 翻译，词性，音标**
 - **有道语音库: 美式发音，英式发音**
 - **词跟字典: 词频**
@@ -184,5 +185,6 @@
 <div id="Ninth"></div>   
 
 ## 9. 特别鸣谢
+[回到目录](#Catalog)
 - 图标设计灵感来自 ***杨其霖, Gary Young***
 

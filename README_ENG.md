@@ -1,8 +1,8 @@
-# RemV  ![](https://img.shields.io/badge/license-GPL3.0-000000.svg)![](https://img.shields.io/badge/platform-Windows-green.svg)![](https://img.shields.io/badge/version-v1.1-red.svg)
+# RemV  :thumbsup: <br/> ![](https://img.shields.io/badge/license-GPL3.0-000000.svg)![](https://img.shields.io/badge/platform-Windows-green.svg)![](https://img.shields.io/badge/version-v1.1-red.svg)
 **Note：This open source project follows [GNU General Public License v3.0](LICENSE), and the right of authorship is comopletely held by Lingao, Xiao.**  
 **注意: 这个开源项目遵从 [GUN通用公开许可协议 v3.0](GUN通用公开许可协议)，著名权被 *肖凌奥* 全权持有.**
 ***
-**[中文版](README.md) <- 点我**
+**:point_right:[中文版](README.md) :point_left:**
 ***
 - This software can run on multi-platform.
 <div id="Catalog"></div>  
@@ -179,6 +179,8 @@ Especially for learner whose native language is not English.
 <div id="Eighth"></div>   
 
 ## 8. APIs
+[Go to Catalog](#Catalog)
+
 - **YouDao Dictionary: translation，part of speech，phonetic symbol** 
 - **YouDao Dictionary voice: American pronunciation，British pronunciation**
 - **Cg Dictionary: Frequency of word use**
@@ -187,4 +189,6 @@ Especially for learner whose native language is not English.
 <div id="Ninth"></div>   
 
 ## 9. Special Acknowledgement
+[Go to Catalog](#Catalog)
+
 - The inspiration of RemV icon came from ***杨其霖, Gary Young***
