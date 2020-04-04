@@ -23,7 +23,7 @@ import openpyxl
 @copyright   Copyright 2020 RemV
 @license     GPL-3.0 (http://www.gnu.org/licenses/gpl-3.0.html)
 @author      Lingao Xiao 肖凌奥 <920338028@qq.com>
-@version     Alpha version
+@version     version 1.1
 @link        https://github.com/ArmandXiao/RemV.git
 """
 
@@ -1209,3 +1209,11 @@ class MyThread(threading.Thread):
                 os.remove(os.path.join(root, name))
             for name in dirs:
                 os.rmdir(os.path.join(root, name))
+
+"""
+@copyright   Copyright 2020 RemV
+@license     GPL-3.0 (http://www.gnu.org/licenses/gpl-3.0.html)
+@author      Lingao Xiao 肖凌奥 <920338028@qq.com>
+@version     version 1.1
+@link        https://github.com/ArmandXiao/RemV.git
+"""
