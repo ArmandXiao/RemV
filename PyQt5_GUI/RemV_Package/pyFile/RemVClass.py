@@ -224,6 +224,13 @@ class RemVClass(QMainWindow):
                                                      "不再让英语成为负担, 祝你好运!\n\n肖凌奥 "
                                                      "Armand\n联系方式(微信): xla920338028")
 
+        self.ui.useTipBtn.clicked.connect(lambda: QMessageBox.information(self, "RemV使用技巧", ""
+                                                                                            "1. 很多图标都是有功能的，自己点点看吧！"
+                                                                                            "\n\n2. 双击一本书，可以从目录删除噢."
+                                                                                            "\n\n3. 一节课只背一遍可是行不通的！"
+                                                                                            "\n\n3.5 懒得背至少多小测几遍吧~"
+                                                                                            "\n\n祝你好运(●'◡'●)"))
+
     def help(self):
         responese = QMessageBox.question(self, "帮助", "联系方式: 920338028@qq.com (邮箱)"
                                                      "\n\t xla920338028 (微信)"
@@ -728,7 +735,8 @@ class RemVClass(QMainWindow):
             if not os.path.exists("lib/res/word_Repository/csv"):
                 os.makedirs("lib/res/word_Repository/csv")
             # check whether corresponding csv file exists
-            if (not os.path.exists("lib/res/word_Repository/csv/%s.csv" % functions.getExcelName(path))) or (path == self.pathList[0]):
+            if (not os.path.exists("lib/res/word_Repository/csv/%s.csv" % functions.getExcelName(path))) or (
+                    path == self.pathList[0]):
                 # after parsing books, books have to be divided into lessons
                 self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 1)))
             else:

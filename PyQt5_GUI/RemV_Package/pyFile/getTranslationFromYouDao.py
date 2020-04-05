@@ -16,7 +16,7 @@ def getHtml(word):
     url = "http://dict.youdao.com/w/" + word + "/#keyfrom=dict2.top"
 
     try:
-        res = request.urlopen(url, timeout=3)
+        res = request.urlopen(url, timeout=2)
     except:
         print("搜索失败")
         return

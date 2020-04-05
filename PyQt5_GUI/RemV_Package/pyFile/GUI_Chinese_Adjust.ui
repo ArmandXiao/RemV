@@ -124,9 +124,28 @@
              </item>
              <item row="1" column="1">
               <layout class="QGridLayout" name="gridLayout_29">
-               <property name="spacing">
+               <property name="leftMargin">
+                <number>5</number>
+               </property>
+               <property name="horizontalSpacing">
+                <number>5</number>
+               </property>
+               <property name="verticalSpacing">
                 <number>0</number>
                </property>
+               <item row="0" column="7">
+                <spacer name="horizontalSpacer_13">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
                <item row="0" column="5">
                 <widget class="QPushButton" name="updateCheckBtn">
                  <property name="font">
@@ -150,17 +169,29 @@ color:white;</string>
                 </widget>
                </item>
                <item row="0" column="6">
-                <spacer name="horizontalSpacer_13">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                <widget class="QPushButton" name="useTipBtn">
+                 <property name="font">
+                  <font>
+                   <family>Times New Roman</family>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
                  </property>
-                </spacer>
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::DefaultContextMenu</enum>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color:rgb(50, 60, 71);
+color:white;</string>
+                 </property>
+                 <property name="text">
+                  <string>使用技巧</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -229,7 +260,7 @@ color:white;</string>
 color:white;</string>
                  </property>
                  <property name="text">
-                  <string>开始</string>
+                  <string>登录</string>
                  </property>
                 </widget>
                </item>
@@ -300,6 +331,9 @@ color:white;</string>
         </property>
         <property name="cursor" stdset="0">
          <cursorShape>ArrowCursor</cursorShape>
+        </property>
+        <property name="contextMenuPolicy">
+         <enum>Qt::DefaultContextMenu</enum>
         </property>
         <property name="toolTip">
          <string>选课列表</string>
@@ -608,7 +642,7 @@ color: white;</string>
          <number>1</number>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="OverviewScene">
          <property name="autoFillBackground">
@@ -3056,7 +3090,7 @@ p, li { white-space: pre-wrap; }
 color: blue;</string>
                 </property>
                 <property name="text">
-                 <string>X</string>
+                 <string>U</string>
                 </property>
                </widget>
               </item>
@@ -3106,7 +3140,7 @@ color: blue;
 background-color: rgba(164, 255, 195, 0)</string>
                 </property>
                 <property name="text">
-                 <string>U</string>
+                 <string>X</string>
                 </property>
                </widget>
               </item>
