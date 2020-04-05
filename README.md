@@ -100,7 +100,7 @@
     - 通过`RemV`上传.
 #### 下载路线 A (需要加速器): https://github.com/ArmandXiao/RemV/releases/tag/Version-v1.1
 
-#### 下载路线 B (国内下载更快):  *https://share.weiyun.com/53OJHOc* Code: t5qsb1  
+#### 下载路线 B (国内下载更快):  https://share.weiyun.com/53OJHOc Code: t5qsb1  
  * `RemV-v1.1_setup.exe` 是需要下载的目标文件
 
 ### MacOS: 敬请期待...
