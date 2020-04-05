@@ -92,12 +92,17 @@
 
 [回到目录](#Catalog)
 
-### Windows: https://github.com/ArmandXiao/RemV/releases/tag/v1.0
-  - v1.0 版本已发布.
+### Windows:  
+  - v1.1 版本已发布.
   - **`RemV.exe`** 是可执行文件.
   - **[WordBook Repository](#WordRepository)** 是整合的书籍的目录.
     - 下载想要背的单词书.  
     - 通过`RemV`上传.
+#### 下载路线 A (需要加速器): https://github.com/ArmandXiao/RemV/releases/tag/Version-v1.1
+
+#### 下载路线 B (国内下载更快):  *https://share.weiyun.com/53OJHOc* Code: t5qsb1  
+ * `RemV-v1.1_setup.exe` 是需要下载的目标文件
+
 ### MacOS: 敬请期待...
 
 <div id="Fourth"></div>  
