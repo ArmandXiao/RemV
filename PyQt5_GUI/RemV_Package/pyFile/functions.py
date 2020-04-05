@@ -1,8 +1,13 @@
+import csv
+import os
+
 import openpyxl
 import re
 import urllib.request as uR
 import urllib.parse as uP
 import json
+
+import xlrd
 
 """
 @copyright   Copyright 2020 RemV
@@ -11,6 +16,7 @@ import json
 @version     version 1.1
 @link        https://github.com/ArmandXiao/RemV.git
 """
+
 
 def translator(content):
     """
@@ -44,6 +50,77 @@ def translator(content):
     # print("翻译结果: %s\n下一次程序将在3秒后执行，输入 quit! 可退出程序" % (target["translateResult"][0][0]["tgt"]))
 
 
+def excelParse_xlrd(path_, pattern=0):
+    """
+    xlrd read excels more efficiently than openpyxl, but xlrd cannot write excels
+    @:parameter:path_: give a path
+    @:parameter: pattern: 0 represents not creating a csv file, 1 represent creating a csv file.
+    @:return: a list tha contains word and meanings, which ought to be easily converted to csv.
+    """
+    # 把path转成 raw String, 避免转义错误
+    wb1 = xlrd.open_workbook(r"" + path_)
+
+    # 暂时的 需要修改成 General 的
+    sheet = wb1.sheet_by_index(0)
+
+    numRow = sheet.nrows
+
+    findNum = re.compile(r"[0-9]")
+
+    myList = []
+
+    global f
+
+    if pattern:
+        name = getExcelName(path_)
+        if not os.path.exists("lib/res/word_Repository/csv"):
+            os.makedirs("lib/res/word_Repository/csv")
+        f = open("lib/res/word_Repository/csv/%s.csv" % name, "w", encoding='utf-8', newline="")
+
+    index = 0
+    while index < numRow:
+        word = str(sheet.row(index)[0].value).strip()
+        pos = str(sheet.row(index)[1].value).strip()
+        meaning = str(sheet.row(index)[2].value).strip()
+        # sheet.row(rowNumber)[column].value -> cell value
+        if len(findNum.findall(word)) > 0:
+            index += 1
+            continue
+
+        if (sheet.row(index)[0].value is not None) and (
+                word.replace(" ", "a").encode("utf-8").isalpha()):
+            # myList[index][0]是 单词
+            # myList[index][1][0] 是 词性
+            # myList[index][1][1] 是 意思
+            myList.append((word, (pos, meaning)))
+            if pattern:
+                writer = csv.writer(f)
+                writer.writerow([word, pos, meaning])
+        index += 1
+
+    if pattern:
+        f.close()
+
+    return myList
+
+
+def parseCsv(path_):
+    """
+    Gives back a list through parsing csv, for parsing csv saves more time than parsing excels again
+    :param path_: path of csv file
+    :return: a list tha contains word and meanings.
+    """
+
+    list_ = []
+
+    with open(path_) as f:
+        read = csv.reader(f)
+        for eachRow in read:
+            list_.append((eachRow[0], (eachRow[1], eachRow[2])))
+
+    return list_
+
+
 def excelParse(path_):
     """
     要给绝对路径 NOT relative path
@@ -68,6 +145,7 @@ def excelParse(path_):
             if len(findNum.findall(str(eachRow[0].value))) > 0:
                 continue
 
+            # check whether the cell is an English word
             if (eachRow[0].value is not None) and (
                     str(eachRow[0].value).strip().replace(" ", "a").encode("utf-8").isalpha()):
                 # myList[index][0]是 单词
@@ -90,7 +168,7 @@ def getExcelName(path_):
     # 系统给的文件名字是 中的 是 /
     getName = re.compile(r"\\|[.]|/")
     excelname = getName.split(newPath)
-    return excelname[len(excelname)-2]
+    return excelname[len(excelname) - 2]
 
 
 def getBooks(list_):
@@ -143,13 +221,11 @@ def divideIntoLessons(list_, num=20):
     # print(lessonList)
     return lessonList
 
-
-def getLessonNum(list_):
-    tmpList = divideIntoLessons(list_)
-    return len(tmpList)
-
-
 if __name__ == '__main__':
-    path = "E:\Code\Python\程序制作\WordApplication\SatVocabulary.xlsx"
-    for i in divideIntoLessons(excelParse(path)):
-        print(i)
+    pass
+    # path = r"C:\Users\Armand\PycharmProjects\RemV\PyQt5_GUI\RemV_Package\单词库\出国研究生\新GRE官方词汇.xlsx"
+    # start = time.time()
+    # myList = excelParse_xlrd(path, 1)
+    # tmp = str(time.time() - start)
+    #
+    # print("总花费时长:" + tmp)

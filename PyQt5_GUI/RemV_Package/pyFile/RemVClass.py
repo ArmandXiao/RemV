@@ -259,12 +259,20 @@ class RemVClass(QMainWindow):
         """
         # self.ui.bookListWidget.row(item) 是获取所以索引
 
+        self.ui.stackedWidget.setCurrentIndex(4)
         index = self.ui.bookListWidget.row(item)
         bookPath = (self.pathList[index])
+        bool_ = True
+
+        for each in self.wordsOAB.keys():
+            if bookPath == each:
+                bool_ = False
+                break
 
         # If the book has been already parsed, do not parse it again.
-        if (self.createdBookName == functions.getExcelName(bookPath)) or (bookPath not in self.wordsOAB.keys()) or (
-                index == 0):
+        if (self.createdBookName == functions.getExcelName(bookPath)) or (
+                index == 0) or bool_:
+
             tmp = self.parseBook(bookPath)
             if tmp is not None:
                 response = QMessageBox.question(self, "删除请求", "您是否需要从目录删除这本书")
@@ -272,6 +280,8 @@ class RemVClass(QMainWindow):
                     self.bookDoubleClicked(item)
                 return
 
+        if self.currentBook == bookPath:
+            return
         # 更新 currentBook
         self.currentBook = bookPath
         # 更新这本书对应的课程
@@ -295,7 +305,7 @@ class RemVClass(QMainWindow):
             self.saveData()
             self.getData()
             self.loadBookNames(self.pathList)
-            self.ui.stackedWidget.setCurrentIndex(3)
+            self.ui.stackedWidget.setCurrentIndex(4)
         else:
             return
 
@@ -354,7 +364,8 @@ class RemVClass(QMainWindow):
             self.ui.wordListWidget.addItem(
                 self.wordsOAB[self.currentBook][self.currentLesson][i][0]
             )
-            if self.wordsOAB[self.currentBook][self.currentLesson][i][1][0] is not None:
+            if (self.wordsOAB[self.currentBook][self.currentLesson][i][1][0] is not None) or (
+                    self.wordsOAB[self.currentBook][self.currentLesson][i][1][0] != ""):
                 self.ui.meaningListWidget.addItem(
                     str(self.wordsOAB[self.currentBook][self.currentLesson][i][1][0]) + "  " +
                     self.wordsOAB[self.currentBook][self.currentLesson][i][1][1]
@@ -713,7 +724,17 @@ class RemVClass(QMainWindow):
 
         # 处理words 把SAT单词书 分成好几节课 然后把SAT这真本书 放到wordsOAB 里面 名字与书的内容
         try:
-            self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse(toRelativePath(path))))
+            # self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse(toRelativePath(path))))
+            if not os.path.exists("lib/res/word_Repository/csv"):
+                os.makedirs("lib/res/word_Repository/csv")
+            # check whether corresponding csv file exists
+            if (not os.path.exists("lib/res/word_Repository/csv/%s.csv" % functions.getExcelName(path))) or (path == self.pathList[0]):
+                # after parsing books, books have to be divided into lessons
+                self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 1)))
+            else:
+                # after parsing books, books have to be divided into lessons
+                self.wordsLFSB = functions.divideIntoLessons(
+                    functions.parseCsv("lib/res/word_Repository/csv/%s.csv" % functions.getExcelName(path)))
         except:
             QMessageBox.about(self, "温馨提示", "目标路径中不存在该文件")
             return "Error"
@@ -882,13 +903,12 @@ class RemVClass(QMainWindow):
         self.ui.lessonListWidget.clear()
         self.ui.lessonListWidget.addItem("Lessons")
 
-        tmpList2 = functions.excelParse(path)
+        self.lessonNum = len(self.wordsOAB[path])
 
-        if not tmpList2:
+        if len(self.wordsOAB[path][0]) == 0:
             self.ui.lessonListWidget.clear()
             return
 
-        self.lessonNum = functions.getLessonNum(tmpList2)
         self.lessonList = []
         for i in range(1, self.lessonNum + 1):
             self.lessonList.append(" L - " + str(i))
@@ -1014,7 +1034,7 @@ class RemVClass(QMainWindow):
 
             findVersion = re.compile(
                 "(<td id=\"LC1\" class=\"blob-code blob-code-inner js-file-line\">)(.*?)(</td>)")
-            newVersion =findVersion.findall(html)[0][1].strip()
+            newVersion = findVersion.findall(html)[0][1].strip()
             if newVersion != currentVersion:
                 response = QMessageBox.question(self, "软件更新提示", "新版本: %s "
                                                                 "\n当前版本:\n %s\n"
@@ -1209,6 +1229,7 @@ class MyThread(threading.Thread):
                 os.remove(os.path.join(root, name))
             for name in dirs:
                 os.rmdir(os.path.join(root, name))
+
 
 """
 @copyright   Copyright 2020 RemV
