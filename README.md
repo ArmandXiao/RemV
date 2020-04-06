@@ -1,4 +1,4 @@
-# RemV :thumbsup: <br/>![](https://img.shields.io/badge/license-GPL3.0-000000.svg)![](https://img.shields.io/badge/platform-Windows-green.svg)![](https://img.shields.io/badge/version-v1.1-red.svg)
+# RemV :rainbow: <br/>![](https://img.shields.io/badge/license-GPL3.0-000000.svg)![](https://img.shields.io/badge/platform-Windows-green.svg)![](https://img.shields.io/badge/version-v1.1-red.svg)
 **Note：This open source project follows [GNU General Public License v3.0](LICENSE), and the right of authorship is comopletely held by Lingao, Xiao.**  
 **注意: 这个开源项目遵从 [GUN通用公开许可协议 v3.0](GUN通用公开许可协议)，著名权被 *肖凌奥* 全权持有.**
 ***
@@ -92,12 +92,17 @@
 
 [回到目录](#Catalog)
 
-### Windows: https://github.com/ArmandXiao/RemV/releases/tag/v1.0
-  - v1.0 版本已发布.
+### Windows:  
+  - v1.1 版本已发布.
   - **`RemV.exe`** 是可执行文件.
   - **[WordBook Repository](#WordRepository)** 是整合的书籍的目录.
     - 下载想要背的单词书.  
     - 通过`RemV`上传.
+#### 下载路线 A (需要加速器): https://github.com/ArmandXiao/RemV/releases/tag/Version-v1.1
+
+#### 下载路线 B (国内下载更快):  https://share.weiyun.com/53OJHOc Code: t5qsb1  
+ * `RemV-v1.1_setup.exe` 是需要下载的目标文件
+
 ### MacOS: 敬请期待...
 
 <div id="Fourth"></div>  
