@@ -1,0 +1,20 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/.gitignore
+.idea/RemV.iml
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+PyQt5_GUI/RemV_Package/.idea/.gitignore
+PyQt5_GUI/RemV_Package/.idea/RemV_Package.iml
+PyQt5_GUI/RemV_Package/.idea/inspectionProfiles/
+PyQt5_GUI/RemV_Package/.idea/misc.xml
+PyQt5_GUI/RemV_Package/.idea/modules.xml
+PyQt5_GUI/RemV_Package/.idea/vcs.xml
+PyQt5_GUI/RemV_Package/__pycache__/
+PyQt5_GUI/RemV_Package/lib/res/word_Repository/csv/
+PyQt5_GUI/RemV_Package/pyFile/__pycache__/
+"PyQt5_GUI/RemV_Package/\345\215\225\350\257\215\345\272\223/__pycache__/"
+version_setup/
+.gitignore
+!/PyQt5_GUI/RemV_Package/pyFile/passwd_root.txt
