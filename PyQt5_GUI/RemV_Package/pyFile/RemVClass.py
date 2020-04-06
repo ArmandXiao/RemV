@@ -7,6 +7,7 @@ import re
 import webbrowser
 from urllib import request
 
+import pymysql
 import requests
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon, QCursor, QImage
@@ -16,7 +17,7 @@ import getPronFromYouDao
 import getSourceFromOuLu
 import getSuffixFromCgdict
 from pyFile import functions, getTranslationFromYouDao, createBookScene, addWordScene, \
-    GUI_Chinese_Adjust, getGreatSentences
+    GUI_Chinese_Adjust, getGreatSentences, getPassword
 import openpyxl
 
 """
@@ -53,6 +54,16 @@ class RemVClass(QMainWindow):
 
     def __init__(self):
         super().__init__()
+
+        self.dbStatus = False
+        self.conn_user = None
+        self.conn_root = None
+        self.cursor_user = None
+        self.cursor_root = None
+
+        t = threading.Thread(target=self.connectDB)
+        t.setDaemon(True)
+        t.start()
 
         # 中文版
         self.ui = GUI_Chinese_Adjust.Ui_MainWindow()
@@ -143,7 +154,7 @@ class RemVClass(QMainWindow):
         self.ui.translateBtn.clicked.connect(self.translateBtnClicked)
         self.ui.translateBtn_2.clicked.connect(self.translate)
         self.ui.showBtn.clicked.connect(lambda: self.updateWord(self.currentIndex))
-        self.ui.exitBtn.clicked.connect(lambda: self.close())
+        self.ui.exitBtn.clicked.connect(self.exitBtnClicked)
         self.ui.miniBtn.clicked.connect(lambda: self.showMinimized())
         self.ui.proUSBtn.clicked.connect(lambda: self.prounciate(self.currentWord, 0))
         self.ui.proENGBtn.clicked.connect(lambda: self.prounciate(self.currentWord, 1))
@@ -172,8 +183,7 @@ class RemVClass(QMainWindow):
         self.currentSeq = "List Order"
         self.currentIndex = 0
         # words list for a specific book
-        self.wordsLFSB = []
-        # words of all books
+        self.wordsLFSB = []  # words of all books
         self.wordsOAB = {}
         # 当前数据
         self.currentWord = ""
@@ -230,6 +240,11 @@ class RemVClass(QMainWindow):
                                                                                             "\n\n3. 一节课只背一遍可是行不通的！"
                                                                                             "\n\n3.5 懒得背至少多小测几遍吧~"
                                                                                             "\n\n祝你好运(●'◡'●)"))
+
+    def exitBtnClicked(self):
+        self.conn_root.close()
+        self.conn_user.close()
+        self.close()
 
     def help(self):
         responese = QMessageBox.question(self, "帮助", "联系方式: 920338028@qq.com (邮箱)"
@@ -709,16 +724,45 @@ class RemVClass(QMainWindow):
         get pronunciations, part of speech, and meanings from internet.
         :return:
         """
-        ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
 
-        tmp = "音标:"
-        for each in ProunceList:
-            tmp += each
-        tmp += "\n"
-        for each in MeaningList:
-            tmp += each + "\n"
-        self.ui.meaningBrowser.setText(tmp)
-        self.ui.meaningBrowser_2.setText(tmp)
+        def trans(self):
+            ProunceList, MeaningList = getTranslationFromYouDao.translate(self.currentWord)
+
+            tmp = "音标:"
+            for each in ProunceList:
+                tmp += each
+            tmp += "\n"
+            for each in MeaningList:
+                tmp += each + "\n"
+            self.ui.meaningBrowser.setText(tmp)
+            self.ui.meaningBrowser_2.setText(tmp)
+
+        str_ = "音标:"
+
+        if self.cursor_user is not None:
+            sql = "SELECT phonetic FROM stardict WHERE word like '%s'" % self.currentWord
+            self.cursor_user.execute(sql)
+            data = self.cursor_user.fetchone()
+            # data is stored in tuple
+            if data:
+                str_ += "[%s]" % data[0]
+            else:
+                str_ += "未找到音标"
+            str_ += '\n'
+
+            sql = "SELECT translation FROM stardict WHERE word like '%s'" % self.currentWord
+            self.cursor_user.execute(sql)
+            data = self.cursor_user.fetchone()
+            # data is stored in tuple
+            if not data:
+                trans(self)
+                return
+            str_ += data[0]
+
+            self.ui.meaningBrowser.setText(str_)
+            self.ui.meaningBrowser_2.setText(str_)
+        else:
+            trans(self)
 
         return
 
@@ -784,8 +828,17 @@ class RemVClass(QMainWindow):
         Set Frequency of use for each word
         :return: None
         """
-
-        fre = getTranslationFromYouDao.getFrequency(self.currentWord)
+        if self.cursor_user is not None:
+            sql = "SELECT collins FROM stardict WHERE word like '%s'" % self.currentWord
+            self.cursor_user.execute(sql)
+            data = self.cursor_user.fetchone()
+            # data is stored in tuple
+            if not data:
+                fre = getTranslationFromYouDao.getFrequency(self.currentWord)
+            else:
+                fre = int(data[0])
+        else:
+            fre = getTranslationFromYouDao.getFrequency(self.currentWord)
 
         if fre == -1:
             return
@@ -1028,6 +1081,30 @@ class RemVClass(QMainWindow):
     def mouseReleaseEvent(self, QMouseEvent):
         self.m_drag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
+
+    def connectDB(self):
+        try:
+            self.conn_user = pymysql.connect(
+                host='127.0.0.1',
+                port=3306,
+                user="remv_user",
+                passwd=getPassword.getUserPassword(),
+                db='remv'
+            )
+
+            self.conn_root = pymysql.connect(
+                host='127.0.0.1',
+                port=3306,
+                user="root",
+                passwd=getPassword.getRootPassword(),
+                db='remv'
+            )
+
+            self.cursor_user = self.conn_user.cursor()
+            self.cursor_root = self.conn_root.cursor()
+
+        except:
+            pass
 
     def updateCheck(self):
         currentVersion = ""

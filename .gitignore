@@ -17,4 +17,4 @@ PyQt5_GUI/RemV_Package/pyFile/__pycache__/
 "PyQt5_GUI/RemV_Package/\345\215\225\350\257\215\345\272\223/__pycache__/"
 version_setup/
 .gitignore
-!/PyQt5_GUI/RemV_Package/pyFile/passwd_root.txt
+!/PyQt5_GUI/RemV_Package/pyFile/getPassword.py
