@@ -10,14 +10,14 @@ from urllib import request
 import pymysql
 import requests
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QIcon, QCursor, QImage
+from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QDialog
 
 import getPronFromYouDao
 import getSourceFromOuLu
 import getSuffixFromCgdict
 from pyFile import functions, getTranslationFromYouDao, createBookScene, addWordScene, \
-    GUI_Chinese_Adjust, getGreatSentences, getPassword
+    GUI_Chinese_Adjust, getGreatSentences, dataBase_Tools
 import openpyxl
 
 """
@@ -57,13 +57,9 @@ class RemVClass(QMainWindow):
 
         self.dbStatus = False
         self.conn_user = None
-        self.conn_root = None
+        # self.conn_root = None
         self.cursor_user = None
-        self.cursor_root = None
-
-        t = threading.Thread(target=self.connectDB)
-        t.setDaemon(True)
-        t.start()
+        # self.cursor_root = None
 
         # 中文版
         self.ui = GUI_Chinese_Adjust.Ui_MainWindow()
@@ -125,6 +121,8 @@ class RemVClass(QMainWindow):
         self.ui.PreSufBox.setVisible(False)
         self.ui.PreSufBrowser.setVisible(False)
 
+        self.ui.exchangeBox.hide()
+
         # 给列表添加 spacing
         self.ui.bookListWidget.setSpacing(20)
         self.ui.lessonListWidget.setSpacing(10)
@@ -161,6 +159,9 @@ class RemVClass(QMainWindow):
         self.ui.proUSBtn_2.clicked.connect(lambda: self.prounciate(self.currentWord, 0))
         self.ui.proENGBtn_2.clicked.connect(lambda: self.prounciate(self.currentWord, 1))
 
+        self.ui.ChineseBtn.clicked.connect(self.ChineseBtnClicked)
+        self.ui.EnglishBtn.clicked.connect(self.EnglishBtnClicked)
+
         # QuizScene 事件
         # 回车键叫return
         self.ui.enterEdit.returnPressed.connect(self.enterCheck)
@@ -185,6 +186,7 @@ class RemVClass(QMainWindow):
         # words list for a specific book
         self.wordsLFSB = []  # words of all books
         self.wordsOAB = {}
+        self.transList = {}
         # 当前数据
         self.currentWord = ""
         self.currentPOS = ""
@@ -204,6 +206,14 @@ class RemVClass(QMainWindow):
         self.remain = 0
         self.wrongSpel = False
         self.firstQuiz = True
+
+        self.currentChineseTrans = ""
+        self.currentEnglishTrans = ""
+
+        # 0 is Chinese, 1 is English
+        self.TransMode = 0
+
+        self.transSourceControl = 1
 
         # Createbook
         self.createdBookName = ""
@@ -240,11 +250,35 @@ class RemVClass(QMainWindow):
                                                                                             "\n\n3. 一节课只背一遍可是行不通的！"
                                                                                             "\n\n3.5 懒得背至少多小测几遍吧~"
                                                                                             "\n\n祝你好运(●'◡'●)"))
+        self.ui.ChineseBtn.setChecked(True)
+        self.ui.ChineseBtn.setEnabled(False)
+
+    def EnglishBtnClicked(self):
+        self.TransMode = 1
+        self.ui.EnglishBtn.setEnabled(False)
+        self.ui.ChineseBtn.setEnabled(True)
+        if self.currentEnglishTrans == "":
+            self.ui.meaningBrowser.setText("No record found, sorry!")
+        else:
+            self.ui.meaningBrowser.setText(self.currentEnglishTrans)
+
+    def ChineseBtnClicked(self):
+        self.TransMode = 0
+        self.ui.ChineseBtn.setEnabled(False)
+        self.ui.EnglishBtn.setEnabled(True)
+        # If no translation found, use original data
+        if self.currentChineseTrans == "":
+            self.ui.meaningBrowser.setText(self.currentMeaning)
+            self.ui.meaningBrowser.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        else:
+            self.ui.meaningBrowser.setText(self.currentChineseTrans)
 
     def exitBtnClicked(self):
-        self.conn_root.close()
-        self.conn_user.close()
-        self.close()
+        try:
+            # self.conn_root.close()
+            self.conn_user.close()
+        finally:
+            self.close()
 
     def help(self):
         responese = QMessageBox.question(self, "帮助", "联系方式: 920338028@qq.com (邮箱)"
@@ -383,16 +417,25 @@ class RemVClass(QMainWindow):
 
         # 根据currentBook 和 currentLesson 填补单词和意思
         for i in range(self.lessonLen):
+            if i == 0:  # update the first current word
+                self.currentWord = self.wordsOAB[self.currentBook][self.currentLesson][i][0]
+
             self.ui.wordListWidget.addItem(
                 self.wordsOAB[self.currentBook][self.currentLesson][i][0]
             )
             if (self.wordsOAB[self.currentBook][self.currentLesson][i][1][0] is not None) or (
                     self.wordsOAB[self.currentBook][self.currentLesson][i][1][0] != ""):
+                if i == 0:  # update the first current meaning
+                    self.currentMeaning = str(self.wordsOAB[self.currentBook][self.currentLesson][i][1][0]) + "  " + \
+                                          self.wordsOAB[self.currentBook][self.currentLesson][i][1][1]
+
                 self.ui.meaningListWidget.addItem(
                     str(self.wordsOAB[self.currentBook][self.currentLesson][i][1][0]) + "  " +
                     self.wordsOAB[self.currentBook][self.currentLesson][i][1][1]
                 )
             else:
+                if i == 0:
+                    self.currentMeaning = self.wordsOAB[self.currentBook][self.currentLesson][i][1][1]
                 self.ui.meaningListWidget.addItem(
                     self.wordsOAB[self.currentBook][self.currentLesson][i][1][1]
                 )
@@ -414,6 +457,12 @@ class RemVClass(QMainWindow):
             print("上传动作取消")
 
     def changeScene_0(self):
+        # disconnect database
+        if self.conn_user:
+            self.conn_user.close()
+        # if self.conn_root:
+        #     self.conn_root.close()
+
         self.setOverViewScene()
         self.ui.stackedWidget.setCurrentIndex(0)
         self.ui.bookListWidget.setDisabled(False)
@@ -424,8 +473,7 @@ class RemVClass(QMainWindow):
         Go to memorizing scene
         :return: None
         """
-        # start a thread to download pic
-        # self.downloadPic()
+        self.connectDB()
 
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.bookListWidget.setEnabled(False)
@@ -446,8 +494,7 @@ class RemVClass(QMainWindow):
         Go to test scene
         :return: None
         """
-        # # start a thread to delete pic
-        # self.deletePic()
+        self.conn_user()
 
         self.remain = self.lessonLen
         self.ui.stackedWidget.setCurrentIndex(2)
@@ -472,14 +519,18 @@ class RemVClass(QMainWindow):
         """
         # 更新 currentWord
         self.currentWord = self.wordsOAB[self.currentBook][self.currentLesson][index][0]
+
         self.ui.wordBrowser.setText(self.currentWord)
 
         if self.wordsOAB[self.currentBook][self.currentLesson][index][1][0] is not None:
+            self.currentMeaning = str(self.wordsOAB[self.currentBook][self.currentLesson][index][1][0]) + \
+                                  self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
             self.ui.meaningBrowser.setText(
                 str(self.wordsOAB[self.currentBook][self.currentLesson][index][1][0]) +
                 self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
             )
         else:
+            self.currentMeaning = self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
             self.ui.meaningBrowser.setText(
                 self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
             )
@@ -488,14 +539,24 @@ class RemVClass(QMainWindow):
         self.ui.wordBrowser.setAlignment(Qt.AlignCenter)
         self.ui.meaningBrowser.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
-    def next(self):
-        self.ui.wordPic.hide()
-        # Thread to clear Frequency
+    def clearCurrentStatus(self):
+        """
+        Clear all temporary status for each word
+        :return: None
+        """
+
+        self.ui.exchangeBox.hide()
         self.clearFrequency()
         self.clearTags()
 
         self.ui.PreSufBox.setVisible(False)
         self.ui.PreSufBrowser.setVisible(False)
+
+        self.currentChineseTrans = ""
+        self.currentEnglishTrans = ""
+
+    def next(self):
+        self.clearCurrentStatus()
 
         if len(self.wordsOAB) == 0:
             pass
@@ -551,17 +612,13 @@ class RemVClass(QMainWindow):
             self.ui.translateBtn.setEnabled(False)
             self.ui.MenuBtn_1.setVisible(True)
             self.ui.QuizBtn_1.setVisible(True)
+
+            self.conn_user.close()
+            # self.conn_root.close()
             return
 
     def back(self):
-        # Thread to clear Frequency
-        self.ui.wordPic.hide()
-        self.clearFrequency()
-        self.clearTags()
-
-        self.ui.PreSufBox.setVisible(False)
-        self.ui.PreSufBrowser.setVisible(False)
-        self.ui.wordPic.hide()
+        self.clearCurrentStatus()
 
         self.currentIndex -= 1
 
@@ -689,6 +746,8 @@ class RemVClass(QMainWindow):
             engSentence, chiSentence = getGreatSentences.getSentences()
             self.ui.greatSentenceEng.setText(engSentence)
             self.ui.greatSentenceCHI.setText(chiSentence)
+
+            self.conn_user.close()
             return
 
     def translateBtnClicked(self):
@@ -696,28 +755,26 @@ class RemVClass(QMainWindow):
         When Translate Button is clicked multiple tasks should run at the same time
         :return: None
         """
-        if internetCheck():
-            # MainThread
-            self.translate()
-            self.setPreOrSuf()
-
-            # start a thread of setFrequency
-            t2 = threading.Thread(target=self.setFrequency)
-            t2.setDaemon(True)
-            t2.start()
-
-            # start a thread of setTags
-            t3 = threading.Thread(target=self.setTags)
-            t3.setDaemon(True)
-            t3.start()
-
-            # start a thread of load pic
-            t1 = threading.Thread(target=self.loadWordPic)
-            t1.setDaemon(True)
-            t1.start()
-        else:
-            self.ui.meaningBrowser.setText("抱歉，请检查您的网络连接\n/(ㄒoㄒ)/~~")
-            self.loadExistPic(r"lib/res/image/menhera-3.png")
+        self.translate()
+        # if internetCheck():
+        #     # MainThread
+        #     # MainThread Functions must be executed before threads.
+        #     self.setPreOrSuf()
+        #     self.loadWordExchange()
+        #
+        #     # start a thread of setFrequency
+        #     t2 = threading.Thread(target=self.setFrequency)
+        #     t2.setDaemon(True)
+        #     t2.start()
+        #
+        #     # start a thread of setTags
+        #     t3 = threading.Thread(target=self.setTags)
+        #     t3.setDaemon(True)
+        #     t3.start()
+        #
+        #
+        # else:
+        #     self.ui.meaningBrowser.setText("抱歉，请检查您的网络连接\n/(ㄒoㄒ)/~~")
 
     def translate(self):
         """
@@ -737,34 +794,165 @@ class RemVClass(QMainWindow):
             self.ui.meaningBrowser.setText(tmp)
             self.ui.meaningBrowser_2.setText(tmp)
 
-        str_ = "音标:"
+        def translateOnline(self):
+            str_ = "音标:"
+            if self.cursor_user is not None:
+                sql = "SELECT phonetic FROM stardict WHERE word like '%s'" % self.currentWord
+                self.cursor_user.execute(sql)
+                data = self.cursor_user.fetchone()
+                # data is stored in tuple
+                if data:
+                    str_ += "[%s]" % data[0]
+                else:
+                    str_ += "未找到音标"
+                str_ += '\n'
 
-        if self.cursor_user is not None:
-            sql = "SELECT phonetic FROM stardict WHERE word like '%s'" % self.currentWord
-            self.cursor_user.execute(sql)
-            data = self.cursor_user.fetchone()
+                sql = "SELECT pos FROM stardict WHERE word like '%s'" % self.currentWord
+                self.cursor_user.execute(sql)
+                data = self.cursor_user.fetchone()
+                if data and data[0] != "":
+                    if "/" in data[0]:
+                        tmpList = data[0].split("/")
+                        for each in tmpList:
+                            eachList = each.split(":")
+                            if eachList[0] == "j":
+                                str_ += "(" + "adj" + ".) : " + (str(eachList[1]) + "%") + " | "
+                            else:
+                                str_ += "(" + eachList[0] + ".) : " + (str(eachList[1]) + "%") + " | "
+
+                    else:
+                        eachList = data[0].split(":")
+                        if eachList[0] == "j":
+                            str_ += "(" + "adj" + ".) : " + (str(eachList[1]) + "%")
+                        else:
+                            str_ += "(" + eachList[0] + ".) : " + (str(eachList[1]) + "%")
+                    str_ += '\n'
+
+                sql = "SELECT translation FROM stardict WHERE word like '%s'" % self.currentWord
+                self.cursor_user.execute(sql)
+                data = self.cursor_user.fetchone()
+                # data is stored in tuple
+                if not data:  # if no data found in database then go search on the internet
+                    trans(self)
+                    return
+                str_ += data[0]
+                self.currentChineseTrans = str_
+
+                sql = "SELECT definition FROM stardict WHERE word like '%s'" % self.currentWord
+                self.cursor_user.execute(sql)
+                data = self.cursor_user.fetchone()
+
+                if data[0] != "":
+                    self.currentEnglishTrans = data[0].replace("\n", "\n\n")
+
+                if not self.TransMode:
+                    self.ui.meaningBrowser.setText(self.currentChineseTrans)
+                else:
+                    if self.currentEnglishTrans == "":
+                        self.ui.meaningBrowser.setText("No record found, sorry!")
+                    else:
+                        self.ui.meaningBrowser.setText(self.currentEnglishTrans)
+
+                self.ui.meaningBrowser_2.setText(str_)
+
+            else:
+                trans(self)
+
+        def translateFromCSV(self):
+            str_ = "音标"
+            # [word, pos, translation, phonetic, collins, tag, definition, exchange]
+            word = self.transList[self.currentBook][self.currentLesson][self.currentIndex][0]
+            pos = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][0]
+            translation = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][1]
+            phonetic = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][2]
+            frequency = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][3]
+            tag = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][4]
+            definition = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][5]
+            exchange = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][6]
+
             # data is stored in tuple
-            if data:
-                str_ += "[%s]" % data[0]
+            if phonetic and (phonetic != ""):
+                str_ += "[%s]" % phonetic
             else:
                 str_ += "未找到音标"
             str_ += '\n'
 
-            sql = "SELECT translation FROM stardict WHERE word like '%s'" % self.currentWord
-            self.cursor_user.execute(sql)
-            data = self.cursor_user.fetchone()
-            # data is stored in tuple
-            if not data:
-                trans(self)
-                return
-            str_ += data[0]
+            if pos and pos != "":
+                if "/" in pos:
+                    tmpList = pos.split("/")
+                    for each in tmpList:
+                        eachList = each.split(":")
+                        if eachList[0] == "j":
+                            str_ += "(" + "adj" + ".) : " + (str(eachList[1]) + "%") + " | "
+                        else:
+                            str_ += "(" + eachList[0] + ".) : " + (str(eachList[1]) + "%") + " | "
 
-            self.ui.meaningBrowser.setText(str_)
+                else:
+                    eachList = pos.split(":")
+                    if eachList[0] == "j":
+                        str_ += "(" + "adj" + ".) : " + (str(eachList[1]) + "%")
+                    else:
+                        str_ += "(" + eachList[0] + ".) : " + (str(eachList[1]) + "%")
+                str_ += '\n'
+
+            self.currentChineseTrans = translation
+
+            if definition and definition != "":
+                self.currentEnglishTrans = definition.replace("\n", "\n\n")
+
+            if not self.TransMode:
+                self.ui.meaningBrowser.setText(self.currentChineseTrans)
+            else:
+                if self.currentEnglishTrans == "":
+                    self.ui.meaningBrowser.setText("No record found, sorry!")
+                else:
+                    self.ui.meaningBrowser.setText(self.currentEnglishTrans)
+
             self.ui.meaningBrowser_2.setText(str_)
+
+        # the self.transSourceControl whether to use which source, default is 0
+        if not self.transSourceControl: #  or (not os.path.exists("lib/res/word_Repository/csv/%s_remv.csv" % functions.getExcelName(self.currentBook)))
+            # To start online connections only when csv file in local is not existent.
+            translateOnline(self)
         else:
-            trans(self)
+            translateFromCSV(self)
 
         return
+
+    def loadWordExchange(self):
+        if self.cursor_user is not None:
+            sql = "SELECT exchange FROM stardict WHERE word like '%s'" % self.currentWord
+            self.cursor_user.execute(sql)
+            data = self.cursor_user.fetchone()
+
+            str_ = ""
+            if data:
+                dataList = data[0].split("/")
+                for each in dataList:
+                    eachList = each.split(":")
+                    if eachList[0] == "p":
+                        str_ += "过去式: " + '\n' + eachList[1]
+                    elif eachList[0] == "d":
+                        str_ += "过去分词: " + '\n' + eachList[1] + '\n'
+                    elif eachList[0] == "i":
+                        str_ += "现在分词: " + '\n' + eachList[1] + '\n'
+                    elif eachList[0] == "3":
+                        str_ += "三单: " + '\n' + eachList[1] + '\n'
+                    elif eachList[0] == "r":
+                        str_ += "比较级: " + '\n' + eachList[1] + '\n'
+                    elif eachList[0] == "t":
+                        str_ += "最高级: " + '\n' + eachList[1] + '\n'
+                    elif eachList[0] == "s":
+                        str_ += "复数: " + '\n' + eachList[1] + '\n'
+                    elif eachList[0] == "0":
+                        str_ += "原型: " + '\n' + eachList[1] + '\n'
+                    elif eachList[0] == "1":
+                        str_ += "变形: " + '\n' + eachList[1] + '\n'
+                    str_ += '\n'
+
+            if str_.strip() != "":
+                self.ui.exchangeEdit.setText(str_)
+                self.ui.exchangeBox.show()
 
     def parseBook(self, path):
         """
@@ -775,18 +963,25 @@ class RemVClass(QMainWindow):
 
         # 处理words 把SAT单词书 分成好几节课 然后把SAT这真本书 放到wordsOAB 里面 名字与书的内容
         try:
-            # self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse(toRelativePath(path))))
-            if not os.path.exists("lib/res/word_Repository/csv"):
-                os.makedirs("lib/res/word_Repository/csv")
             # check whether corresponding csv file exists
-            if (not os.path.exists("lib/res/word_Repository/csv/%s.csv" % functions.getExcelName(path))) or (
+            if (not os.path.exists("lib/res/word_Repository/csv/%s_remv.csv" % functions.getExcelName(path))) or (
                     path == self.pathList[0]):
                 # after parsing books, books have to be divided into lessons
-                self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 1)))
+                self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 1))) #
+                # 1 represents to download offline translation
+                self.transSourceControl = 0
+
             else:
                 # after parsing books, books have to be divided into lessons
-                self.wordsLFSB = functions.divideIntoLessons(
-                    functions.parseCsv("lib/res/word_Repository/csv/%s.csv" % functions.getExcelName(path)))
+                self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 0)))
+                # 0 represents to only parse the excel
+
+                # Pattern: (word,(pos,translation,phonetic,collins,tag,definition,exchange))
+                self.transList.update({path: functions.divideIntoLessons(
+                    functions.parseCsv("lib/res/word_Repository/csv/%s_remv.csv"
+                                       % functions.getExcelName(path)))})
+
+                self.transSourceControl = 1
         except:
             QMessageBox.about(self, "温馨提示", "目标路径中不存在该文件")
             return "Error"
@@ -870,65 +1065,6 @@ class RemVClass(QMainWindow):
                 self.ui.starBtn_5.setVisible(False)
 
         return
-
-    def loadWordPic(self):
-        """
-        load Pic in local files
-        :return:
-        """
-
-        wordPath = self.currentWord.replace(" ", "%20").strip() + ".jpg"
-        path_ = os.getcwd() + r"\lib\res\pic"
-        filePath = os.path.join(path_, wordPath)
-        if os.path.exists(filePath):
-            self.loadExistPic(filePath)
-        else:
-            self.loadWordPicOnline()
-        return
-
-    def loadExistPic(self, filePath):
-        img = QPixmap(filePath)
-        img = img.scaled(self.ui.picWidget.width(), self.ui.picWidget.height(),
-                         Qt.IgnoreAspectRatio, Qt.FastTransformation)
-        self.ui.wordPic.setPixmap(img)
-        self.ui.wordPic.show()
-
-    def loadWordPicOnline(self):
-        url = getSourceFromOuLu.getPicUrl(self.currentWord)
-
-        if url is not None:
-            try:
-                res = requests.get(url, timeout=3)
-                img = QImage.fromData(res.content)
-                img = img.scaled(241, 261, Qt.IgnoreAspectRatio, Qt.FastTransformation)
-                self.ui.wordPic.setPixmap(QPixmap(img))
-                self.ui.wordPic.show()
-                return
-
-            except BaseException:
-                print("图片解析错误")
-        else:
-            return
-
-    def downloadPic(self):
-        num = 0
-        while num < self.lessonLen:
-            if (num + 4) <= self.lessonLen:
-                t0 = MyThread(args=(num, num + 4, self.wordsOAB, self.currentBook, self.currentLesson),
-                              func="download")
-                t0.setDaemon(True)
-                t0.start()
-            else:
-                t0 = MyThread(args=(num, self.lessonLen, self.wordsOAB, self.currentBook, self.currentLesson),
-                              func="download")
-                t0.setDaemon(True)
-                t0.start()
-            num = num + 4
-
-    def deletePic(self):
-        t1 = MyThread(func="delete")
-        t1.setDaemon(False)
-        t1.start()
 
     def setTags(self):
         tagList = getSourceFromOuLu.getTags(self.currentWord)
@@ -1083,28 +1219,34 @@ class RemVClass(QMainWindow):
         self.setCursor(QCursor(Qt.ArrowCursor))
 
     def connectDB(self):
+        self.connectDB_user()
+        # self.connectDB_root()
+
+    def connectDB_user(self):
         try:
             self.conn_user = pymysql.connect(
                 host='127.0.0.1',
                 port=3306,
                 user="remv_user",
-                passwd=getPassword.getUserPassword(),
+                passwd="iloveRemV",
                 db='remv'
             )
-
-            self.conn_root = pymysql.connect(
-                host='127.0.0.1',
-                port=3306,
-                user="root",
-                passwd=getPassword.getRootPassword(),
-                db='remv'
-            )
-
             self.cursor_user = self.conn_user.cursor()
-            self.cursor_root = self.conn_root.cursor()
-
         except:
             pass
+
+    # def connectDB_root(self):
+    #     try:
+    #         self.conn_root = pymysql.connect(
+    #             host='127.0.0.1',
+    #             port=3306,
+    #             user="root",
+    #             passwd=getPassword.getRootPassword(),
+    #             db='remv'
+    #         )
+    #         self.cursor_root = self.conn_root.cursor()
+    #     except:
+    #         pass
 
     def updateCheck(self):
         currentVersion = ""
@@ -1283,37 +1425,7 @@ class RemVClass(QMainWindow):
 
         self.ui.PreSufBrowser.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
 
-
-class MyThread(threading.Thread):
-    def __init__(self, func="download", args=()):
-        threading.Thread.__init__(self)
-        self.result = None
-        self.error = None
-        self.func = func
-        self.args = args
-
-    def run(self):
-        print("%s 执行啦" % self.name)
-        if self.func == "download":
-            self.download(*self.args)
-        if self.func == "delete":
-            self.delete()
-
-    def download(self, startNum, lessonLen, wordsOAB, book, lesson):
-        print("download 成功执行")
-
-        for i in range(startNum, lessonLen):
-            word = wordsOAB[book][lesson][i][0]
-            getSourceFromOuLu.downloadPicFromOuLu(word)
-
-    def delete(self):
-        path_ = os.getcwd() + r"\lib\res\pic"
-        # 遍历删除所有lib\res\pic 下的文件
-        for root, dirs, files in os.walk(path_, topdown=False):
-            for name in files:
-                os.remove(os.path.join(root, name))
-            for name in dirs:
-                os.rmdir(os.path.join(root, name))
+        self.ui.exchangeEdit.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
 
 
 """

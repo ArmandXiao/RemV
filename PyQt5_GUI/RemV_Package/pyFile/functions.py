@@ -1,5 +1,6 @@
 import csv
 import os
+import threading
 
 import openpyxl
 import re
@@ -8,6 +9,8 @@ import urllib.parse as uP
 import json
 
 import xlrd
+
+import dataBase_Tools
 
 """
 @copyright   Copyright 2020 RemV
@@ -69,13 +72,10 @@ def excelParse_xlrd(path_, pattern=0):
 
     myList = []
 
-    global f
+    global f, writer, wordList
 
     if pattern:
-        name = getExcelName(path_)
-        if not os.path.exists("lib/res/word_Repository/csv"):
-            os.makedirs("lib/res/word_Repository/csv")
-        f = open("lib/res/word_Repository/csv/%s.csv" % name, "w", encoding='utf-8', newline="")
+        wordList = []
 
     index = 0
     while index < numRow:
@@ -94,12 +94,13 @@ def excelParse_xlrd(path_, pattern=0):
             # myList[index][1][1] 是 意思
             myList.append((word, (pos, meaning)))
             if pattern:
-                writer = csv.writer(f)
-                writer.writerow([word, pos, meaning])
+                wordList.append(word)
         index += 1
 
     if pattern:
-        f.close()
+        newThread = threading.Thread(target=dataBase_Tools.writeCSV, args=(getExcelName(path_), wordList))
+        newThread.setDaemon(False)
+        newThread.start()
 
     return myList
 
@@ -107,6 +108,7 @@ def excelParse_xlrd(path_, pattern=0):
 def parseCsv(path_):
     """
     Gives back a list through parsing csv, for parsing csv saves more time than parsing excels again
+    Pattern: [word,pos,translation,phonetic,collins,tag,definition,exchange]
     :param path_: path of csv file
     :return: a list tha contains word and meanings.
     """
@@ -116,7 +118,8 @@ def parseCsv(path_):
     with open(path_) as f:
         read = csv.reader(f)
         for eachRow in read:
-            list_.append((eachRow[0], (eachRow[1], eachRow[2])))
+            # [word,pos,translation,phonetic,collins,tag,definition,exchange]
+            list_.append((eachRow[0], (eachRow[1], eachRow[2], eachRow[3], eachRow[4], eachRow[5], eachRow[6], eachRow[7] )))
 
     return list_
 
@@ -220,6 +223,7 @@ def divideIntoLessons(list_, num=20):
     lessonList.append(list_[count:])
     # print(lessonList)
     return lessonList
+
 
 if __name__ == '__main__':
     pass

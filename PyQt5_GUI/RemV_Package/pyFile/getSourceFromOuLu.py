@@ -80,10 +80,13 @@ def getTags(word):
     html = getHtml(word)
 
     tagFinder = re.compile("(<span class=\"tag\">)(.{1,5})(</span>)")
-    tagList = tagFinder.findall(html)
-    resultList = []
-    for each in tagList:
-        resultList.append(each[1])
+    try:
+        tagList = tagFinder.findall(html)
+        resultList = []
+        for each in tagList:
+            resultList.append(each[1])
+    except:
+        return None
 
     return resultList
 
