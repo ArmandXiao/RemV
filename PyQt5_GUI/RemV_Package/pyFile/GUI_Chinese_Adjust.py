@@ -228,7 +228,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.uploadButton.sizePolicy().hasHeightForWidth())
         self.uploadButton.setSizePolicy(sizePolicy)
         self.uploadButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.uploadButton.setStyleSheet("background-color:rgb(167, 203, 238);\n"
+        self.uploadButton.setStyleSheet("background-color:rgb(230, 255, 255);\n"
 "    color: black;\n"
 "    font: bold 20px;\n"
 "")
@@ -1546,7 +1546,7 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "登录"))
         self.lessonListWidget.setToolTip(_translate("MainWindow", "选课列表"))
         self.bookListWidget.setSortingEnabled(False)
-        self.downloadBtn.setText(_translate("MainWindow", "离线下载"))
+        self.downloadBtn.setText(_translate("MainWindow", "获取单词书"))
         self.downloadBtn.setShortcut(_translate("MainWindow", "Ctrl+D"))
         self.uploadButton.setText(_translate("MainWindow", "上传"))
         self.uploadButton.setShortcut(_translate("MainWindow", "Ctrl+U"))

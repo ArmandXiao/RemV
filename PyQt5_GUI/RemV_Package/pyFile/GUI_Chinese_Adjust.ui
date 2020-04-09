@@ -458,7 +458,7 @@ background: rgb(42, 51, 60)
 </string>
           </property>
           <property name="text">
-           <string>离线下载</string>
+           <string>获取单词书</string>
           </property>
           <property name="iconSize">
            <size>
@@ -495,7 +495,7 @@ background: rgb(42, 51, 60)
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color:rgb(167, 203, 238);
+           <string notr="true">background-color:rgb(230, 255, 255);
 	color: black;
     font: bold 20px;
 </string>

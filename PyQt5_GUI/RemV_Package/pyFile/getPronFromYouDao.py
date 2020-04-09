@@ -1,4 +1,5 @@
 import os
+import subprocess
 import urllib.request
 
 from playsound import playsound
@@ -11,6 +12,7 @@ from playsound import playsound
 @link        https://github.com/ArmandXiao/RemV.git
 """
 
+
 def downloadMP3FromYouDao(word, type_):
     word = word.replace(" ", "%20")
     url = "http://dict.youdao.com/dictvoice?type=%d&audio=%s" % (type_, word)
@@ -20,8 +22,6 @@ def downloadMP3FromYouDao(word, type_):
     filePath = os.path.join(path, fileName)
 
     if not os.path.exists(filePath):
-        if not os.path.exists(path):
-            os.makedirs(path)
         try:
             urllib.request.urlretrieve(url, filePath)
         except:
@@ -38,12 +38,9 @@ def playSound(word, type_):
     if path != "":
         playsound(path)
         # del
-        os.remove(path)
+        cmd = r"del %s" % path
+        subprocess.call(cmd, shell=True)
 
 
 def sayTipSound():
     playsound(r"lib\res\pron\Please%20check%20your%20internet%20connection_0.mp3")
-
-
-if __name__ == '__main__':
-    playSound("perennial", 1)

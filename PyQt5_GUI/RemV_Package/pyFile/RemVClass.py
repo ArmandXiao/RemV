@@ -1,24 +1,28 @@
+# coding:utf-8
 import os
 import pickle
+import re
 import sys
+import webbrowser
 import threading
 from random import randint
-import re
-import webbrowser
 from urllib import request
 
+import openpyxl
 import pymysql
 import requests
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QCursor
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QDialog, QWidget
 
+import dataBase_Tools
+import downloadScene
 import getPronFromYouDao
 import getSourceFromOuLu
 import getSuffixFromCgdict
 from pyFile import functions, getTranslationFromYouDao, createBookScene, addWordScene, \
-    GUI_Chinese_Adjust, getGreatSentences, dataBase_Tools
-import openpyxl
+    GUI_Chinese_Adjust, getGreatSentences
 
 """
 @copyright   Copyright 2020 RemV
@@ -64,10 +68,6 @@ class RemVClass(QMainWindow):
         # 中文版
         self.ui = GUI_Chinese_Adjust.Ui_MainWindow()
         GUI_Chinese_Adjust.Ui_MainWindow.setupUi(self.ui, self)
-
-        # Create second and third scene
-        self.secondWin = self.accessSecond()()
-        self.thirdWin = self.accessThird()()
 
         self.ui.stackedWidget.setCurrentIndex(4)
 
@@ -137,6 +137,7 @@ class RemVClass(QMainWindow):
         # uploadBtn 添加点击事件
         self.ui.uploadButton.clicked.connect(self.uploadBtnClicked)
         self.ui.addBookBtn.clicked.connect(self.goToAddScene)
+        self.ui.downloadBtn.clicked.connect(self.goToDownload)
 
         # 给 memorize, quiz, menu 添加事件 切屏事件
         self.ui.MenuBtn_1.clicked.connect(self.changeScene_0)
@@ -244,14 +245,17 @@ class RemVClass(QMainWindow):
                                                      "不再让英语成为负担, 祝你好运!\n\n肖凌奥 "
                                                      "Armand\n联系方式(微信): xla920338028")
 
-        self.ui.useTipBtn.clicked.connect(lambda: QMessageBox.information(self, "RemV使用技巧", ""
-                                                                                            "1. 很多图标都是有功能的，自己点点看吧！"
-                                                                                            "\n\n2. 双击一本书，可以从目录删除噢."
-                                                                                            "\n\n3. 一节课只背一遍可是行不通的！"
-                                                                                            "\n\n3.5 懒得背至少多小测几遍吧~"
-                                                                                            "\n\n祝你好运(●'◡'●)"))
-        self.ui.ChineseBtn.setChecked(True)
-        self.ui.ChineseBtn.setEnabled(False)
+        self.secondWin = self.accessSecond()()
+        self.thirdWin = self.accessThird()()
+        self.downloadScene = self.accessDownloadScene()()
+
+        self.secondWin.setWindowTitle("创建书")
+        self.thirdWin.setWindowTitle("加入单词")
+        self.downloadScene.setWindowTitle("下载离线单词书")
+
+        self.secondWin.setWindowIcon(QIcon("lib\\res\\image\\logo_1_128x128.ico"))
+        self.thirdWin.setWindowIcon(QIcon("lib\\res\\image\\logo_1_128x128.ico"))
+        self.downloadScene.setWindowIcon(QIcon("lib\\res\\image\\logo_1_128x128.ico"))
 
     def EnglishBtnClicked(self):
         self.TransMode = 1
@@ -275,8 +279,9 @@ class RemVClass(QMainWindow):
 
     def exitBtnClicked(self):
         try:
-            # self.conn_root.close()
-            self.conn_user.close()
+            if self.conn_user:
+                # self.conn_root.close()
+                self.conn_user.close()
         finally:
             self.close()
 
@@ -458,10 +463,6 @@ class RemVClass(QMainWindow):
 
     def changeScene_0(self):
         # disconnect database
-        if self.conn_user:
-            self.conn_user.close()
-        # if self.conn_root:
-        #     self.conn_root.close()
 
         self.setOverViewScene()
         self.ui.stackedWidget.setCurrentIndex(0)
@@ -494,7 +495,8 @@ class RemVClass(QMainWindow):
         Go to test scene
         :return: None
         """
-        self.conn_user()
+
+        self.connectDB()
 
         self.remain = self.lessonLen
         self.ui.stackedWidget.setCurrentIndex(2)
@@ -756,25 +758,20 @@ class RemVClass(QMainWindow):
         :return: None
         """
         self.translate()
-        # if internetCheck():
-        #     # MainThread
-        #     # MainThread Functions must be executed before threads.
-        #     self.setPreOrSuf()
-        #     self.loadWordExchange()
-        #
-        #     # start a thread of setFrequency
-        #     t2 = threading.Thread(target=self.setFrequency)
-        #     t2.setDaemon(True)
-        #     t2.start()
-        #
-        #     # start a thread of setTags
-        #     t3 = threading.Thread(target=self.setTags)
-        #     t3.setDaemon(True)
-        #     t3.start()
-        #
-        #
-        # else:
-        #     self.ui.meaningBrowser.setText("抱歉，请检查您的网络连接\n/(ㄒoㄒ)/~~")
+        # MainThread
+        # MainThread Functions must be executed before threads.
+        self.setPreOrSuf()
+        self.loadWordExchange()
+
+        # start a thread of setFrequency
+        t2 = threading.Thread(target=self.setFrequency)
+        t2.setDaemon(True)
+        t2.start()
+
+        # start a thread of setTags
+        t3 = threading.Thread(target=self.setTags)
+        t3.setDaemon(True)
+        t3.start()
 
     def translate(self):
         """
@@ -861,14 +858,10 @@ class RemVClass(QMainWindow):
         def translateFromCSV(self):
             str_ = "音标"
             # [word, pos, translation, phonetic, collins, tag, definition, exchange]
-            word = self.transList[self.currentBook][self.currentLesson][self.currentIndex][0]
             pos = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][0]
             translation = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][1]
             phonetic = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][2]
-            frequency = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][3]
-            tag = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][4]
             definition = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][5]
-            exchange = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][6]
 
             # data is stored in tuple
             if phonetic and (phonetic != ""):
@@ -895,7 +888,7 @@ class RemVClass(QMainWindow):
                         str_ += "(" + eachList[0] + ".) : " + (str(eachList[1]) + "%")
                 str_ += '\n'
 
-            self.currentChineseTrans = translation
+            self.currentChineseTrans = str_ + translation
 
             if definition and definition != "":
                 self.currentEnglishTrans = definition.replace("\n", "\n\n")
@@ -908,11 +901,15 @@ class RemVClass(QMainWindow):
                 else:
                     self.ui.meaningBrowser.setText(self.currentEnglishTrans)
 
-            self.ui.meaningBrowser_2.setText(str_)
+            self.ui.meaningBrowser_2.setText(self.currentChineseTrans)
 
         # the self.transSourceControl whether to use which source, default is 0
-        if not self.transSourceControl: #  or (not os.path.exists("lib/res/word_Repository/csv/%s_remv.csv" % functions.getExcelName(self.currentBook)))
+        if not self.transSourceControl:
             # To start online connections only when csv file in local is not existent.
+            if not internetCheck():
+                self.ui.meaningBrowser.setText("请检查网络连接\n/(ㄒoㄒ)/~~")
+                self.ui.meaningBrowser_2.setText("请检查网络连接\n/(ㄒoㄒ)/~~")
+                return
             translateOnline(self)
         else:
             translateFromCSV(self)
@@ -920,35 +917,43 @@ class RemVClass(QMainWindow):
         return
 
     def loadWordExchange(self):
-        if self.cursor_user is not None:
-            sql = "SELECT exchange FROM stardict WHERE word like '%s'" % self.currentWord
-            self.cursor_user.execute(sql)
-            data = self.cursor_user.fetchone()
+        data = None
+        if not self.transSourceControl:
+            # To get frequency from database or online
+            if not internetCheck():
+                return
+            if self.cursor_user is not None:
+                sql = "SELECT exchange FROM stardict WHERE word like '%s'" % self.currentWord
+                self.cursor_user.execute(sql)
+                data = self.cursor_user.fetchone()
+        else:
+            # uniform the formate
+            data = [self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][6]]
 
-            str_ = ""
-            if data:
-                dataList = data[0].split("/")
-                for each in dataList:
-                    eachList = each.split(":")
-                    if eachList[0] == "p":
-                        str_ += "过去式: " + '\n' + eachList[1]
-                    elif eachList[0] == "d":
-                        str_ += "过去分词: " + '\n' + eachList[1] + '\n'
-                    elif eachList[0] == "i":
-                        str_ += "现在分词: " + '\n' + eachList[1] + '\n'
-                    elif eachList[0] == "3":
-                        str_ += "三单: " + '\n' + eachList[1] + '\n'
-                    elif eachList[0] == "r":
-                        str_ += "比较级: " + '\n' + eachList[1] + '\n'
-                    elif eachList[0] == "t":
-                        str_ += "最高级: " + '\n' + eachList[1] + '\n'
-                    elif eachList[0] == "s":
-                        str_ += "复数: " + '\n' + eachList[1] + '\n'
-                    elif eachList[0] == "0":
-                        str_ += "原型: " + '\n' + eachList[1] + '\n'
-                    elif eachList[0] == "1":
-                        str_ += "变形: " + '\n' + eachList[1] + '\n'
-                    str_ += '\n'
+        str_ = ""
+        if data:
+            dataList = data[0].split("/")
+            for each in dataList:
+                eachList = each.split(":")
+                if eachList[0] == "p":
+                    str_ += "过去式: " + '\n' + eachList[1]
+                elif eachList[0] == "d":
+                    str_ += "过去分词: " + '\n' + eachList[1] + '\n'
+                elif eachList[0] == "i":
+                    str_ += "现在分词: " + '\n' + eachList[1] + '\n'
+                elif eachList[0] == "3":
+                    str_ += "三单: " + '\n' + eachList[1] + '\n'
+                elif eachList[0] == "r":
+                    str_ += "比较级: " + '\n' + eachList[1] + '\n'
+                elif eachList[0] == "t":
+                    str_ += "最高级: " + '\n' + eachList[1] + '\n'
+                elif eachList[0] == "s":
+                    str_ += "复数: " + '\n' + eachList[1] + '\n'
+                elif eachList[0] == "0":
+                    str_ += "原型: " + '\n' + eachList[1] + '\n'
+                elif eachList[0] == "1":
+                    str_ += "变形: " + '\n' + eachList[1] + '\n'
+                str_ += '\n'
 
             if str_.strip() != "":
                 self.ui.exchangeEdit.setText(str_)
@@ -967,7 +972,7 @@ class RemVClass(QMainWindow):
             if (not os.path.exists("lib/res/word_Repository/csv/%s_remv.csv" % functions.getExcelName(path))) or (
                     path == self.pathList[0]):
                 # after parsing books, books have to be divided into lessons
-                self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 1))) #
+                self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 1)))  #
                 # 1 represents to download offline translation
                 self.transSourceControl = 0
 
@@ -997,7 +1002,8 @@ class RemVClass(QMainWindow):
         Set Prefix and Suffix for each word
         :return: None
         """
-
+        if not internetCheck():
+            return
         PreList, SufList = getSuffixFromCgdict.getPreOrSuf(self.currentWord)
 
         if len(PreList) != 0:
@@ -1023,19 +1029,26 @@ class RemVClass(QMainWindow):
         Set Frequency of use for each word
         :return: None
         """
-        if self.cursor_user is not None:
-            sql = "SELECT collins FROM stardict WHERE word like '%s'" % self.currentWord
-            self.cursor_user.execute(sql)
-            data = self.cursor_user.fetchone()
-            # data is stored in tuple
-            if not data:
-                fre = getTranslationFromYouDao.getFrequency(self.currentWord)
+        fre = -1
+        if not self.transSourceControl:
+            # To get frequency from database or online
+            if not internetCheck():
+                return
+            if self.cursor_user is not None:
+                sql = "SELECT collins FROM stardict WHERE word like '%s'" % self.currentWord
+                self.cursor_user.execute(sql)
+                data = self.cursor_user.fetchone()
+                # data is stored in tuple
+                if not data:
+                    fre = getTranslationFromYouDao.getFrequency(self.currentWord)
+                else:
+                    fre = int(data[0])
             else:
-                fre = int(data[0])
+                fre = getTranslationFromYouDao.getFrequency(self.currentWord)
         else:
-            fre = getTranslationFromYouDao.getFrequency(self.currentWord)
+            fre = int(self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][3])
 
-        if fre == -1:
+        if fre == -1:  # getTranslationFromYouDao.getFrequency(self.currentWord) may gives -1
             return
         for i in range(fre):
             if i == 0:
@@ -1067,7 +1080,37 @@ class RemVClass(QMainWindow):
         return
 
     def setTags(self):
-        tagList = getSourceFromOuLu.getTags(self.currentWord)
+        tagList = []
+        if not self.transSourceControl:
+            if not internetCheck():
+                return
+            # To start online connections only when csv file in local is not existent.
+            tagList = getSourceFromOuLu.getTags(self.currentWord)
+        else:
+            tag = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][4]
+            tagList = tag.split("/")
+            index = 0
+            for each in tagList:
+                if each == "toefl":
+                    tagList[index] = "托福"
+                elif each == "ielts":
+                    tagList[index] = "雅思"
+                elif each == "zk":
+                    tagList[index] = '中考'
+                elif each == "gk":
+                    tagList[index] = '高考'
+                elif each == "ky":
+                    tagList[index] = '考研'
+                elif each == "cet4":
+                    tagList[index] = '四级'
+                elif each == "cet6":
+                    tagList[index] = '六级'
+                elif each == "gre":
+                    tagList[index] = 'GRE'
+                elif each == "sat":
+                    tagList[index] = 'SAT'
+                index += 1
+
         length = len(tagList)
         if length != 0:
             for i in range(length):
@@ -1225,7 +1268,7 @@ class RemVClass(QMainWindow):
     def connectDB_user(self):
         try:
             self.conn_user = pymysql.connect(
-                host='127.0.0.1',
+                host='192.168.1.101',
                 port=3306,
                 user="remv_user",
                 passwd="iloveRemV",
@@ -1238,7 +1281,7 @@ class RemVClass(QMainWindow):
     # def connectDB_root(self):
     #     try:
     #         self.conn_root = pymysql.connect(
-    #             host='127.0.0.1',
+    #             host='192.168.1.101',
     #             port=3306,
     #             user="root",
     #             passwd=getPassword.getRootPassword(),
@@ -1363,6 +1406,115 @@ class RemVClass(QMainWindow):
                 outterClass.thirdWin.hide()
 
         return DialogWin_2
+
+    def goToDownload(self):
+        conn = pymysql.connect(host='192.168.1.101', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
+        cur = conn.cursor()
+        for i in range(6):
+            if i == 0:
+                cur.execute("select book from bookcatalog where booktype like '小学'")
+                data = cur.fetchall()
+                if not data:
+                    continue
+                self.downloadScene.ui_DS.list_1.clear()
+                for each in data:
+                    self.downloadScene.ui_DS.list_1.addItems(each)
+            elif i == 1:
+                cur.execute("select book from bookcatalog where booktype like '初中'")
+                data = cur.fetchall()
+                if not data:
+                    continue
+                self.downloadScene.ui_DS.list_2.clear()
+                for each in data:
+                    self.downloadScene.ui_DS.list_2.addItems(each)
+            elif i == 2:
+                cur.execute("select book from bookcatalog where booktype like '高中'")
+                data = cur.fetchall()
+                if not data:
+                    continue
+                self.downloadScene.ui_DS.list_3.clear()
+                for each in data:
+                    self.downloadScene.ui_DS.list_3.addItems(each)
+            elif i == 3:
+                cur.execute("select book from bookcatalog where booktype like '大学'")
+                data = cur.fetchall()
+                if not data:
+                    continue
+                self.downloadScene.ui_DS.list_4.clear()
+                for each in data:
+                    self.downloadScene.ui_DS.list_4.addItems(each)
+            elif i == 4:
+                cur.execute("select book from bookcatalog where booktype like '留学'")
+                data = cur.fetchall()
+                if not data:
+                    continue
+                self.downloadScene.ui_DS.list_5.clear()
+                for each in data:
+                    self.downloadScene.ui_DS.list_5.addItems(each)
+            elif i == 5:
+                cur.execute("select book from bookcatalog where booktype like '研究生'")
+                data = cur.fetchall()
+                if not data:
+                    continue
+                self.downloadScene.ui_DS.list_6.clear()
+                for each in data:
+                    self.downloadScene.ui_DS.list_6.addItems(each)
+        conn.close()
+        self.downloadScene.show()
+
+    def accessDownloadScene(self):
+        outterClass = self
+
+        class DownloadScene(QWidget):
+            # list_1 : 小学
+            # list_2 : 初中
+            # list_3 : 高中
+            # list_4 : 大学
+            # list_5 : 留学
+            # list_6 : 研究生
+            def __init__(self):
+                super().__init__()
+                self.ui_DS = downloadScene.Ui_Form()
+                downloadScene.Ui_Form.setupUi(self.ui_DS, self)
+
+                self.ui_DS.downloadBtn.clicked.connect(self.download)
+                self.ui_DS.list_1.selectedItems()
+
+            def download(self):
+                list_ = []
+
+                list_ += self.ui_DS.list_1.selectedItems()
+                list_ += self.ui_DS.list_2.selectedItems()
+                list_ += self.ui_DS.list_3.selectedItems()
+                list_ += self.ui_DS.list_4.selectedItems()
+                list_ += self.ui_DS.list_5.selectedItems()
+                list_ += self.ui_DS.list_6.selectedItems()
+                tmpList = []
+                for each in list_:
+                    if each.text().strip() != "":
+                        tmpList.append(each.text())
+                list_ = tmpList
+                bool_ = True
+                time = len(list_) * 30
+                timeStr = "%d 分钟 %d 秒" % (time // 60, time % 60)
+                for each in list_:
+                    if bool_:
+                        self.setEnabled(False)
+                        QMessageBox.information(self, "请耐心等待", "您一共选择了 %d 本书\n\n等等时间约为:\n\n%s" % (len(list_), timeStr))
+                        bool_ = False
+                    if not os.path.exists(r'lib/res/word_Repository/csv/%s_remv.csv' % each):
+                        name = dataBase_Tools.writeCSV_byName(each)
+                        self.ui_DS.finishedList.addItem(name)
+
+                self.ui_DS.list_1.clearSelection()
+                self.ui_DS.list_2.clearSelection()
+                self.ui_DS.list_3.clearSelection()
+                self.ui_DS.list_4.clearSelection()
+                self.ui_DS.list_5.clearSelection()
+                self.ui_DS.list_6.clearSelection()
+                self.setEnabled(True)
+
+        return DownloadScene
 
     def setScrollBarStyle(self):
         verticalScrollBarStyle = """
