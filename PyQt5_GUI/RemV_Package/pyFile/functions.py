@@ -98,7 +98,7 @@ def excelParse_xlrd(path_, pattern=0):
         index += 1
 
     if pattern:
-        newThread = threading.Thread(target=dataBase_Tools.writeCSV, args=(getExcelName(path_), wordList))
+        newThread = threading.Thread(target=dataBase_Tools.writeCSV, args=(getFileName(path_), wordList))
         newThread.setDaemon(False)
         newThread.start()
 
@@ -161,9 +161,9 @@ def excelParse(path_):
     return myList
 
 
-def getExcelName(path_):
+def getFileName(path_):
     '''
-
+    获取文件的名字，如果包含_remv 就删除
     :param path_: 文件路径
     :return: String 文件名字
     '''
@@ -171,7 +171,10 @@ def getExcelName(path_):
     # 系统给的文件名字是 中的 是 /
     getName = re.compile(r"\\|[.]|/")
     excelname = getName.split(newPath)
-    return excelname[len(excelname) - 2]
+    if "_remv" in excelname[len(excelname) - 2]:
+        return excelname[len(excelname) - 2].split("_remv")[0]
+    else:
+        return excelname[len(excelname) - 2]
 
 
 def getBooks(list_):
@@ -183,12 +186,12 @@ def getBooks(list_):
     if type(list_) is list:
         dict1 = {}
         for item in list_:
-            dict1.update({getExcelName(item): item})
+            dict1.update({getFileName(item): item})
         return dict1
 
     if type(list_) is str:
         dict1 = {}
-        dict1.update({getExcelName(list_): list_})
+        dict1.update({getFileName(list_): list_})
         return dict1
 
     return None
@@ -201,7 +204,7 @@ def getBookNames(pathList):
     """
     list_ = []
     for item in pathList:
-        list_.append(getExcelName(item))
+        list_.append(getFileName(item))
     return list_
 
 

@@ -3,6 +3,7 @@ import os
 import pickle
 import re
 import sys
+import time
 import webbrowser
 import threading
 from random import randint
@@ -133,7 +134,8 @@ class RemVClass(QMainWindow):
         self.ui.bookListWidget.itemClicked.connect(self.bookClicked)
         self.ui.bookListWidget.itemDoubleClicked.connect(self.bookDoubleClicked)
         self.ui.lessonListWidget.itemClicked.connect(self.lessonClicked)
-
+        self.ui.wordListWidget.itemClicked.connect(self.relateMeaning)
+        self.ui.meaningListWidget.itemClicked.connect(self.relateWord)
         # uploadBtn 添加点击事件
         self.ui.uploadButton.clicked.connect(self.uploadBtnClicked)
         self.ui.addBookBtn.clicked.connect(self.goToAddScene)
@@ -257,6 +259,14 @@ class RemVClass(QMainWindow):
         self.thirdWin.setWindowIcon(QIcon("lib\\res\\image\\logo_1_128x128.ico"))
         self.downloadScene.setWindowIcon(QIcon("lib\\res\\image\\logo_1_128x128.ico"))
 
+    def relateMeaning(self, item):
+        index = self.ui.wordListWidget.row(item)
+        self.ui.meaningListWidget.setCurrentRow(index)
+
+    def relateWord(self, item):
+        index = self.ui.meaningListWidget.row(item)
+        self.ui.wordListWidget.setCurrentRow(index)
+
     def EnglishBtnClicked(self):
         self.TransMode = 1
         self.ui.EnglishBtn.setEnabled(False)
@@ -282,6 +292,7 @@ class RemVClass(QMainWindow):
             if self.conn_user:
                 # self.conn_root.close()
                 self.conn_user.close()
+
         finally:
             self.close()
 
@@ -331,14 +342,21 @@ class RemVClass(QMainWindow):
                 break
 
         # If the book has been already parsed, do not parse it again.
-        if (self.createdBookName == functions.getExcelName(bookPath)) or (
+        if (self.createdBookName == functions.getFileName(bookPath)) or (
                 index == 0) or bool_:
 
             tmp = self.parseBook(bookPath)
             if tmp is not None:
                 response = QMessageBox.question(self, "删除请求", "您是否需要从目录删除这本书")
                 if response != 65536:
-                    self.bookDoubleClicked(item)
+                    index = self.ui.bookListWidget.row(item)
+                    self.pathList.pop(index)
+                    self.ui.lessonListWidget.clear()
+                    self.ui.bookListWidget.clear()
+                    self.saveData()
+                    self.getData()
+                    self.loadBookNames(self.pathList)
+                    self.ui.stackedWidget.setCurrentIndex(4)
                 return
 
         if self.currentBook == bookPath:
@@ -428,7 +446,13 @@ class RemVClass(QMainWindow):
             self.ui.wordListWidget.addItem(
                 self.wordsOAB[self.currentBook][self.currentLesson][i][0]
             )
-            if (self.wordsOAB[self.currentBook][self.currentLesson][i][1][0] is not None) or (
+            if self.transSourceControl:
+                if i == 0:
+                    self.currentMeaning = self.wordsOAB[self.currentBook][self.currentLesson][i][1][1]
+                self.ui.meaningListWidget.addItem(
+                    self.wordsOAB[self.currentBook][self.currentLesson][i][1][1]
+                )
+            elif (self.wordsOAB[self.currentBook][self.currentLesson][i][1][0] is not None) or (
                     self.wordsOAB[self.currentBook][self.currentLesson][i][1][0] != ""):
                 if i == 0:  # update the first current meaning
                     self.currentMeaning = str(self.wordsOAB[self.currentBook][self.currentLesson][i][1][0]) + "  " + \
@@ -446,10 +470,11 @@ class RemVClass(QMainWindow):
                 )
 
     def uploadBtnClicked(self):
-        filePath, _ = QFileDialog.getOpenFileName(self, "上传文件", "\\ ", "Excel (*.xlsx)")  # 设置文件扩展名过滤,注意用双分号间隔
+        filePath, _ = QFileDialog.getOpenFileName(self, "上传文件", "\\ ",
+                                                  "Excel (*.xlsx);; CSV (*.csv)")  # 设置文件扩展名过滤,注意用双分号间隔
         # _ 是返回的type 如果是excel 就返回 "Excel (*.xlsx)"
         if _ != "":
-            name = functions.getExcelName(filePath)
+            name = functions.getFileName(filePath)
             tmpList = functions.getBookNames(self.pathList)
             # 查重
             if name not in tmpList:
@@ -524,22 +549,23 @@ class RemVClass(QMainWindow):
 
         self.ui.wordBrowser.setText(self.currentWord)
 
-        if self.wordsOAB[self.currentBook][self.currentLesson][index][1][0] is not None:
+        if self.transSourceControl or self.wordsOAB[self.currentBook][self.currentLesson][index][1][0] is None:
+            self.currentMeaning = self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
+            self.ui.meaningBrowser.setText(
+                self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
+            )
+
+        elif self.wordsOAB[self.currentBook][self.currentLesson][index][1][0] is not None:
             self.currentMeaning = str(self.wordsOAB[self.currentBook][self.currentLesson][index][1][0]) + \
                                   self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
             self.ui.meaningBrowser.setText(
                 str(self.wordsOAB[self.currentBook][self.currentLesson][index][1][0]) +
                 self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
             )
-        else:
-            self.currentMeaning = self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
-            self.ui.meaningBrowser.setText(
-                self.wordsOAB[self.currentBook][self.currentLesson][index][1][1]
-            )
 
         # 居中显示
         self.ui.wordBrowser.setAlignment(Qt.AlignCenter)
-        self.ui.meaningBrowser.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        # self.ui.meaningBrowser.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
     def clearCurrentStatus(self):
         """
@@ -616,6 +642,7 @@ class RemVClass(QMainWindow):
             self.ui.QuizBtn_1.setVisible(True)
 
             self.conn_user.close()
+            self.conn_user = None
             # self.conn_root.close()
             return
 
@@ -750,6 +777,7 @@ class RemVClass(QMainWindow):
             self.ui.greatSentenceCHI.setText(chiSentence)
 
             self.conn_user.close()
+            self.conn_user = None
             return
 
     def translateBtnClicked(self):
@@ -969,22 +997,27 @@ class RemVClass(QMainWindow):
         # 处理words 把SAT单词书 分成好几节课 然后把SAT这真本书 放到wordsOAB 里面 名字与书的内容
         try:
             # check whether corresponding csv file exists
-            if (not os.path.exists("lib/res/word_Repository/csv/%s_remv.csv" % functions.getExcelName(path))) or (
+            if ((".xlsx" in path) and (
+                    not os.path.exists("lib/res/word_Repository/csv/%s_remv.csv" % functions.getFileName(path)))) or (
                     path == self.pathList[0]):
                 # after parsing books, books have to be divided into lessons
-                self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 1)))  #
+                self.wordsLFSB = functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 1))
                 # 1 represents to download offline translation
                 self.transSourceControl = 0
-
+            elif ".csv" in path:
+                self.wordsLFSB = functions.divideIntoLessons(functions.parseCsv(toRelativePath(path)))
+                self.transList.update({path: functions.divideIntoLessons(
+                    functions.parseCsv(path))})
+                self.transSourceControl = 1
             else:
                 # after parsing books, books have to be divided into lessons
-                self.wordsLFSB = (functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 0)))
+                self.wordsLFSB = functions.divideIntoLessons(functions.excelParse_xlrd(toRelativePath(path), 0))
                 # 0 represents to only parse the excel
 
                 # Pattern: (word,(pos,translation,phonetic,collins,tag,definition,exchange))
                 self.transList.update({path: functions.divideIntoLessons(
                     functions.parseCsv("lib/res/word_Repository/csv/%s_remv.csv"
-                                       % functions.getExcelName(path)))})
+                                       % functions.getFileName(path)))})
 
                 self.transSourceControl = 1
         except:
@@ -1090,37 +1123,40 @@ class RemVClass(QMainWindow):
             tag = self.transList[self.currentBook][self.currentLesson][self.currentIndex][1][4]
             tagList = tag.split("/")
             index = 0
-            for each in tagList:
-                if each == "toefl":
-                    tagList[index] = "托福"
-                elif each == "ielts":
-                    tagList[index] = "雅思"
-                elif each == "zk":
-                    tagList[index] = '中考'
-                elif each == "gk":
-                    tagList[index] = '高考'
-                elif each == "ky":
-                    tagList[index] = '考研'
-                elif each == "cet4":
-                    tagList[index] = '四级'
-                elif each == "cet6":
-                    tagList[index] = '六级'
-                elif each == "gre":
-                    tagList[index] = 'GRE'
-                elif each == "sat":
-                    tagList[index] = 'SAT'
-                index += 1
+            for eachItem in tagList:
+                for each in eachItem.split(" "):
+                    if not (index < len(tagList)):
+                        continue
+                    if each == "toefl":
+                        tagList[index] = "托福"
+                    elif each == "ielts":
+                        tagList[index] = "雅思"
+                    elif each == "zk":
+                        tagList[index] = '中考'
+                    elif each == "gk":
+                        tagList[index] = '高考'
+                    elif each == "ky":
+                        tagList[index] = '考研'
+                    elif each == "cet4":
+                        tagList[index] = '四级'
+                    elif each == "cet6":
+                        tagList[index] = '六级'
+                    elif each == "gre":
+                        tagList[index] = 'GRE'
+                    elif each == "sat":
+                        tagList[index] = 'SAT'
+                    index += 1
 
         length = len(tagList)
         if length != 0:
             for i in range(length):
                 if i == 0:
                     self.ui.tag_1.setText(tagList[i])
-                if i == 1:
+                elif i == 1:
                     self.ui.tag_2.setText(tagList[i])
-                if i == 2:
+                elif i == 2:
                     self.ui.tag_3.setText(tagList[i])
-                if i == 3:
+                elif i == 3:
                     self.ui.tag_4.setText(tagList[i])
         return
 
@@ -1170,7 +1206,7 @@ class RemVClass(QMainWindow):
                 pickle.dump(self.accumulativeNum, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 pickle.dump(self.totalStudyTime, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 # currentBook 是地址 currentLesson是下标 得加一
-                self.lastProgress = "上次进度: %s Lesson %d  共学习: %d 个单词！" % (
+                self.lastProgress = "进度: %s Lesson %d  共学习: %d 个单词！" % (
                     functions.getBookNames([self.currentBook])[0], self.currentLesson + 1, self.accumulativeNum)
                 pickle.dump(self.lastProgress, handle, protocol=pickle.HIGHEST_PROTOCOL)
         except:
@@ -1263,6 +1299,7 @@ class RemVClass(QMainWindow):
 
     def connectDB(self):
         self.connectDB_user()
+
         # self.connectDB_root()
 
     def connectDB_user(self):
@@ -1408,6 +1445,18 @@ class RemVClass(QMainWindow):
         return DialogWin_2
 
     def goToDownload(self):
+        self.downloadScene.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint)
+
+        self.downloadScene.ui_DS.stackedWidget.setCurrentIndex(0)
+        self.downloadScene.list_ = []
+        self.downloadScene.bookNum = 0
+        self.downloadScene.bool_ = True
+        self.downloadScene.time = 0
+        self.downloadScene.myThread = None
+
+        if not internetCheck():
+            QMessageBox.information(self, "网络连接失败", "数据库请求连接失败\n请检查网络连接")
+            return
         conn = pymysql.connect(host='192.168.1.101', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
         cur = conn.cursor()
         for i in range(6):
@@ -1466,6 +1515,7 @@ class RemVClass(QMainWindow):
         outterClass = self
 
         class DownloadScene(QWidget):
+
             # list_1 : 小学
             # list_2 : 初中
             # list_3 : 高中
@@ -1474,45 +1524,86 @@ class RemVClass(QMainWindow):
             # list_6 : 研究生
             def __init__(self):
                 super().__init__()
+                self.list_ = []
+                self.bookNum = 0
+                self.bool_ = True
+                self.time = 0
+                self.myThread = None
                 self.ui_DS = downloadScene.Ui_Form()
                 downloadScene.Ui_Form.setupUi(self.ui_DS, self)
 
-                self.ui_DS.downloadBtn.clicked.connect(self.download)
-                self.ui_DS.list_1.selectedItems()
+                self.ui_DS.downloadBtn.clicked.connect(self.goToConfirm)
+                self.ui_DS.backBtn_DS.clicked.connect(lambda: self.ui_DS.stackedWidget.setCurrentIndex(0))
+                self.ui_DS.confirmBtn.clicked.connect(self.download)
 
-            def download(self):
-                list_ = []
-
-                list_ += self.ui_DS.list_1.selectedItems()
-                list_ += self.ui_DS.list_2.selectedItems()
-                list_ += self.ui_DS.list_3.selectedItems()
-                list_ += self.ui_DS.list_4.selectedItems()
-                list_ += self.ui_DS.list_5.selectedItems()
-                list_ += self.ui_DS.list_6.selectedItems()
+            def goToConfirm(self):
+                self.list_ = []
+                self.ui_DS.stackedWidget.setCurrentIndex(1)
+                self.list_ += self.ui_DS.list_1.selectedItems()
+                self.list_ += self.ui_DS.list_2.selectedItems()
+                self.list_ += self.ui_DS.list_3.selectedItems()
+                self.list_ += self.ui_DS.list_4.selectedItems()
+                self.list_ += self.ui_DS.list_5.selectedItems()
+                self.list_ += self.ui_DS.list_6.selectedItems()
                 tmpList = []
-                for each in list_:
+                for each in self.list_:
                     if each.text().strip() != "":
                         tmpList.append(each.text())
-                list_ = tmpList
-                bool_ = True
-                time = len(list_) * 30
-                timeStr = "%d 分钟 %d 秒" % (time // 60, time % 60)
-                for each in list_:
-                    if bool_:
-                        self.setEnabled(False)
-                        QMessageBox.information(self, "请耐心等待", "您一共选择了 %d 本书\n\n等等时间约为:\n\n%s" % (len(list_), timeStr))
-                        bool_ = False
-                    if not os.path.exists(r'lib/res/word_Repository/csv/%s_remv.csv' % each):
-                        name = dataBase_Tools.writeCSV_byName(each)
-                        self.ui_DS.finishedList.addItem(name)
+                        self.bookNum += 1
+                self.list_ = tmpList
+                self.ui_DS.confirmList.addItems(tmpList)
 
+                self.time = len(self.list_) * 30
+                timeStr = "%d 分钟 %d 秒" % (self.time // 60, self.time % 60)
+
+                self.ui_DS.confirmLabel.setText("共选择 %d 本书, 需要约 %s" % (len(self.list_, ), timeStr))
+                self.ui_DS.confirmLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            def download(self):
+                # filter the csv that has been downloaded already
+                for each in self.list_:
+                    if os.path.exists(r'lib/res/word_Repository/csv/%s_remv.csv' % each):
+                        self.list_.remove(each)
+                        self.bookNum -= 1
+                self.myThread = MyThread(self.list_, outterClass)
+                self.myThread.setDaemon(True)
+                self.myThread.start()
+
+                def timeCheck(self):
+                    self.ui_DS.stackedWidget.setCurrentIndex(2)
+                    step = self.time / 100
+                    progress = 0
+                    while True:
+                        if self.bookNum == 0:
+                            return
+                        time.sleep(step)
+                        progress += step
+                        self.ui_DS.progressBar.setValue(progress)
+                        downloadProgress = len(self.myThread.finishedList) / self.bookNum * 100
+                        if self.myThread is not None and downloadProgress > progress:
+                            progress = downloadProgress
+                            self.ui_DS.progressBar.setValue(downloadProgress)
+                        if progress == 100:
+                            return
+
+                timeCheck(self)
+
+                self.ui_DS.stackedWidget.setCurrentIndex(0)
+                self.ui_DS.confirmList.clear()
+                self.ui_DS.finishedList.clear()
                 self.ui_DS.list_1.clearSelection()
                 self.ui_DS.list_2.clearSelection()
                 self.ui_DS.list_3.clearSelection()
                 self.ui_DS.list_4.clearSelection()
                 self.ui_DS.list_5.clearSelection()
                 self.ui_DS.list_6.clearSelection()
-                self.setEnabled(True)
+                self.ui_DS.finishedList.addItems(self.myThread.finishedList)
+
+                # reset book list
+                outterClass.saveData()
+                outterClass.getData()
+
+                for each in self.myThread.finishedList:
+                    outterClass.ui.bookListWidget.addItem(each)
 
         return DownloadScene
 
@@ -1551,33 +1642,117 @@ class RemVClass(QMainWindow):
                 subcontrol-position: bottom;
                 }
                               
+        """
 
-}
+        horizontalScrollBarStyle = """
+            QScrollBar:horizontal {
+                border: none;
+                background: none;
+                height: 12px;
+                margin: 0px 0px 0 0px;
+            }
+            
+            QScrollBar::handle:horizontal {
+                background: rgba(0, 0, 0, 50);
+                width: 12px;
+                border-radius: 6px;
+                border: none;
+            }
+            
+            QScrollBar::handle:hover {
+                background: rgba(0, 0, 0, 100);
+            }
+            
+            QScrollBar:sub-line {
+                height: 12px;
+                width: 10px;
+                background: transparent;
+                subcontrol-position: left;
+            }
+            
+            QScrollBar:add-line {
+                height: 12px;
+                width: 10px;
+                background: transparent;
+                subcontrol-position: right;
+            }
+
+
+        """
+        horizontalScrollBarStyle_bookList = """
+            QScrollBar:horizontal {
+                border: none;
+                background: none;
+                height: 15px;
+                margin: 0px 0px 0 0px;
+            }
+
+            QScrollBar::handle:horizontal {
+                background: rgba(41,51,60,150);
+                width: 15px;
+                border: none;
+            }
+
+            QScrollBar::handle:hover {
+                background: rgba(0, 0, 0, 100);
+            }
+
+            QScrollBar:sub-line {
+                height: 12px;
+                width: 10px;
+                background: transparent;
+                subcontrol-position: left;
+            }
+
+            QScrollBar:add-line {
+                height: 12px;
+                width: 10px;
+                background: transparent;
+                subcontrol-position: right;
+            }
+
+
         """
         self.ui.bookListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
-        self.ui.bookListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.bookListWidget.horizontalScrollBar().setStyleSheet(horizontalScrollBarStyle_bookList)
 
         self.ui.lessonListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
-        self.ui.lessonListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.lessonListWidget.horizontalScrollBar().setStyleSheet(horizontalScrollBarStyle)
 
         self.ui.wordListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
-        self.ui.wordListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.wordListWidget.horizontalScrollBar().setStyleSheet(horizontalScrollBarStyle)
 
         self.ui.meaningListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
-        self.ui.meaningListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.meaningListWidget.horizontalScrollBar().setStyleSheet(horizontalScrollBarStyle)
 
         self.ui.wordEnterListWidget.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
-        self.ui.wordEnterListWidget.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.wordEnterListWidget.horizontalScrollBar().setStyleSheet(horizontalScrollBarStyle)
 
         self.ui.meaningBrowser.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
-        self.ui.meaningBrowser.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.meaningBrowser.horizontalScrollBar().setStyleSheet(horizontalScrollBarStyle)
 
         self.ui.meaningBrowser_2.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
-        self.ui.meaningBrowser_2.horizontalScrollBar().setStyleSheet(verticalScrollBarStyle)
+        self.ui.meaningBrowser_2.horizontalScrollBar().setStyleSheet(horizontalScrollBarStyle)
 
         self.ui.PreSufBrowser.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
 
         self.ui.exchangeEdit.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
+
+
+class MyThread(threading.Thread):
+    def __init__(self, list_, outterClass):
+        threading.Thread.__init__(self)
+        self.list_ = list_
+        self.outterClass = outterClass
+        self.finishedList = []
+
+    def run(self):
+        for each in self.list_:
+            name = dataBase_Tools.writeCSV_byName(each)
+            self.outterClass.pathList.append(r'lib/res/word_Repository/csv/%s_remv.csv' % each)
+            self.finishedList.append(name)
+
+        return self.finishedList
 
 
 """

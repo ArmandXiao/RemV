@@ -143,6 +143,8 @@ def writeCSV_byName(bookname):
         cur.execute("SELECT word FROM %s_remv where id like %d" % (bookname, i))
         data = cur.fetchone()
 
+        if not data:
+            continue
         word = data[0]
         pos = ""
         translation = ""
