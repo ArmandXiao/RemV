@@ -23,7 +23,7 @@ import getPronFromYouDao
 import getSourceFromOuLu
 import getSuffixFromCgdict
 from pyFile import functions, getTranslationFromYouDao, createBookScene, addWordScene, \
-    GUI_Chinese_Adjust, getGreatSentences
+    newGUI, getGreatSentences
 
 """
 @copyright   Copyright 2020 RemV
@@ -67,8 +67,8 @@ class RemVClass(QMainWindow):
         # self.cursor_root = None
 
         # 中文版
-        self.ui = GUI_Chinese_Adjust.Ui_MainWindow()
-        GUI_Chinese_Adjust.Ui_MainWindow.setupUi(self.ui, self)
+        self.ui = newGUI.Ui_MainWindow()
+        newGUI.Ui_MainWindow.setupUi(self.ui, self)
 
         self.ui.stackedWidget.setCurrentIndex(4)
 
@@ -119,9 +119,6 @@ class RemVClass(QMainWindow):
         self.ui.starBtn_4.setVisible(False)
         self.ui.starBtn_5.setVisible(False)
 
-        self.ui.PreSufBox.setVisible(False)
-        self.ui.PreSufBrowser.setVisible(False)
-
         self.ui.exchangeBox.hide()
 
         # 给列表添加 spacing
@@ -139,6 +136,10 @@ class RemVClass(QMainWindow):
         # uploadBtn 添加点击事件
         self.ui.uploadButton.clicked.connect(self.uploadBtnClicked)
         self.ui.addBookBtn.clicked.connect(self.goToAddScene)
+
+        # go to Download scene 因为没买虚拟服务器，所以先取消这个功能
+        # self.ui.downloadBtn.clicked.connect(lambda: QMessageBox.information(self, "提示", "功能未开通，因为目前需求问题，"
+        #                                                                                 "并没有购买服务器。如果强烈希望拥有，可以通过联系放松，联系我。"))
         self.ui.downloadBtn.clicked.connect(self.goToDownload)
 
         # 给 memorize, quiz, menu 添加事件 切屏事件
@@ -509,7 +510,7 @@ class RemVClass(QMainWindow):
 
         # 把第一个元素更新
         self.updateWord(0)
-        self.ui.countBrowser_1.setText("  1")
+        self.ui.countLabel.setText("  1")
         self.ui.backBtn.setEnabled(False)
         # self.ui.showBtn.setVisible(False)
 
@@ -577,9 +578,6 @@ class RemVClass(QMainWindow):
         self.clearFrequency()
         self.clearTags()
 
-        self.ui.PreSufBox.setVisible(False)
-        self.ui.PreSufBrowser.setVisible(False)
-
         self.currentChineseTrans = ""
         self.currentEnglishTrans = ""
 
@@ -600,7 +598,7 @@ class RemVClass(QMainWindow):
                 self.saveData()
                 self.updateWord(self.currentIndex)
                 # 更新count
-                self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
+                self.ui.countLabel.setText("  " + str(self.currentIndex + 1))
 
             # 第二轮 要先update 再加一
             elif self.countRound == 1:
@@ -612,7 +610,7 @@ class RemVClass(QMainWindow):
                 # 不显示意思
                 self.ui.meaningBrowser.setText("")
                 # 更新count
-                self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
+                self.ui.countLabel.setText("  " + str(self.currentIndex + 1))
 
         # 第一轮结束
         elif self.currentIndex == self.lessonLen - 1 and self.countRound == 0:
@@ -623,7 +621,7 @@ class RemVClass(QMainWindow):
             self.ui.meaningBrowser.setText("\t中文意思没有啦"
                                            "\n\t不过你同样可以点击显示按钮来查看"
                                            "\n\t准备好了吗？")
-            self.ui.countBrowser_1.setText("")
+            self.ui.countLabel.setText("")
             self.countRound = 1
             self.ui.showBtn.setEnabled(False)
             self.ui.translateBtn.setEnabled(False)
@@ -654,7 +652,7 @@ class RemVClass(QMainWindow):
         if self.currentIndex == 0:
             self.ui.backBtn.setEnabled(False)
         # 更新count
-        self.ui.countBrowser_1.setText("  " + str(self.currentIndex + 1))
+        self.ui.countLabel.setText("  " + str(self.currentIndex + 1))
         self.saveData()
         self.updateWord(self.currentIndex)
 
@@ -788,7 +786,9 @@ class RemVClass(QMainWindow):
         self.translate()
         # MainThread
         # MainThread Functions must be executed before threads.
-        self.setPreOrSuf()
+
+        # 词根词缀功能删除
+        # self.setPreOrSuf()
         self.loadWordExchange()
 
         # start a thread of setFrequency
@@ -1029,33 +1029,6 @@ class RemVClass(QMainWindow):
 
         # 保存数据
         self.saveData()
-
-    def setPreOrSuf(self):
-        """
-        Set Prefix and Suffix for each word
-        :return: None
-        """
-        if not internetCheck():
-            return
-        PreList, SufList = getSuffixFromCgdict.getPreOrSuf(self.currentWord)
-
-        if len(PreList) != 0:
-            self.ui.PreSufBox.setVisible(True)
-            self.ui.PreSufBrowser.setVisible(True)
-            self.ui.PreSufBrowser.clear()
-            for eachPre in PreList:
-                self.ui.PreSufBrowser.append(eachPre)
-                self.ui.PreSufBrowser.append("\n")
-            return
-
-        if len(SufList) != 0:
-            self.ui.PreSufBrowser.clear()
-            self.ui.PreSufBox.setVisible(True)
-            self.ui.PreSufBrowser.setVisible(True)
-            for eachSuf in SufList:
-                self.ui.PreSufBrowser.append(eachSuf)
-                self.ui.PreSufBrowser.append("\n")
-            return
 
     def setFrequency(self):
         """
@@ -1305,7 +1278,7 @@ class RemVClass(QMainWindow):
     def connectDB_user(self):
         try:
             self.conn_user = pymysql.connect(
-                host='192.168.1.101',
+                host='localhost',
                 port=3306,
                 user="remv_user",
                 passwd="iloveRemV",
@@ -1318,7 +1291,7 @@ class RemVClass(QMainWindow):
     # def connectDB_root(self):
     #     try:
     #         self.conn_root = pymysql.connect(
-    #             host='192.168.1.101',
+    #             host='localhost',
     #             port=3306,
     #             user="root",
     #             passwd=getPassword.getRootPassword(),
@@ -1457,7 +1430,7 @@ class RemVClass(QMainWindow):
         if not internetCheck():
             QMessageBox.information(self, "网络连接失败", "数据库请求连接失败\n请检查网络连接")
             return
-        conn = pymysql.connect(host='192.168.1.101', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
+        conn = pymysql.connect(host='localhost', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
         cur = conn.cursor()
         for i in range(6):
             if i == 0:
@@ -1558,6 +1531,7 @@ class RemVClass(QMainWindow):
 
                 self.ui_DS.confirmLabel.setText("共选择 %d 本书, 需要约 %s" % (len(self.list_, ), timeStr))
                 self.ui_DS.confirmLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+
             def download(self):
                 # filter the csv that has been downloaded already
                 for each in self.list_:
@@ -1585,7 +1559,9 @@ class RemVClass(QMainWindow):
                         if progress == 100:
                             return
 
-                timeCheck(self)
+                t0 = threading.Thread(target=timeCheck, args=(self,))
+                t0.start()
+                t0.join()
 
                 self.ui_DS.stackedWidget.setCurrentIndex(0)
                 self.ui_DS.confirmList.clear()
@@ -1733,8 +1709,6 @@ class RemVClass(QMainWindow):
 
         self.ui.meaningBrowser_2.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
         self.ui.meaningBrowser_2.horizontalScrollBar().setStyleSheet(horizontalScrollBarStyle)
-
-        self.ui.PreSufBrowser.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
 
         self.ui.exchangeEdit.verticalScrollBar().setStyleSheet(verticalScrollBarStyle)
 

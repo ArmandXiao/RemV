@@ -17,8 +17,6 @@ def main():
     app = QApplication(sys.argv)
     win = RemVClass()
 
-
-
     win.setStyleSheet(loadQss())
     win.show()
 

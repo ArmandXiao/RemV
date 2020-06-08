@@ -4,7 +4,7 @@ import pymysql
 
 
 def downloadFromDB(bookname):
-    conn = pymysql.connect(host='192.168.1.101', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
+    conn = pymysql.connect(host='localhost', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
     cur = conn.cursor()
     list_ = []
     if type(bookname) is list:
@@ -52,7 +52,7 @@ def writeCSV(bookname, list_):
     f = open("lib/res/word_Repository/csv/%s_remv.csv" % bookname, "w", encoding='utf-8', newline="")
     writer_ = csv.writer(f)
 
-    conn = pymysql.connect(host='192.168.1.101', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
+    conn = pymysql.connect(host='localhost', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
     cur = conn.cursor()
 
     for each in list_:
@@ -133,7 +133,7 @@ def writeCSV_byName(bookname):
     f = open("lib/res/word_Repository/csv/%s_remv.csv" % bookname, "w", encoding='utf-8', newline="")
     writer_ = csv.writer(f)
 
-    conn = pymysql.connect(host='192.168.1.101', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
+    conn = pymysql.connect(host='localhost', port=3306, user='remv_user', passwd="iloveRemV", db='remv')
     cur = conn.cursor()
 
     cur.execute("SELECT COUNT(*) FROM %s_remv" % bookname)
